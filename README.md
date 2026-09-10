@@ -1,6 +1,15 @@
 # Relynked website
 
-Static site, no build step. Open `index.html` in a browser to view it.
+Static site, no build step. Live at https://relynked.com.
+
+Hosted on Cloudflare Pages, project `relynked`, in the Qubydata Cloudflare account.
+Deploying is one command, run from this folder:
+
+    CLOUDFLARE_API_TOKEN=$(cat ~/cf-token.txt)     CLOUDFLARE_ACCOUNT_ID=d98789131749b5406fb336071454a0d4     npx wrangler pages deploy . --project-name relynked --branch main
+
+Links and assets are root absolute, so this no longer previews over file://.
+To view it locally, run `python -m http.server` in this folder and open
+http://localhost:8000.
 
 ## Files
 
