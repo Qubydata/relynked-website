@@ -108,6 +108,19 @@ h3{font-size:1.35rem;letter-spacing:-.03em}
 .chip.b .ic{width:34px;height:34px;border-radius:9px;background:var(--lime);display:grid;place-items:center}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 
+/* ---------- 3D device: real perspective, rotation driven by scroll ---------- */
+.stage3d{perspective:1700px;perspective-origin:50% 42%}
+.dev3d{position:relative;transform-style:preserve-3d;will-change:transform;backface-visibility:hidden}
+.dev3d .edge{position:absolute;inset:0;border-radius:26px;background:linear-gradient(90deg,#02201a,#0b3128 45%,#02201a);
+ transform:translateZ(-16px);box-shadow:0 40px 80px rgba(1,63,50,.42)}
+.dev3d .sheen{position:absolute;inset:0;border-radius:26px;pointer-events:none;opacity:0;
+ background:linear-gradient(105deg,transparent 32%,rgba(255,255,255,.26) 47%,transparent 63%)}
+.dev3d .board{position:relative;transform:none}
+.hv:hover .dev3d .board{transform:none}
+@keyframes spinin{from{transform:rotateY(-45deg) translateX(-7%) scale(.93);opacity:0}
+ to{transform:rotateY(0) translateX(0) scale(1);opacity:1}}
+.dev3d.enter{animation:spinin 1.15s var(--ease) .35s both}
+@media(prefers-reduced-motion:reduce){.dev3d,.dev3d.enter{transform:none!important;animation:none!important;opacity:1!important}}
 /* ---------- ticker ---------- */
 .ticker{background:var(--forest);color:var(--paper);padding:18px 0;overflow:hidden;position:relative}
 .ticker::before,.ticker::after{content:"";position:absolute;top:0;bottom:0;width:120px;z-index:1;pointer-events:none}

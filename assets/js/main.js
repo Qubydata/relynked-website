@@ -68,3 +68,34 @@ document.querySelectorAll('.magnet').forEach(b=>{
 (function(){const cols=document.querySelectorAll('.bd .cb');let i=0;if(!cols.length)return;
   setInterval(()=>{const c=cols[i%2];const first=c.firstElementChild;if(!first)return;
     first.style.animation='none';first.offsetHeight;first.style.animation='';c.appendChild(first);i++;},4200);})();
+
+/* 3D devices. Rotation follows scroll position: the device arrives turned 45
+   degrees, straightens as it crosses the middle of the viewport, and turns away
+   again on the way out. Same maths in reverse when scrolling back up. */
+(function(){
+  const els=[...document.querySelectorAll('[data-spin]')];
+  if(!els.length||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  let queued=false;
+  function frame(){
+    queued=false;
+    const vh=innerHeight;
+    for(const el of els){
+      if(el.classList.contains('enter'))continue;
+      const r=el.getBoundingClientRect();
+      if(r.bottom<-240||r.top>vh+240)continue;
+      let p=((r.top+r.height/2)-vh/2)/(vh/2+r.height/2);
+      p=Math.max(-1,Math.min(1,p));
+      el.style.transform='rotateY('+(p*45).toFixed(2)+'deg) translateX('+(p*7).toFixed(2)
+        +'%) scale('+(1-Math.abs(p)*0.07).toFixed(3)+')';
+      const sh=el.querySelector('.sheen,.msheen');
+      if(sh)sh.style.opacity=Math.min(.5,Math.abs(p)*0.85).toFixed(2);
+    }
+  }
+  const nudge=()=>{if(!queued){queued=true;requestAnimationFrame(frame);}};
+  addEventListener('scroll',nudge,{passive:true});
+  addEventListener('resize',nudge,{passive:true});
+  document.querySelectorAll('.dev3d.enter').forEach(el=>
+    el.addEventListener('animationend',()=>{
+      el.classList.remove('enter');el.style.animation='none';frame();},{once:true}));
+  frame();
+})();
