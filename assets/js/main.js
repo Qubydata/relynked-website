@@ -99,3 +99,15 @@ document.querySelectorAll('.magnet').forEach(b=>{
       el.classList.remove('enter');el.style.animation='none';frame();},{once:true}));
   frame();
 })();
+
+/* back to top. Appears once the page has scrolled past a screen and a half. */
+(function(){
+  const b=document.getElementById('totop');
+  if(!b)return;
+  const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let queued=false;
+  const set=()=>{queued=false;b.classList.toggle('show',scrollY>innerHeight*1.5);};
+  addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(set);}},{passive:true});
+  b.addEventListener('click',()=>scrollTo({top:0,behavior:still?'auto':'smooth'}));
+  set();
+})();

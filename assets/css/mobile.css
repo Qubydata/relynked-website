@@ -315,3 +315,6 @@ body.mnavopen .mdock{transform:translateY(120%)}
  .mlay .msteps .mfill{height:calc(100% - 32px)}
  .mlay .mmenu a{opacity:1;transform:none}
 }
+
+/* white text needs a dark backing, not neon. Lime stays as the edge cue. */
+.mlay .mdark .mhl::after{background:#01251E;box-shadow:inset 0 -3px 0 var(--mlime)}

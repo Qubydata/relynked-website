@@ -24,7 +24,7 @@ h3{font-size:1.35rem;letter-spacing:-.03em}
 .hl::after{content:"";position:absolute;left:-.06em;right:-.06em;bottom:.08em;height:.42em;background:var(--lime);z-index:-1;
  transform:scaleX(0);transform-origin:left;transition:transform .9s var(--ease) .25s;border-radius:2px}
 .chain .hl,.here .hl{color:var(--paper)}
-.chain .hl::after,.here .hl::after{height:.5em;bottom:.04em}
+.chain .hl::after,.here .hl::after{height:.5em;bottom:.04em;background:#01251E;box-shadow:inset 0 -3px 0 var(--lime)}
 .in .hl::after,.hl.on::after{transform:scaleX(1)}
 
 /* ---------- nav ---------- */
@@ -363,3 +363,28 @@ footer{padding:80px 0 40px;margin-top:100px;border-top:1.5px solid rgba(1,63,50,
  .hl::after{transform:scaleX(1)}
  .flow .line{width:84%}
 }
+
+/* ---------- back to top: liquid glass ---------- */
+.lgdefs{position:absolute;width:0;height:0;overflow:hidden;pointer-events:none}
+.totop{position:fixed;right:22px;bottom:26px;z-index:55;width:54px;height:54px;border-radius:50%;
+ display:grid;place-items:center;padding:0;border:0;cursor:pointer;
+ background:rgba(253,253,253,.42);
+ /* plain blur first, so a browser without url() support still gets glass */
+ -webkit-backdrop-filter:blur(6px) saturate(180%);
+ backdrop-filter:blur(6px) saturate(180%);
+ box-shadow:inset 0 1px 0 #ffffff5c, inset 0 -1px 0 rgba(255,255,255,.18),
+  0 10px 26px rgba(1,63,50,.24), 0 0 0 1px rgba(255,255,255,.35);
+ opacity:0;visibility:hidden;transform:translateY(14px) scale(.86);
+ transition:opacity .35s var(--ease),transform .35s var(--ease),visibility .35s}
+@supports (backdrop-filter: url(#lg)){
+ .totop{backdrop-filter:url(#lg) blur(3px) saturate(180%)}
+}
+.totop::after{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;
+ background:linear-gradient(150deg,rgba(255,255,255,.55),rgba(255,255,255,0) 46%)}
+.totop svg{position:relative;width:21px;height:21px;stroke:var(--forest);fill:none;stroke-width:2.6;
+ stroke-linecap:round;stroke-linejoin:round}
+.totop.show{opacity:1;visibility:visible;transform:none}
+.totop:hover{transform:translateY(-2px)}
+.totop:active{transform:scale(.94)}
+@media(max-width:900px){.totop{right:16px;bottom:108px;width:50px;height:50px}}
+@media(prefers-reduced-motion:reduce){.totop{transition:none}}
