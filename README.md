@@ -99,6 +99,12 @@ pixels a second. Add or remove items in the HTML and nothing else needs touching
 ribbon gets longer, not faster. It travels left to right. To reverse it, delete
 `animation-direction:reverse` from the `.tk-track` rule in the stylesheet.
 
+The ribbon is the one animation that keeps running for visitors whose system asks for
+reduced motion, because frozen it hides every item past the right edge. That is why its
+`.tk-track` rule uses `!important` and why the script sets the duration as an important
+inline value. To make it obey the preference like everything else, delete those
+`!important` rules and drop the third argument from `setProperty` in the script.
+
 ## Reduced motion
 
 The stylesheet switches animations off for anyone who asks their device for reduced

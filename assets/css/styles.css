@@ -310,6 +310,12 @@ footer{padding:80px 0 40px;margin-top:100px;border-top:1.5px solid rgba(1,63,50,
 /* ticker: even spacing so the loop seam is invisible however many items there are */
 .tk-track{gap:0;animation-direction:reverse}
 .tk-track span{margin-right:56px}
+/* The ribbon carries content rather than decoration: frozen, it hides every item
+   past the right edge. So it keeps moving even where the reduced-motion rule at
+   the foot of this file switches other animations off. The script sets its
+   duration inline, which is what keeps that rule from flattening it to 0s. */
+.tk-track{animation-name:marquee!important;animation-timing-function:linear!important;animation-iteration-count:infinite!important;animation-direction:reverse!important}
+.ticker:hover .tk-track{animation-play-state:paused!important}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){
  .hero h1 .ln span,.hero .lead,.hero .cta,.hero .note,.hv{opacity:1;transform:none}

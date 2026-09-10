@@ -48,7 +48,7 @@ document.querySelectorAll('.magnet').forEach(b=>{
   if(!track||!track.children.length)return;
   [...track.children].forEach(n=>track.appendChild(n.cloneNode(true)));
   const pace=()=>{const one=track.scrollWidth/2;
-    track.style.animationDuration=Math.max(12,Math.round(one/58))+'s';};
+    track.style.setProperty('animation-duration',Math.max(12,Math.round(one/58))+'s','important');};
   pace();
   addEventListener('resize',pace,{passive:true});
 })();
