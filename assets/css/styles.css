@@ -302,6 +302,10 @@ footer{padding:80px 0 40px;margin-top:100px;border-top:1.5px solid rgba(1,63,50,
  h2{font-size:clamp(1.85rem,8.2vw,2.6rem)}
  .hl{white-space:normal}
  .eyebrow{font-size:.62rem;letter-spacing:.16em}
+ /* two pills side by side on a phone force the label to wrap, and a wrapped label
+    inside a 100px radius turns the button into a blob. Stack them instead. */
+ .hero .cta,.cta-band .row{flex-direction:column;align-items:stretch}
+ .hero .cta .btn,.cta-band .row .btn{justify-content:center;white-space:nowrap}
 }
 /* ticker: even spacing so the loop seam is invisible however many items there are */
 .tk-track{gap:0;animation-direction:reverse}
