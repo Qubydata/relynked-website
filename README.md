@@ -33,13 +33,38 @@ the photo exists.
 
 ## Products
 
-There are two: **Relynked Business**, the venue system this site is mostly about, and
-**Remy**, the WhatsApp assistant. They appear as two cards on `product.html` and as the
-two entries in the footer Product column on all five pages.
+**Relynked Business**, the operations system, and **Remy**, the WhatsApp assistant, plus
+a dashed "More coming" slot so the grid visibly has room for a third. They are the two
+entries in the footer Product column on all five pages.
 
 Remy has no page of its own yet, so its card links to `contact.html`. The five surface
 cards that used to fill the product page (Waiter, Kitchen, Bar, Chef, Storekeeper) were
-replaced by these two. That copy is still in `reference/` if it is ever wanted back.
+replaced. That copy is still in `reference/` if it is ever wanted back.
+
+**Naming decision, recorded.** The product stays `Relynked Business`. It is not renamed
+to Relynked Hospitality. A vertical is a configuration, not a product, so naming the
+product after the first vertical would force a rename the moment the second one ships.
+Today it is Relynked Business configured for hospitality. Tomorrow it is the same
+product configured for retail. Products with a genuinely different shape get their own
+name, as Remy does.
+
+## Positioning
+
+The site sells a measurement engine that ships a hospitality vertical first, not a
+restaurant system. The test for any new line of copy: could a supermarket owner, a hotel
+manager, a car showroom owner or a clinic administrator read it and see themselves? If
+not, it is too narrow.
+
+The hero device still shows a kitchen pass board, deliberately, because concrete beats
+abstract. The caption beneath it does the broadening work by naming it as one deployment.
+
+The sector strip on the home page carries honest status chips: Live, In build, Planned.
+**Do not mark anything Live that is not.** Change a chip by swapping the class on the
+`.flag` span: `live`, `build` or `soon`.
+
+The anti-counterfeit section deliberately does not describe the mechanism. No serials, no
+scanning flow, no outcome list, no screenshots of the verification screen. That belongs
+in a sales conversation, not on a public page.
 
 ## Company details
 

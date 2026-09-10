@@ -284,6 +284,9 @@ footer{padding:80px 0 40px;margin-top:100px;border-top:1.5px solid rgba(1,63,50,
  .links a{font-family:var(--d);font-weight:800;font-size:1.05rem;letter-spacing:-.025em;padding:16px 0;border-bottom:1.5px solid rgba(1,63,50,.08)}
  .links a::after{display:none}
  .links .menu-cta{display:block;text-align:center;background:var(--lime);border-radius:100px;padding:15px 0;margin:14px 0 10px;border-bottom:0}
+ /* a grid item defaults to min-width:auto, so the wide pass board was stretching the
+    hero's single column past the screen and dragging the headline out with it */
+ .hero>div,.hero>.hv{min-width:0}
 }
 @media(max-width:600px){
  .wrap{padding-left:22px;padding-right:22px}
@@ -307,6 +310,30 @@ footer{padding:80px 0 40px;margin-top:100px;border-top:1.5px solid rgba(1,63,50,
  .hero .cta,.cta-band .row{flex-direction:column;align-items:stretch}
  .hero .cta .btn,.cta-band .row .btn{justify-content:center;white-space:nowrap}
 }
+/* ---------- broadening revision: sector strip, examples, product grid ---------- */
+.shown{font-family:var(--m);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:rgba(22,22,22,.45);margin-top:20px;text-align:center;line-height:1.7}
+.sect{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:48px}
+.tile{background:var(--paper);border:1.5px solid rgba(1,63,50,.1);border-radius:16px;padding:22px 20px;display:flex;flex-direction:column;gap:12px;transition:.3s var(--ease)}
+.tile:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(1,63,50,.12);border-color:transparent}
+.tile svg{width:24px;height:24px;stroke:var(--forest);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.tile b{font-family:var(--d);font-weight:800;font-size:.98rem;letter-spacing:-.025em;line-height:1.25;flex:1}
+.flag{font-family:var(--m);font-size:.54rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;padding:5px 9px;border-radius:6px;align-self:flex-start}
+.flag.live{background:var(--lime);color:var(--forest)}
+.flag.build{background:rgba(224,160,0,.18);color:#8F6300}
+.flag.soon{background:var(--mist);color:rgba(22,22,22,.5)}
+.sectnote{margin-top:34px;font-size:.92rem;color:rgba(22,22,22,.62);font-weight:500;line-height:1.6;max-width:70ch}
+.sectnote a{font-weight:800;color:var(--forest);border-bottom:2px solid var(--lime)}
+.egs{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px;padding-top:24px;border-top:1.5px solid rgba(1,63,50,.12)}
+.egs b{font-family:var(--m);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--forest);font-weight:700;display:block;margin-bottom:7px}
+.egs p{font-size:.84rem;color:rgba(22,22,22,.6);line-height:1.55}
+.step .eg{font-family:var(--m);font-size:.58rem;letter-spacing:.05em;line-height:1.6;color:rgba(253,253,253,.42);display:block;margin-top:14px;padding-top:12px;border-top:1px solid rgba(253,253,253,.14);text-transform:uppercase}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:56px}
+.sc.soon{background:transparent;border-style:dashed;border-color:rgba(1,63,50,.3)}
+.sc.soon .ic{background:transparent;border:1.5px dashed rgba(1,63,50,.3)}
+.sc.soon .ic svg{stroke:var(--forest)}
+@media(max-width:1080px){.sect{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:900px){.sect{grid-template-columns:repeat(2,1fr)}.pgrid{grid-template-columns:1fr}.egs{grid-template-columns:1fr;gap:16px}}
+@media(max-width:600px){.sect{grid-template-columns:1fr}}
 /* ticker: even spacing so the loop seam is invisible however many items there are */
 .tk-track{gap:0;animation-direction:reverse}
 .tk-track span{margin-right:56px}

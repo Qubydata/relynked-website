@@ -20,10 +20,21 @@ if(burger){
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.15});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
-/* count-up */
+/* count-up. The clock is anchored to the first frame's own timestamp: anchoring it
+   to performance.now() instead made progress go negative, because a frame is stamped
+   with the time the frame began, which can be before the observer callback ran. That
+   printed negative numbers and left the counters stuck. */
+const still=matchMedia('(prefers-reduced-motion: reduce)');
 const cio=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;cio.unobserve(e.target);
-  const el=e.target,end=+el.dataset.count,t0=performance.now();
-  (function tick(t){const p=Math.min(1,(t-t0)/1400),v=Math.round(end*(1-Math.pow(1-p,3)));el.textContent=v;if(p<1)requestAnimationFrame(tick);})(t0);
+  const el=e.target,end=+el.dataset.count;
+  if(still.matches){el.textContent=end;return;}
+  let t0=null;
+  requestAnimationFrame(function tick(t){
+    if(t0===null)t0=t;
+    const p=Math.min(1,Math.max(0,(t-t0)/1400));
+    el.textContent=p<1?Math.round(end*(1-Math.pow(1-p,3))):end;
+    if(p<1)requestAnimationFrame(tick);
+  });
 }),{threshold:.6});
 document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
 
