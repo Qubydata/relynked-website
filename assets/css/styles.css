@@ -2,7 +2,7 @@
   --forest:#013F32;--lime:#E7FE25;--paper:#FDFDFD;--ink:#161616;
   --forest-2:#02594A;--forest-3:#0B2A24;--mist:#EEF3EF;--amber:#E0A000;--red:#C4331B;
   --d:"Archivo",system-ui,sans-serif;--b:"Manrope",system-ui,sans-serif;--m:"JetBrains Mono",ui-monospace,monospace;
-  --ease:cubic-bezier(.16,1,.3,1);--w:1240px;
+  --ease:cubic-bezier(.16,1,.3,1);--w:min(1760px,92vw);
 }
 *{box-sizing:border-box;margin:0}
 html{scroll-behavior:smooth}

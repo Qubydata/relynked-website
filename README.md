@@ -65,6 +65,13 @@ House style is no em-dashes and no en-dashes. The only dash-like glyph in the co
 the minus sign in the two reconciliation equations on `how-it-works.html`, which is
 arithmetic, not punctuation.
 
+## Page width
+
+The container is `--w` in the stylesheet, set to `min(1760px, 92vw)`. It grows with the
+window and stops at 1760px, so a wide monitor gets a wide page instead of a column
+stranded in the middle. Raise or lower the 1760 to taste. Paragraphs stay readable
+regardless, because `.lead` is capped at 56 characters.
+
 ## Mobile
 
 One responsive site, no separate mobile version. Breakpoints are 1080, 900 and 600 px.
