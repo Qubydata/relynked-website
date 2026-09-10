@@ -50,6 +50,7 @@ h3{font-size:1.35rem;letter-spacing:-.03em}
 .btn.ghost{background:transparent;color:var(--forest);border:1.5px solid rgba(1,63,50,.25)}
 .btn.ghost:hover{border-color:var(--forest);background:rgba(1,63,50,.04)}
 
+.logo svg.mk{background:none;border-radius:0;display:block;flex:none}
 /* ---------- hero ---------- */
 .hero{min-height:100vh;display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:56px;padding-top:120px;padding-bottom:60px;position:relative;overflow:hidden}
 .hero::before{content:"";position:absolute;right:-18vw;top:-12vh;width:64vw;height:64vw;border-radius:50%;
