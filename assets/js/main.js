@@ -85,7 +85,8 @@ document.querySelectorAll('.magnet').forEach(b=>{
       if(r.bottom<-240||r.top>vh+240)continue;
       let p=((r.top+r.height/2)-vh/2)/(vh/2+r.height/2);
       p=Math.max(-1,Math.min(1,p));
-      el.style.transform='rotateY('+(p*45).toFixed(2)+'deg) translateX('+(p*7).toFixed(2)
+      el.style.transform='rotateY('+(p*45).toFixed(2)+'deg) rotateX('+(p*22).toFixed(2)
+        +'deg) rotateZ('+(p*3).toFixed(2)+'deg) translateX('+(p*7).toFixed(2)
         +'%) scale('+(1-Math.abs(p)*0.07).toFixed(3)+')';
       const sh=el.querySelector('.sheen,.msheen');
       if(sh)sh.style.opacity=Math.min(.5,Math.abs(p)*0.85).toFixed(2);

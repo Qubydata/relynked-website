@@ -109,16 +109,25 @@ h3{font-size:1.35rem;letter-spacing:-.03em}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 
 /* ---------- 3D device: real perspective, rotation driven by scroll ---------- */
-.stage3d{perspective:1700px;perspective-origin:50% 42%}
-.dev3d{position:relative;transform-style:preserve-3d;will-change:transform;backface-visibility:hidden}
-.dev3d .edge{position:absolute;inset:0;border-radius:26px;background:linear-gradient(90deg,#02201a,#0b3128 45%,#02201a);
- transform:translateZ(-16px);box-shadow:0 40px 80px rgba(1,63,50,.42)}
+.stage3d{perspective:1500px;perspective-origin:50% 42%}
+.dev3d{position:relative;transform-style:preserve-3d;will-change:transform;--thick:30px}
+/* the four side faces are what make it read as a solid object rather than a card */
+.dev3d .edge{position:absolute;inset:0;border-radius:26px;background:linear-gradient(160deg,#0b3128,#02201a);
+ transform:translateZ(calc(var(--thick)*-1));box-shadow:0 46px 90px rgba(1,63,50,.45)}
+.dev3d .sideL,.dev3d .sideR{position:absolute;top:14px;bottom:14px;width:var(--thick);
+ background:linear-gradient(180deg,#1a5544 0%,#0b3128 26%,#02201a 100%)}
+.dev3d .sideL{left:0;transform-origin:left center;transform:rotateY(90deg)}
+.dev3d .sideR{right:0;transform-origin:right center;transform:rotateY(-90deg)}
+.dev3d .sideT,.dev3d .sideB{position:absolute;left:14px;right:14px;height:var(--thick);
+ background:linear-gradient(90deg,#02201a,#154a3b 50%,#02201a)}
+.dev3d .sideT{top:0;transform-origin:center top;transform:rotateX(-90deg)}
+.dev3d .sideB{bottom:0;transform-origin:center bottom;transform:rotateX(90deg)}
 .dev3d .sheen{position:absolute;inset:0;border-radius:26px;pointer-events:none;opacity:0;
  background:linear-gradient(105deg,transparent 32%,rgba(255,255,255,.26) 47%,transparent 63%)}
 .dev3d .board{position:relative;transform:none}
 .hv:hover .dev3d .board{transform:none}
-@keyframes spinin{from{transform:rotateY(-45deg) translateX(-7%) scale(.93);opacity:0}
- to{transform:rotateY(0) translateX(0) scale(1);opacity:1}}
+@keyframes spinin{from{transform:rotateY(-45deg) rotateX(-22deg) rotateZ(-3deg) translateX(-7%) scale(.92);opacity:0}
+ to{transform:rotateY(0) rotateX(0) rotateZ(0) translateX(0) scale(1);opacity:1}}
 .dev3d.enter{animation:spinin 1.15s var(--ease) .35s both}
 @media(prefers-reduced-motion:reduce){.dev3d,.dev3d.enter{transform:none!important;animation:none!important;opacity:1!important}}
 /* ---------- ticker ---------- */
