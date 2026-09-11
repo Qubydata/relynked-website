@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#FDFDFD">
+<title>Press · Relynked</title>
+<meta name="description" content="Facts, boilerplate, brand assets and contact for journalists writing about Relynked.">
+<link rel="canonical" href="https://relynked.com/press">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/img/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=JetBrains+Mono:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --forest:#0A3F32;--forest-2:#0D5344;--forest-3:#06291F;--lime:#E7FE25;--paper:#FDFDFD;--ink:#161616;
+  --mist:#EEF3EF;--amber:#E0A000;
+  --d:"Archivo",system-ui,sans-serif;--b:"Manrope",system-ui,sans-serif;--m:"JetBrains Mono",ui-monospace,monospace;
+  --ease:cubic-bezier(.16,1,.3,1);--w:1180px;
+}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:var(--b);background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;
+ line-height:1.5;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button,input,textarea,select{font:inherit;color:inherit}
+.wrap{width:100%;max-width:var(--w);margin:0 auto;padding:0 28px}
+h1,h2,h3{font-family:var(--d);font-weight:800;letter-spacing:-.05em;line-height:1.02}
+.eyebrow{font-family:var(--m);font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;font-weight:700;
+ color:var(--forest);opacity:.75;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:20px;height:2px;background:var(--lime)}
+.hl{position:relative;display:inline-block;isolation:isolate}
+.hl::after{content:"";position:absolute;left:-.05em;right:-.05em;bottom:.07em;height:.42em;background:var(--lime);
+ z-index:-1;transform:scaleX(0);transform-origin:left;transition:transform .9s var(--ease) .3s;border-radius:2px}
+.in .hl::after,.hl.on::after{transform:scaleX(1)}
+section{padding:104px 0;position:relative}
+.rv{opacity:0;transform:translateY(28px);transition:opacity .85s var(--ease),transform .85s var(--ease)}
+.rv.in{opacity:1;transform:none}
+.rv.d1{transition-delay:.09s}.rv.d2{transition-delay:.18s}.rv.d3{transition-delay:.27s}.rv.d4{transition-delay:.36s}
+
+.nav{position:fixed;top:0;left:0;right:0;z-index:40;padding:20px 0;transition:.35s var(--ease)}
+.nav.solid{background:rgba(253,253,253,.88);backdrop-filter:blur(16px) saturate(160%);
+ -webkit-backdrop-filter:blur(16px) saturate(160%);padding:12px 0;border-bottom:1px solid rgba(10,63,50,.1)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--d);font-weight:800;font-size:1.18rem;letter-spacing:-.04em}
+.logo .mk{width:32px;height:32px;flex:none;display:block}
+.back{font-size:.9rem;font-weight:700;display:flex;align-items:center;gap:8px;opacity:.65;transition:.25s}
+.back:hover{opacity:1}
+.back svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:15px 26px;border-radius:100px;
+ font-weight:800;font-size:.95rem;border:0;cursor:pointer;transition:.24s var(--ease)}
+.btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;transition:transform .24s var(--ease)}
+.btn:hover svg{transform:translateX(3px)}
+.btn.lime{background:var(--lime);color:var(--forest)}
+.btn.forest{background:var(--forest);color:var(--paper)}
+.btn.ghost{background:transparent;border:1.5px solid rgba(10,63,50,.24);color:var(--forest)}
+.btn.ghost:hover{border-color:var(--forest)}
+.btn:disabled{opacity:.42;cursor:not-allowed}
+
+.hero{padding:172px 0 72px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;right:-24%;top:-30%;width:74%;height:150%;border-radius:50%;
+ background:radial-gradient(circle,rgba(231,254,37,.22),transparent 62%);pointer-events:none;
+ animation:drift 20s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate(-50px,40px) scale(1.1)}}
+.hero h1{font-size:clamp(2.5rem,5.2vw,4.5rem);font-weight:900;position:relative}
+.hero h1 .ln{display:block;overflow:hidden;padding-bottom:.05em}
+.hero h1 .ln > span{display:block;transform:translateY(110%);animation:lift 1s var(--ease) forwards}
+.hero h1 .ln:nth-child(2) > span{animation-delay:.1s}
+@keyframes lift{to{transform:none}}
+.hero .sub{font-size:1.12rem;color:rgba(22,22,22,.62);font-weight:500;max-width:58ch;margin-top:26px;line-height:1.68;
+ opacity:0;animation:fade .9s var(--ease) .5s forwards}
+@keyframes fade{to{opacity:1}}
+.hero .acts{margin-top:32px;display:flex;gap:12px;flex-wrap:wrap;opacity:0;animation:fade .9s var(--ease) .68s forwards}
+
+.facts{background:var(--forest);color:var(--paper);padding:0}
+.fgrid{display:grid;grid-template-columns:repeat(4,1fr)}
+.fact{padding:38px 28px;border-right:1px solid rgba(253,253,253,.12);transition:background .35s}
+.fact:last-child{border-right:0}
+.fact:hover{background:rgba(231,254,37,.07)}
+.fact .k{font-family:var(--m);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;
+ color:rgba(253,253,253,.5);font-weight:700;margin-bottom:12px}
+.fact .v{font-family:var(--d);font-weight:800;font-size:1.5rem;letter-spacing:-.04em;line-height:1.15}
+.fact .v small{display:block;font-family:var(--b);font-size:.82rem;font-weight:600;color:rgba(253,253,253,.55);
+ letter-spacing:0;margin-top:7px;line-height:1.5}
+
+.bp{border:1.5px solid rgba(10,63,50,.12);border-radius:20px;overflow:hidden;margin-bottom:14px;
+ background:var(--paper);transition:.3s var(--ease)}
+.bp:hover{border-color:rgba(10,63,50,.26)}
+.bph{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:16px 22px;
+ background:var(--mist);border-bottom:1.5px solid rgba(10,63,50,.1)}
+.bph .lab{font-family:var(--m);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;
+ font-weight:700;color:rgba(22,22,22,.55)}
+.bph .lab b{color:var(--forest)}
+.copy{display:inline-flex;align-items:center;gap:8px;background:var(--forest);color:var(--paper);border:0;
+ border-radius:100px;padding:10px 18px;font-size:.82rem;font-weight:800;cursor:pointer;transition:.24s var(--ease)}
+.copy:hover{background:var(--forest-2)}
+.copy.ok{background:var(--lime);color:var(--forest)}
+.copy svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.bpb{padding:24px 22px;font-size:1rem;line-height:1.72;color:rgba(22,22,22,.78)}
+.bpb p+p{margin-top:16px}
+
+.story{background:var(--mist)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.p{font-size:1.02rem;color:rgba(22,22,22,.66);line-height:1.75}
+.p+.p{margin-top:18px}
+.pull{border-left:3px solid var(--lime);padding-left:22px;margin:28px 0;font-family:var(--d);
+ font-weight:700;font-size:1.3rem;letter-spacing:-.03em;line-height:1.35}
+
+.people{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:48px}
+.person{border:1.5px solid rgba(10,63,50,.12);border-radius:22px;padding:28px;display:flex;gap:22px;
+ align-items:flex-start;transition:.35s var(--ease)}
+.person:hover{border-color:rgba(231,254,37,.7);transform:translateY(-4px)}
+.person .ph{width:88px;height:88px;border-radius:18px;flex:none;background:
+ linear-gradient(140deg,var(--forest-3),var(--forest) 60%,var(--forest-2));display:grid;place-items:center;position:relative;overflow:hidden}
+.person .ph::before{content:"";position:absolute;inset:0;background:
+ repeating-linear-gradient(115deg,transparent 0 14px,rgba(231,254,37,.06) 14px 15px)}
+.person .ph span{position:relative;font-family:var(--m);font-size:.52rem;letter-spacing:.14em;color:var(--lime);
+ font-weight:700;text-align:center;line-height:1.5;padding:0 6px}
+.person h3{font-size:1.25rem;margin-bottom:4px}
+.person .role{font-size:.85rem;color:rgba(22,22,22,.55);font-weight:700;margin-bottom:12px}
+.person p{font-size:.9rem;color:rgba(22,22,22,.64);line-height:1.6}
+
+.assets{background:var(--forest);color:var(--paper)}
+.assets .eyebrow{color:var(--lime);opacity:1}
+.agrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px}
+.asset{background:rgba(253,253,253,.05);border:1.5px solid rgba(253,253,253,.12);border-radius:20px;
+ overflow:hidden;transition:.35s var(--ease);display:block}
+.asset:hover{border-color:rgba(231,254,37,.5);transform:translateY(-5px)}
+.asset .prev{height:172px;display:grid;place-items:center;position:relative;overflow:hidden}
+.asset .prev.light{background:var(--paper)}
+.asset .prev.dark{background:var(--forest-3)}
+.asset .prev.limebg{background:var(--lime)}
+.markL{display:flex;align-items:center;gap:11px;font-family:var(--d);font-weight:800;font-size:1.5rem;letter-spacing:-.04em}
+.markL .m{width:40px;height:40px;display:block}
+.asset .meta{padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;
+ border-top:1px solid rgba(253,253,253,.11)}
+.asset .meta .t{flex:1}
+.asset .meta b{display:block;font-size:.95rem;font-weight:800;letter-spacing:-.02em}
+.asset .meta span{font-family:var(--m);font-size:.62rem;color:rgba(253,253,253,.45);font-weight:700;letter-spacing:.1em}
+.dl{width:40px;height:40px;border-radius:50%;background:rgba(231,254,37,.14);display:grid;place-items:center;
+ flex:none;transition:.25s}
+.asset:hover .dl{background:var(--lime)}
+.dl svg{width:17px;height:17px;stroke:var(--lime);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:.25s}
+.asset:hover .dl svg{stroke:var(--forest)}
+
+.pal{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:40px}
+.sw{border-radius:16px;overflow:hidden;border:1.5px solid rgba(253,253,253,.12);cursor:pointer;transition:.3s var(--ease)}
+.sw:hover{transform:translateY(-4px);border-color:rgba(231,254,37,.5)}
+.sw .chip{height:96px}
+.sw .info{padding:14px 16px;background:rgba(253,253,253,.05)}
+.sw .info b{display:block;font-size:.88rem;font-weight:800;margin-bottom:3px}
+.sw .info span{font-family:var(--m);font-size:.68rem;color:rgba(253,253,253,.5);font-weight:700}
+.sw.copied .info span{color:var(--lime)}
+
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px}
+.rule{border-radius:18px;padding:24px;border:1.5px solid rgba(253,253,253,.12);background:rgba(253,253,253,.04)}
+.rule .h{display:flex;align-items:center;gap:10px;font-weight:800;font-size:.95rem;margin-bottom:14px}
+.rule .h svg{width:19px;height:19px;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.rule.do .h{color:var(--lime)}.rule.do .h svg{stroke:var(--lime)}
+.rule.dont .h{color:#FF7A5C}.rule.dont .h svg{stroke:#FF7A5C}
+.rule ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
+.rule li{font-size:.9rem;color:rgba(253,253,253,.65);line-height:1.55;padding-left:16px;position:relative}
+.rule li::before{content:"";position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:rgba(253,253,253,.3)}
+
+.cov{border:1.5px dashed rgba(10,63,50,.24);border-radius:22px;padding:52px 36px;text-align:center;margin-top:44px;
+ background:var(--mist)}
+.cov svg{width:40px;height:40px;stroke:var(--forest);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+ opacity:.5;margin-bottom:20px}
+.cov h3{font-size:1.5rem;margin-bottom:12px}
+.cov p{font-size:.98rem;color:rgba(22,22,22,.6);line-height:1.7;max-width:52ch;margin:0 auto 24px}
+
+.enq{background:var(--mist)}
+.fshell{max-width:760px;margin:48px auto 0;background:var(--paper);border:1.5px solid rgba(10,63,50,.12);
+ border-radius:26px;overflow:hidden}
+.fhead{padding:24px 30px;border-bottom:1.5px solid rgba(10,63,50,.1);display:flex;align-items:center;
+ justify-content:space-between;gap:16px;flex-wrap:wrap}
+.fhead b{font-family:var(--d);font-size:1.15rem;letter-spacing:-.035em}
+.fhead span{font-size:.85rem;color:rgba(22,22,22,.55);font-weight:600}
+.fbody{padding:30px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.fld label{display:block;font-size:.78rem;font-weight:800;color:rgba(22,22,22,.6);margin-bottom:8px}
+.fin,.fsel,.fta{width:100%;background:var(--mist);border:1.5px solid rgba(10,63,50,.13);border-radius:13px;
+ padding:14px 15px;font-size:.98rem;font-weight:600;font-family:var(--b);transition:.25s}
+.fin:focus,.fsel:focus,.fta:focus{outline:none;border-color:var(--forest);background:var(--paper)}
+.fta{min-height:132px;resize:none;line-height:1.6;font-weight:500}
+.fsel{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23161616' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+ background-repeat:no-repeat;background-position:right 14px center;background-size:16px;padding-right:42px}
+.urgent{display:flex;align-items:flex-start;gap:12px;background:rgba(224,160,0,.1);border:1.5px solid rgba(224,160,0,.3);
+ border-radius:14px;padding:15px 17px;margin-bottom:20px;font-size:.88rem;color:#8F6300;font-weight:600;line-height:1.55}
+.urgent svg{width:17px;height:17px;stroke:#8F6300;fill:none;stroke-width:2.3;flex:none;margin-top:2px}
+.urgent a{color:#8F6300;text-decoration:underline;font-weight:800}
+.fwarn{background:rgba(224,160,0,.12);border:1.5px solid rgba(224,160,0,.4);border-radius:14px;padding:15px 17px;
+ margin-bottom:18px;font-size:.9rem;line-height:1.6;color:#8F6300;font-weight:600;display:none}
+.fwarn.on{display:block}
+.fwarn a{color:var(--forest);text-decoration:underline}
+
+.fdone{display:none;text-align:center;padding:56px 30px}
+.fdone.on{display:block;animation:fade .6s var(--ease)}
+.tick{position:relative;width:98px;height:98px;display:grid;place-items:center;margin:0 auto 26px}
+.tick .halo,.tick .halo2{position:absolute;inset:0;border-radius:50%;border:2px solid var(--lime);opacity:0}
+.tick .halo{animation:ripple 2.2s var(--ease) .35s infinite}
+.tick .halo2{animation:ripple 2.2s var(--ease) .95s infinite}
+@keyframes ripple{0%{transform:scale(.72);opacity:.75}100%{transform:scale(1.45);opacity:0}}
+.tick .disc{position:relative;width:80px;height:80px;border-radius:50%;background:var(--lime);display:grid;place-items:center;
+ animation:pop .62s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes pop{0%{transform:scale(0) rotate(-24deg)}100%{transform:scale(1) rotate(0)}}
+.tick svg{width:42px;height:42px;overflow:visible}
+.tick .ring{fill:none;stroke:var(--forest);stroke-width:2;opacity:.28;stroke-dasharray:132;stroke-dashoffset:132;
+ animation:draw2 .8s var(--ease) .25s forwards}
+.tick .mark{fill:none;stroke:var(--forest);stroke-width:3.6;stroke-linecap:round;stroke-linejoin:round;
+ stroke-dasharray:34;stroke-dashoffset:34;animation:draw2 .45s var(--ease) .55s forwards}
+@keyframes draw2{to{stroke-dashoffset:0}}
+.fdone h3{font-size:1.8rem;margin-bottom:12px}
+.fdone p{color:rgba(22,22,22,.62);max-width:44ch;margin:0 auto;line-height:1.7}
+
+.toast{position:fixed;bottom:28px;left:50%;transform:translate(-50%,140%);z-index:80;background:var(--forest);
+ color:var(--paper);padding:15px 24px;border-radius:100px;font-weight:800;font-size:.9rem;display:flex;
+ align-items:center;gap:10px;box-shadow:0 18px 40px rgba(10,63,50,.3);transition:transform .45s var(--ease);max-width:calc(100vw - 32px)}
+.toast.up{transform:translate(-50%,0)}
+.toast svg{width:17px;height:17px;stroke:var(--lime);fill:none;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+footer{padding:58px 0 40px;border-top:1.5px solid rgba(10,63,50,.1)}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:22px;flex-wrap:wrap}
+footer p{font-size:.85rem;color:rgba(22,22,22,.45);font-weight:600}
+footer .fl{display:flex;gap:20px;font-size:.88rem;font-weight:700;flex-wrap:wrap}
+footer .fl a{opacity:.6;transition:.25s}footer .fl a:hover{opacity:1;color:var(--forest)}
+
+@media(max-width:960px){
+  .fgrid{grid-template-columns:1fr 1fr}
+  .fact{border-bottom:1px solid rgba(253,253,253,.12)}
+  .fact:nth-child(2n){border-right:0}
+  .cols,.people,.rules{grid-template-columns:1fr;gap:34px}
+  .agrid{grid-template-columns:1fr}
+  .pal{grid-template-columns:repeat(2,1fr)}
+  .row{grid-template-columns:1fr}
+  .hero{padding:140px 0 56px}
+  section{padding:74px 0}
+}
+@media(max-width:600px){
+  .wrap{padding:0 20px}
+  section{padding:60px 0}
+  .hero{padding:118px 0 44px}
+  .hero .sub{font-size:1rem;margin-top:20px}
+  .hero .acts{margin-top:26px;flex-direction:column;align-items:stretch}
+  .hero .acts .btn{width:100%}
+  .fgrid{grid-template-columns:1fr}
+  .fact{padding:26px 20px;border-right:0}
+  .fact .v{font-size:1.3rem}
+  .bph{padding:14px 16px;flex-wrap:wrap;gap:12px}
+  .bpb{padding:20px 16px;font-size:.95rem}
+  .cols{gap:30px}
+  .pull{font-size:1.12rem;padding-left:16px;margin:22px 0}
+  .person{flex-direction:column;gap:16px;padding:22px}
+  .person .ph{width:72px;height:72px}
+  .pal{grid-template-columns:1fr 1fr;gap:10px}
+  .sw .chip{height:74px}
+  .rule{padding:20px}
+  .cov{padding:36px 22px;border-radius:18px}
+  .cov h3{font-size:1.25rem}
+  .fshell{border-radius:20px;margin-top:32px}
+  .fhead{padding:20px 20px}
+  .fbody{padding:22px 20px}
+  .fta{min-height:112px}
+  .fdone{padding:44px 22px}
+  .fdone h3{font-size:1.5rem}
+  .tick{width:88px;height:88px}
+  .tick .disc{width:72px;height:72px}
+  .toast{bottom:18px;font-size:.84rem;padding:13px 18px}
+  footer .wrap{flex-direction:column;align-items:flex-start;gap:16px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .rv{opacity:1;transform:none}
+  .hero .sub,.hero .acts{opacity:1}
+  .hero h1 .ln > span{transform:none}
+  .tick .ring,.tick .mark{stroke-dashoffset:0}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav"><div class="wrap">
+  <a class="logo" href="/"><svg class="mk" viewBox="0 0 336 338" aria-hidden="true"><rect width="336" height="338" rx="84" fill="#0A3F32"/><rect x="54" y="85" width="176" height="65" rx="32.5" fill="#fff"/><rect x="54" y="186" width="227" height="67" rx="33.5" fill="#E2E41A"/></svg>Relynked</a>
+  <a class="back" href="/"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 18l-6-6 6-6"/></svg> Back to site</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="eyebrow">Press and media</div>
+  <h1>
+    <span class="ln"><span>Everything you need</span></span>
+    <span class="ln"><span>to <span class="hl on">write about us.</span></span></span>
+  </h1>
+  <p class="sub">Facts, boilerplate you can paste, logos you can download, and a direct line when you are on deadline. Nothing here requires an email first. If something is missing, ask and we will add it.</p>
+  <div class="acts">
+    <a class="btn forest" href="#assets">Download brand assets <svg viewBox="0 0 24 24"><path d="M12 3v13M7 12l5 5 5-5M5 21h14"/></svg></a>
+    <a class="btn ghost" href="#enquiry">Make an enquiry</a>
+  </div>
+</div></header>
+
+<section class="facts" style="padding:0"><div class="fgrid">
+  <div class="fact"><div class="k">Company</div><div class="v">Relynked Ltd<small>RC 9837720 · Registered in Nigeria</small></div></div>
+  <div class="fact"><div class="k">Incorporated</div><div class="v">2026<small>Edo State registration, RC 9837720</small></div></div>
+  <div class="fact"><div class="k">Headquarters</div><div class="v">Benin City<small>Edo State, Nigeria</small></div></div>
+  <div class="fact"><div class="k">Stage</div><div class="v">Early<small>Live customers, pre-institutional funding</small></div></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="rv" style="max-width:680px">
+    <div class="eyebrow">Boilerplate</div>
+    <h2>Copy what fits your <span class="hl">word count.</span></h2>
+    <p class="p" style="margin-top:20px">Three approved descriptions. Use any of them verbatim without asking. If you need something tailored, the form at the bottom reaches us faster than you might expect.</p>
+  </div>
+
+  <div style="margin-top:48px">
+    <div class="bp rv">
+      <div class="bph"><span class="lab">Short · <b>24 words</b></span>
+        <button class="copy" data-copy="#bp1"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="ct">Copy</span></button></div>
+      <div class="bpb" id="bp1"><p>Relynked is a Nigerian software company building management systems that measure what actually happens inside a business, from what arrives to what is sold.</p></div>
+    </div>
+
+    <div class="bp rv d1">
+      <div class="bph"><span class="lab">Medium · <b>61 words</b></span>
+        <button class="copy" data-copy="#bp2"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="ct">Copy</span></button></div>
+      <div class="bpb" id="bp2"><p>Relynked is a Nigerian software company building management systems for businesses that run on cash, goods and trust. Its products put a name and a time on every handover inside a business, compare what should have happened against what did, and keep working through a power cut. Relynked launched in hospitality and is expanding into retail, pharmacy and hotels.</p></div>
+    </div>
+
+    <div class="bp rv d2">
+      <div class="bph"><span class="lab">Long · <b>134 words</b></span>
+        <button class="copy" data-copy="#bp3"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="ct">Copy</span></button></div>
+      <div class="bpb" id="bp3">
+        <p>Relynked Ltd is a software company based in Benin City, Nigeria, building management systems for businesses that move goods, money and people. Its core product, Relynked Business, records every handover inside an operation, from the moment stock arrives to the moment it is sold, and attaches a named person and a timestamp to each one. A measurement engine then compares what the records say should have happened against what actually did, and surfaces the gaps.</p>
+        <p>A second product, Remy, answers a business's customers on WhatsApp. Both are designed around Nigerian conditions: unreliable power, bank transfers that may never land, and market buying that leaves no paper trail. Relynked began with bars, lounges and restaurants and is extending into retail, pharmacy, hotels and other sectors.</p>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section class="story"><div class="wrap cols">
+  <div class="rv">
+    <div class="eyebrow">The story</div>
+    <h2>Why it exists.</h2>
+    <p class="p" style="margin-top:22px">Most businesses in Nigeria discover a problem the same way: the figures are short at the end of the month, and nobody can say where or when. Not because people are dishonest, but because a hundred small handovers happen every day and almost none of them are recorded.</p>
+    <div class="pull">"A gap should belong to one handover between two people, not to a total nobody can unpick."</div>
+    <p class="p">Relynked's answer is to make the recording invisible. A waiter takes an order, a storekeeper hands over a crate, a bartender checks a bottle. Each of those is already happening. Relynked simply makes sure each one carries a name and a time, and then does the arithmetic nobody has time to do by hand.</p>
+  </div>
+  <div class="rv d2">
+    <div class="eyebrow">Angles worth exploring</div>
+    <p class="p" style="margin-top:22px"><b style="color:var(--ink)">Software built for power cuts.</b> Every device saves locally before anything reaches a server, because assuming stable electricity is assuming a different country.</p>
+    <p class="p"><b style="color:var(--ink)">A transfer is not money until it lands.</b> Relynked refuses to treat a payment screenshot as proof, which is a deliberate stance on a problem every Nigerian merchant recognises.</p>
+    <p class="p"><b style="color:var(--ink)">Counterfeit goods, not just theft.</b> Fake product entering a legitimate business is a larger and less-discussed loss than staff theft, and it is designed for directly.</p>
+    <p class="p"><b style="color:var(--ink)">Data that stays in-country.</b> Business records are held in Nigeria, and the company is explicit about the narrow exceptions.</p>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="rv" style="max-width:640px">
+    <div class="eyebrow">Available for interview</div>
+    <h2>Who to quote.</h2>
+    <p class="p" style="margin-top:20px">Both available for interview, comment or background, in person in Benin City and Lagos or remotely.</p>
+  </div>
+  <div class="people">
+    <div class="person rv"><span class="ph"><span>HEADSHOT<br>PLACEHOLDER</span></span>
+      <div><h3>Founder name</h3><div class="role">Founder and Chief Executive · Placeholder</div>
+        <p>Speaks on: why the company exists, building software for Nigerian operating conditions, the hospitality market, and where Relynked goes next.</p></div></div>
+    <div class="person rv d1"><span class="ph"><span>HEADSHOT<br>PLACEHOLDER</span></span>
+      <div><h3>Second name</h3><div class="role">Role · Placeholder</div>
+        <p>Speaks on: product and engineering decisions, offline-first architecture, and the anti-counterfeit approach.</p></div></div>
+  </div>
+</div></section>
+
+<section class="assets" id="assets"><div class="wrap">
+  <div class="rv" style="max-width:660px">
+    <div class="eyebrow">Brand assets</div>
+    <h2 style="color:var(--paper)">Take what you need.</h2>
+    <p class="p" style="color:rgba(253,253,253,.62);margin-top:20px">Logos in SVG and PNG, on light and dark. No permission required for editorial use. Please do not alter them.</p>
+  </div>
+
+  <div class="agrid">
+    <a class="asset rv" href="/assets/brand/relynked-lockup-light.png" download>
+      <div class="prev light">
+        <span class="markL" style="color:var(--forest)"><svg class="m" viewBox="0 0 336 338" aria-hidden="true"><rect width="336" height="338" rx="84" fill="#0A3F32"/><rect x="54" y="85" width="176" height="65" rx="32.5" fill="#fff"/><rect x="54" y="186" width="227" height="67" rx="33.5" fill="#E2E41A"/></svg>Relynked</span>
+      </div>
+      <div class="meta"><span class="t"><b>Primary, on light</b><span>PNG · 2000PX WIDE</span></span>
+        <span class="dl"><svg viewBox="0 0 24 24"><path d="M12 3v13M7 12l5 5 5-5M5 21h14"/></svg></span></div>
+    </a>
+
+    <a class="asset rv d1" href="/assets/brand/relynked-lockup-dark.png" download>
+      <div class="prev dark">
+        <span class="markL" style="color:var(--paper)"><svg class="m" viewBox="0 0 336 338" aria-hidden="true"><rect width="336" height="338" rx="84" fill="#E7FE25"/><rect x="54" y="85" width="176" height="65" rx="32.5" fill="#0A3F32"/><rect x="54" y="186" width="227" height="67" rx="33.5" fill="#0A3F32" opacity=".55"/></svg>Relynked</span>
+      </div>
+      <div class="meta"><span class="t"><b>Primary, on dark</b><span>PNG · 2000PX WIDE</span></span>
+        <span class="dl"><svg viewBox="0 0 24 24"><path d="M12 3v13M7 12l5 5 5-5M5 21h14"/></svg></span></div>
+    </a>
+
+    <a class="asset rv d2" href="/assets/img/logo.svg" download="relynked-mark.svg">
+      <div class="prev limebg">
+        <span class="markL"><svg class="m" style="width:64px;height:64px" viewBox="0 0 336 338" aria-hidden="true"><rect width="336" height="338" rx="84" fill="#0A3F32"/><rect x="54" y="85" width="176" height="65" rx="32.5" fill="#fff"/><rect x="54" y="186" width="227" height="67" rx="33.5" fill="#E2E41A"/></svg></span>
+      </div>
+      <div class="meta"><span class="t"><b>Mark only</b><span>SVG · VECTOR</span></span>
+        <span class="dl"><svg viewBox="0 0 24 24"><path d="M12 3v13M7 12l5 5 5-5M5 21h14"/></svg></span></div>
+    </a>
+  </div>
+
+  <div class="rv" style="margin-top:64px"><div class="eyebrow">Palette</div>
+    <h3 style="color:var(--paper);font-size:1.5rem">Click any swatch to copy the hex.</h3></div>
+  <div class="pal">
+    <div class="sw rv" data-hex="#0A3F32"><div class="chip" style="background:#0A3F32"></div><div class="info"><b>Forest</b><span>#0A3F32</span></div></div>
+    <div class="sw rv d1" data-hex="#E7FE25"><div class="chip" style="background:#E7FE25"></div><div class="info"><b>Lime</b><span>#E7FE25</span></div></div>
+    <div class="sw rv d2" data-hex="#FDFDFD"><div class="chip" style="background:#FDFDFD"></div><div class="info"><b>Paper</b><span>#FDFDFD</span></div></div>
+    <div class="sw rv d3" data-hex="#161616"><div class="chip" style="background:#161616"></div><div class="info"><b>Ink</b><span>#161616</span></div></div>
+    <div class="sw rv d4" data-hex="#E0A000"><div class="chip" style="background:#E0A000"></div><div class="info"><b>Amber</b><span>#E0A000</span></div></div>
+  </div>
+
+  <div class="rules">
+    <div class="rule do rv"><div class="h"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Please do</div>
+      <ul><li>Write the name as <b>Relynked</b>, one word, capital R only.</li>
+        <li>Use the supplied files rather than a screenshot.</li>
+        <li>Keep clear space around the mark equal to the height of the logo tile.</li>
+        <li>Use the light version on dark backgrounds and the reverse.</li></ul></div>
+    <div class="rule dont rv d1"><div class="h"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>Please do not</div>
+      <ul><li>Write ReLynked, RELYNKED, Re-Lynked or Relinked.</li>
+        <li>Stretch, rotate, recolour or add effects to the mark.</li>
+        <li>Place the mark on a busy photograph without a solid backing.</li>
+        <li>Use the lime as a text colour on white. It is an accent, not a foreground.</li></ul></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="rv" style="max-width:640px"><div class="eyebrow">Coverage</div>
+    <h2>In the press.</h2></div>
+  <div class="cov rv d1">
+    <svg viewBox="0 0 24 24"><path d="M4 4h13a2 2 0 0 1 2 2v13a2 2 0 0 0 2-2V6M4 4v14a2 2 0 0 0 2 2h13"/><path d="M8 8h7M8 12h7M8 16h4"/></svg>
+    <h3>Nothing to show yet, and we would rather say so.</h3>
+    <p>Relynked launched recently and has not been written about. When that changes this section will fill with real links rather than logos we have no right to display. If you are considering a piece, you would be the first, and we will make that worth your while with access and data nobody else has.</p>
+    <a class="btn forest" href="#enquiry">Be the first <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  </div>
+</div></section>
+
+<section class="enq" id="enquiry"><div class="wrap">
+  <div class="rv" style="text-align:center;max-width:620px;margin:0 auto">
+    <div class="eyebrow" style="justify-content:center">Press enquiries</div>
+    <h2>Tell us your deadline.</h2>
+    <p class="p" style="margin:20px auto 0">We answer press enquiries the same working day. Put your deadline in and we will work to it rather than to ours.</p>
+  </div>
+
+  <div class="fshell rv d1">
+    <div class="fhead"><b>Press enquiry</b><span>Same working day response</span></div>
+    <div class="fbody" id="fbody">
+      <div class="urgent"><svg viewBox="0 0 24 24"><path d="M12 8v5M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg>
+        <span><b>On deadline today?</b> Call <a href="tel:+2349162216711">0916 221 6711</a> directly, or write to <a href="mailto:press@relynked.com">press@relynked.com</a>. Someone will pick up or call you back within the hour.</span></div>
+      <div class="fwarn" id="fwarn"></div>
+      <div class="row">
+        <div class="fld"><label for="p-name">Your name</label><input class="fin" id="p-name" placeholder="Full name"></div>
+        <div class="fld"><label for="p-outlet">Publication or outlet</label><input class="fin" id="p-outlet" placeholder="Where this will run"></div>
+      </div>
+      <div class="row">
+        <div class="fld"><label for="p-email">Email</label><input class="fin" id="p-email" type="email" placeholder="you@outlet.com"></div>
+        <div class="fld"><label for="p-deadline">Your deadline</label>
+          <select class="fsel" id="p-deadline">
+            <option value="">Select one</option>
+            <option>Today</option><option>Within 48 hours</option><option>This week</option>
+            <option>Next week</option><option>No fixed deadline</option>
+          </select></div>
+      </div>
+      <div class="fld" style="margin-bottom:18px"><label for="p-type">What do you need</label>
+        <select class="fsel" id="p-type">
+          <option value="">Select one</option>
+          <option>Interview with a founder</option><option>Comment or quote for a piece</option>
+          <option>Background briefing, not for attribution</option><option>Product demonstration</option>
+          <option>Assets or facts not on this page</option><option>Something else</option>
+        </select></div>
+      <div class="fld" style="margin-bottom:22px"><label for="p-detail">What is the piece about</label>
+        <textarea class="fta" id="p-detail" placeholder="A line or two on the angle helps us send the right person and the right material."></textarea></div>
+      <button class="btn lime" id="p-send" style="width:100%" disabled>Send enquiry <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    </div>
+    <div class="fdone" id="fdone">
+      <span class="tick">
+        <span class="halo"></span><span class="halo2"></span>
+        <span class="disc">
+          <svg viewBox="0 0 52 52" aria-hidden="true">
+            <circle class="ring" cx="26" cy="26" r="21"/>
+            <path class="mark" d="M15.5 26.5l7 7L37 19"/>
+          </svg>
+        </span>
+      </span>
+      <h3>Got it.</h3>
+      <p>We will come back to you today. If your deadline is tighter than that, call the number above and say it is press.</p>
+    </div>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <p>© 2026 Relynked Ltd · RC 9837720 · 7B Edegbe Street, GRA, Benin City, Edo State</p>
+  <div class="fl"><a href="/">Home</a><a href="/product">Products</a><a href="/careers">Careers</a><a href="/contact">Contact</a><a href="/privacy">Privacy</a></div>
+</div></footer>
+
+<div class="toast" id="toast"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span id="toast-t">Copied</span></div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+addEventListener('scroll',()=>$('#nav').classList.toggle('solid',scrollY>40),{passive:true});
+const io=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}}),
+  {threshold:0,rootMargin:'0px 0px -12% 0px'});
+$$('.rv').forEach(el=>io.observe(el));
+
+let tt;
+function toast(msg){
+  $('#toast-t').textContent=msg;
+  $('#toast').classList.add('up');
+  clearTimeout(tt); tt=setTimeout(()=>$('#toast').classList.remove('up'),2200);
+}
+async function put(text){
+  try{ await navigator.clipboard.writeText(text); return true; }
+  catch(e){
+    try{
+      const t=document.createElement('textarea');t.value=text;t.style.position='fixed';t.style.opacity='0';
+      document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();return true;
+    }catch(e2){ return false; }
+  }
+}
+$$('.copy').forEach(b=>b.onclick=async()=>{
+  const src=$(b.dataset.copy);
+  const text=[...src.querySelectorAll('p')].map(p=>p.textContent.trim()).join('\n\n');
+  const done=await put(text);
+  if(!done){ toast('Could not copy, select the text instead'); return; }
+  b.classList.add('ok'); b.querySelector('.ct').textContent='Copied';
+  toast('Boilerplate copied');
+  setTimeout(()=>{b.classList.remove('ok');b.querySelector('.ct').textContent='Copy';},2000);
+});
+$$('.sw').forEach(s=>s.onclick=async()=>{
+  const done=await put(s.dataset.hex);
+  if(!done){ toast('Could not copy'); return; }
+  s.classList.add('copied'); toast(s.dataset.hex+' copied');
+  setTimeout(()=>s.classList.remove('copied'),1600);
+});
+$$('.asset').forEach(a=>a.addEventListener('click',()=>toast('Downloading')));
+
+const req=['#p-name','#p-outlet','#p-email','#p-deadline','#p-type'];
+function ok(){
+  const mail=/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test($('#p-email').value.trim());
+  return req.every(s=>$(s).value.trim().length>0) && mail;
+}
+function sync(){ $('#p-send').disabled=!ok(); }
+req.concat(['#p-detail']).forEach(s=>{
+  const el=$(s); el.addEventListener('input',sync); el.addEventListener('change',sync);
+});
+function payload(){
+  return {
+    name:$('#p-name').value.trim(), outlet:$('#p-outlet').value.trim(), email:$('#p-email').value.trim(),
+    deadline:$('#p-deadline').value, need:$('#p-type').value, detail:$('#p-detail').value.trim(),
+    sent:new Date().toISOString()
+  };
+}
+function mailtoFallback(d){
+  const body=['Name: '+d.name,'Outlet: '+d.outlet,'Email: '+d.email,'Deadline: '+d.deadline,
+    'Needs: '+d.need,'','About the piece:',d.detail||'Not given'].join('\n');
+  return 'mailto:press@relynked.com?subject='+encodeURIComponent('Press enquiry: '+d.outlet)+'&body='+encodeURIComponent(body);
+}
+$('#p-send').onclick=async function(){
+  const btn=$('#p-send'), d=payload();
+  btn.disabled=true; btn.textContent='Sending...';
+  let sent=false;
+  try{
+    const res=await fetch('/api/press',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});
+    if(res.ok) sent=true;
+  }catch(e){}
+  if(sent){
+    $('#fbody').style.display='none';
+    $('#fdone').classList.add('on');
+    $('.fshell').scrollIntoView({block:'center',behavior:'smooth'});
+  }else{
+    btn.disabled=false;
+    btn.innerHTML='Send enquiry <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+    const w=$('#fwarn');
+    w.innerHTML='We could not send that from here, and nothing is lost. <a href="'+mailtoFallback(d)+'">Send it as an email instead</a>, or call the number above if you are on deadline.';
+    w.classList.add('on');
+    w.scrollIntoView({block:'center',behavior:'smooth'});
+  }
+};
+sync();
+</script>
+</body>
+</html>
