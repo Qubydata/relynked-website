@@ -51,11 +51,6 @@ body::before{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;opa
 /* ---------- hero ---------- */
 .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:130px 0 96px;position:relative}
 .herogrid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
-.tag{display:inline-flex;align-items:center;gap:9px;font-family:var(--m);font-size:.66rem;letter-spacing:.2em;
- text-transform:uppercase;font-weight:700;color:var(--lime);border:1px solid rgba(231,254,37,.3);
- padding:9px 15px;border-radius:100px;margin-bottom:30px;opacity:0;animation:fade .8s var(--ease) .1s forwards}
-.tag i{width:6px;height:6px;border-radius:50%;background:var(--lime);animation:blink 2s ease-in-out infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes fade{to{opacity:1}}
 h1{font-size:clamp(2.4rem,5vw,4.6rem);font-weight:900}
 h1 .ln{display:block;overflow:hidden;padding-bottom:.06em}
@@ -286,7 +281,7 @@ footer .fl a:hover{opacity:1;color:var(--lime)}
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
   .rv{opacity:1;transform:none}
-  .tag,.sub,.heroct,.crew{opacity:1}
+  .sub,.heroct,.crew{opacity:1}
   h1 .ln span{transform:none}
   .fig{opacity:1}
   .tick .ring,.tick .mark{stroke-dashoffset:0}
@@ -306,7 +301,6 @@ footer .fl a:hover{opacity:1;color:var(--lime)}
 
 <header class="hero"><div class="wrap herogrid">
   <div>
-    <span class="tag"><i></i>Always reading</span>
     <h1>
       <span class="ln"><span>We don't post</span></span>
       <span class="ln"><span>job openings.</span></span>
