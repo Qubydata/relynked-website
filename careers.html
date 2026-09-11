@@ -69,12 +69,12 @@ h1 .ln:nth-child(3) span{animation-delay:.2s}
    wide enough that the dark greens at the outer edges still have light behind
    them. Without it they would disappear into the page. */
 .crewpanel{position:relative;padding:0;background:none;border:0;border-radius:0;box-shadow:none}
-.crewpanel::before{content:"";position:absolute;inset:-26% -32% -18%;pointer-events:none;
- background:radial-gradient(ellipse 54% 54% at 50% 46%,
+.crewpanel::before{content:"";position:absolute;inset:-40% -55% -30%;pointer-events:none;z-index:0;
+ background:radial-gradient(ellipse 46% 46% at 50% 46%,
    rgba(249,253,249,.98) 0%,
-   rgba(245,251,246,.97) 44%,
-   rgba(238,247,239,.92) 60%,
-   rgba(231,254,37,.18) 79%,
+   rgba(246,251,247,.97) 40%,
+   rgba(240,248,241,.93) 56%,
+   rgba(231,254,37,.16) 78%,
    rgba(231,254,37,0) 100%)}
 .crewpanel img{position:relative;width:100%;height:auto;display:block;animation:floaty 7.5s ease-in-out infinite}
 @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
@@ -247,7 +247,7 @@ footer .fl a:hover{opacity:1;color:var(--lime)}
   .sub{font-size:1rem;margin-top:20px}
   .heroct{margin-top:26px}
   .crew{margin-top:6px}
-  .crewpanel::before{inset:-22% -26% -14%}
+  .crewpanel::before{inset:-34% -40% -24%}
   .crewcap{font-size:.55rem;letter-spacing:.12em;margin-top:14px}
   .orb.a{width:86vw;height:86vw}
   .orb.b{width:74vw;height:74vw}
