@@ -82,8 +82,8 @@ Street, GRA, Benin City, Edo State, Nigeria. It appears in the footer bar and in
 footer Contact column on all five pages, and three times on `contact.html`: the address
 block, the map, and the location card.
 
-The phone number is 0911 567 1307, shown in local format and dialled as
-`tel:+2349115671307` so it works from abroad too. It appears in the footer on all five
+The phone number is 0916 221 6711, shown in local format and dialled as
+`tel:+2349162216711` so it works from abroad too. It appears in the footer on all five
 pages, twice on `contact.html`, and in the CTA band on four pages.
 
 ## The map
