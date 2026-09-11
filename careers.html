@@ -65,24 +65,13 @@ h1 .ln:nth-child(3) span{animation-delay:.2s}
 
 /* ---------- the crew ---------- */
 .crew{position:relative;opacity:0;animation:fade 1s var(--ease) .5s forwards}
-.crew svg{width:100%;display:block;overflow:visible}
-.halo{transform-origin:center;animation:halo 7s ease-in-out infinite}
-@keyframes halo{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:.85;transform:scale(1.05)}}
-.fig{opacity:0;transform-origin:center bottom;
- animation:figrise .95s var(--ease) forwards, figbob 5.5s ease-in-out infinite}
-.fig:nth-of-type(1){animation-delay:.60s,1.6s}
-.fig:nth-of-type(2){animation-delay:.72s,1.9s}
-.fig:nth-of-type(3){animation-delay:.84s,1.7s}
-.fig:nth-of-type(4){animation-delay:.96s,2.1s}
-.fig:nth-of-type(5){animation-delay:1.08s,1.8s}
-.fig:nth-of-type(6){animation-delay:1.20s,2.0s}
-@keyframes figrise{from{opacity:0;transform:translateY(30px) scale(.92)}to{opacity:1;transform:none}}
-@keyframes figbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-.spark{transform-origin:center;animation:spark 3.4s ease-in-out infinite}
-.spark.s2{animation-delay:1.1s}
-.spark.s3{animation-delay:2.2s}
-@keyframes spark{0%,100%{opacity:0;transform:translateY(4px) scale(.6)}
- 40%{opacity:1;transform:translateY(-4px) scale(1)}70%{opacity:0;transform:translateY(-12px) scale(.8)}}
+.crewpanel{position:relative;border-radius:28px;padding:22px 20px 6px;overflow:hidden;
+ background:linear-gradient(155deg,#FDFDFD 0%,#EDF4EE 58%,#E3EEE4 100%);
+ border:1.5px solid rgba(231,254,37,.28);box-shadow:0 30px 68px rgba(0,0,0,.3)}
+.crewpanel::before{content:"";position:absolute;left:50%;top:-34%;width:86%;height:92%;transform:translateX(-50%);
+ border-radius:50%;background:radial-gradient(circle,rgba(231,254,37,.55),transparent 66%);pointer-events:none}
+.crewpanel img{position:relative;width:100%;height:auto;display:block;animation:floaty 7.5s ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
 .crewcap{font-family:var(--m);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;
  color:rgba(253,253,253,.38);font-weight:700;text-align:center;margin-top:20px;line-height:1.7}
 
@@ -252,6 +241,7 @@ footer .fl a:hover{opacity:1;color:var(--lime)}
   .sub{font-size:1rem;margin-top:20px}
   .heroct{margin-top:26px}
   .crew{margin-top:6px}
+  .crewpanel{border-radius:20px;padding:14px 12px 4px}
   .crewcap{font-size:.55rem;letter-spacing:.12em;margin-top:14px}
   .orb.a{width:86vw;height:86vw}
   .orb.b{width:74vw;height:74vw}
@@ -283,8 +273,8 @@ footer .fl a:hover{opacity:1;color:var(--lime)}
   .rv{opacity:1;transform:none}
   .sub,.heroct,.crew{opacity:1}
   h1 .ln span{transform:none}
-  .fig{opacity:1}
-  .tick .ring,.tick .mark{stroke-dashoffset:0}
+  .crewpanel img{transform:none}
+   .tick .ring,.tick .mark{stroke-dashoffset:0}
   .mqt{animation-name:run!important;animation-duration:30s!important;animation-timing-function:linear!important;animation-iteration-count:infinite!important}
 }
 </style>
@@ -314,59 +304,10 @@ footer .fl a:hover{opacity:1;color:var(--lime)}
   </div>
 
   <div class="crew">
-    <svg viewBox="0 0 560 300" role="img" aria-label="Illustration of a team of six people standing together">
-      <ellipse class="halo" cx="280" cy="186" rx="238" ry="104" fill="#E7FE25" opacity=".07"/>
-      <circle class="halo" cx="280" cy="176" r="120" fill="none" stroke="#E7FE25" stroke-opacity=".14"/>
-
-      <g class="spark"><circle cx="118" cy="66" r="4.5" fill="#E7FE25"/></g>
-      <g class="spark s2"><circle cx="288" cy="44" r="5.5" fill="#E7FE25"/></g>
-      <g class="spark s3"><circle cx="452" cy="72" r="4" fill="#E7FE25"/></g>
-
-      <g class="fig">
-        <rect x="34" y="182" width="60" height="96" rx="30" fill="#E7FE25" opacity=".9"/>
-        <circle cx="64" cy="140" r="24" fill="#FDFDFD" opacity=".3"/>
-        <circle cx="64" cy="152" r="20" fill="#FDFDFD"/>
-      </g>
-
-      <g class="fig">
-        <rect x="118" y="196" width="58" height="82" rx="29" fill="#FDFDFD" opacity=".92"/>
-        <path d="M126 170q21 -34 42 0q-6 -24 -21 -24t-21 24z" fill="#0D5344"/>
-        <circle cx="147" cy="168" r="19" fill="#E7FE25"/>
-        <path d="M128 164q19 -26 38 0q-4 -20 -19 -20t-19 20z" fill="#0D5344"/>
-      </g>
-
-      <g class="fig">
-        <rect x="202" y="172" width="62" height="106" rx="31" fill="#0D5344"/>
-        <rect x="202" y="172" width="62" height="106" rx="31" fill="#FDFDFD" opacity=".16"/>
-        <circle cx="233" cy="128" r="15" fill="#FDFDFD" opacity=".45"/>
-        <circle cx="219" cy="124" r="10" fill="#FDFDFD" opacity=".45"/>
-        <circle cx="248" cy="125" r="9" fill="#FDFDFD" opacity=".45"/>
-        <circle cx="233" cy="144" r="21" fill="#FDFDFD"/>
-      </g>
-
-      <g class="fig">
-        <rect x="290" y="190" width="58" height="88" rx="29" fill="#E7FE25" opacity=".78"/>
-        <circle cx="319" cy="162" r="19" fill="#FDFDFD"/>
-        <path d="M300 158h38a19 19 0 0 0 -38 0z" fill="#0D5344"/>
-        <circle cx="319" cy="141" r="7" fill="#0D5344"/>
-      </g>
-
-      <g class="fig">
-        <rect x="374" y="180" width="60" height="98" rx="30" fill="#FDFDFD" opacity=".85"/>
-        <rect x="382" y="120" width="44" height="40" rx="20" fill="#FDFDFD" opacity=".5"/>
-        <circle cx="404" cy="150" r="20" fill="#E7FE25"/>
-        <path d="M384 146q20 -26 40 0q0 -22 -20 -22t-20 22z" fill="#FDFDFD" opacity=".85"/>
-      </g>
-
-      <g class="fig">
-        <rect x="458" y="198" width="56" height="80" rx="28" fill="#0D5344"/>
-        <rect x="458" y="198" width="56" height="80" rx="28" fill="#E7FE25" opacity=".2"/>
-        <circle cx="486" cy="170" r="18" fill="#FDFDFD"/>
-        <path d="M468 166a18 18 0 0 1 36 0c3-15-7-25-18-25s-21 10-18 25z" fill="#E7FE25"/>
-      </g>
-
-      <rect x="24" y="276" width="512" height="3" rx="1.5" fill="#FDFDFD" opacity=".14"/>
-    </svg>
+    <div class="crewpanel">
+      <img src="/assets/img/careers-team.png" width="1200" height="654" loading="eager" decoding="async"
+           alt="A team of seven people working together around a table, with laptops, plans and site equipment">
+    </div>
     <p class="crewcap">Engineers, designers, field operators,<br>and whoever you turn out to be.</p>
   </div>
 </div>
