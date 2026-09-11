@@ -444,3 +444,7 @@ footer{padding:80px 0 40px;margin-top:100px;border-top:1.5px solid rgba(1,63,50,
  .legal thead th{font-size:.6rem;letter-spacing:.08em;padding:10px 12px}
  .legal tbody td:first-child,.legal table.compact tbody td:first-child{width:38%;white-space:normal}
 }
+
+/* legal links in the footer bar need to look clickable */
+.fb a{text-decoration:underline;text-decoration-color:rgba(1,63,50,.35);text-underline-offset:3px}
+.fb a:hover{color:var(--forest);text-decoration-color:var(--forest)}

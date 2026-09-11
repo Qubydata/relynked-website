@@ -330,3 +330,5 @@ body.mnavopen .mdock{transform:translateY(120%)}
 
 /* white text needs a dark backing, not neon. Lime stays as the edge cue. */
 .mlay .mdark .mhl::after{background:#01251E;box-shadow:inset 0 -3px 0 var(--mlime)}
+
+.mlay .mfb a{text-decoration:underline;text-decoration-color:rgba(10,63,50,.4);text-underline-offset:3px}
