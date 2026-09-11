@@ -19,6 +19,36 @@ h2{font-size:clamp(2.2rem,4.2vw,3.6rem)}
 h3{font-size:1.35rem;letter-spacing:-.03em}
 .lead{font-size:1.15rem;color:rgba(22,22,22,.66);font-weight:500;line-height:1.6;max-width:56ch}
 
+/* long-form legal copy: privacy, terms */
+.legal{max-width:800px}
+.legal .meta{font-family:var(--m);font-size:.8rem;letter-spacing:.04em;color:rgba(22,22,22,.5);margin-bottom:26px}
+.legal .jump{display:flex;flex-wrap:wrap;gap:9px;margin:0 0 60px}
+.legal .jump a{font-family:var(--m);font-size:.72rem;letter-spacing:.01em;color:var(--forest);background:var(--mist);padding:8px 13px;border-radius:20px;white-space:nowrap;line-height:1}
+.legal .jump a:hover{background:var(--lime)}
+.legal h3{margin:70px 0 20px;font-size:1.5rem}
+.legal h3:first-of-type{margin-top:0}
+.legal h4{font-family:var(--m);font-weight:700;font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;color:var(--forest);opacity:.85;margin:38px 0 14px}
+.legal h4:first-of-type{margin-top:24px}
+.legal p{margin:0 0 22px;font-size:1.02rem;line-height:1.75;color:rgba(22,22,22,.8);max-width:68ch}
+.legal ul,.legal ol{margin:0 0 26px;padding-left:22px;display:flex;flex-direction:column;gap:12px}
+.legal li{font-size:1.02rem;line-height:1.65;color:rgba(22,22,22,.8)}
+.legal li::marker{color:var(--forest);font-weight:700}
+.legal strong{color:var(--ink)}
+.legal a{color:var(--forest);text-decoration:underline;text-decoration-color:rgba(1,63,50,.3)}
+.legal .note{margin:0 0 26px;padding:18px 22px;background:var(--mist);border-radius:10px;font-size:.98rem;line-height:1.7;color:rgba(22,22,22,.85)}
+.legal .note p{margin:0 0 12px;max-width:none}
+.legal .note p:last-child{margin-bottom:0}
+.legal .twrap{overflow-x:auto;border:1px solid rgba(1,63,50,.2);border-radius:10px;margin:0 0 30px}
+.legal table{width:100%;border-collapse:collapse;font-size:.94rem;min-width:460px}
+.legal th,.legal td{text-align:left;padding:15px 18px;vertical-align:top;line-height:1.6;
+ border-bottom:1px solid rgba(1,63,50,.13);border-right:1px solid rgba(1,63,50,.13)}
+.legal th:last-child,.legal td:last-child{border-right:none}
+.legal thead th{font-family:var(--m);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--forest);
+ font-weight:700;background:var(--mist);border-bottom:2px solid rgba(1,63,50,.24);line-height:1.5}
+.legal tbody tr:last-child td{border-bottom:none}
+.legal tbody td:first-child{font-weight:700;color:var(--ink);width:34%}
+.legal table.compact tbody td:first-child{white-space:nowrap;width:30%}
+
 /* lime sweep behind key words: the signature */
 .hl{position:relative;display:inline-block;white-space:nowrap;isolation:isolate}
 .hl::after{content:"";position:absolute;left:-.06em;right:-.06em;bottom:.08em;height:.42em;background:var(--lime);z-index:-1;
@@ -403,3 +433,14 @@ footer{padding:80px 0 40px;margin-top:100px;border-top:1.5px solid rgba(1,63,50,
 .totop:active{transform:scale(.94)}
 @media(max-width:900px){.totop{right:16px;bottom:108px;width:50px;height:50px}}
 @media(prefers-reduced-motion:reduce){.totop{transition:none}}
+
+/* Legal tables on a phone: keep the table and its ruling, just let the cells
+   breathe less and the text wrap, rather than forcing a 480px table into a
+   scrolling box where the last column gets clipped mid-word. */
+@media(max-width:760px){
+ .legal .twrap{overflow-x:visible;margin-bottom:24px}
+ .legal table{min-width:0;font-size:.86rem}
+ .legal th,.legal td{padding:11px 12px;line-height:1.5}
+ .legal thead th{font-size:.6rem;letter-spacing:.08em;padding:10px 12px}
+ .legal tbody td:first-child,.legal table.compact tbody td:first-child{width:38%;white-space:normal}
+}
