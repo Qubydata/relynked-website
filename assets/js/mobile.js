@@ -11,7 +11,8 @@ $('#mmclose').onclick=()=>document.body.classList.remove('mnavopen');
 addEventListener('keydown',e=>{if(e.key==='Escape')document.body.classList.remove('mnavopen');});
 document.querySelectorAll('.mmenu a').forEach(a=>a.onclick=()=>document.body.classList.remove('mnavopen'));
 /* reveal */
-const io=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('min');io.unobserve(x.target);}}),{threshold:.12});
+const io=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('min');io.unobserve(x.target);}}),
+  {threshold:0,rootMargin:'0px 0px -12% 0px'});
 document.querySelectorAll('.mrv').forEach(el=>io.observe(el));
 /* count-up */
 const cio=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;cio.unobserve(e.target);
