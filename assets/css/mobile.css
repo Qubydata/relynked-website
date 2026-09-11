@@ -276,12 +276,16 @@ body.mnavopen .mdock{transform:translateY(120%)}
 .mlay .mphone{position:relative;width:236px;transform-style:preserve-3d;will-change:transform;--mthick:21px}
 .mlay .mphone .medge{position:absolute;inset:0;border-radius:40px;transform:translateZ(calc(var(--mthick)*-1));
  background:linear-gradient(160deg,#0b3128,#02201a);box-shadow:0 40px 66px rgba(10,63,50,.45)}
-.mlay .mphone .msideL,.mlay .mphone .msideR{position:absolute;top:20px;bottom:20px;width:var(--mthick);
- background:linear-gradient(180deg,#1a5544 0%,#0b3128 26%,#02201a 100%)}
+.mlay .mphone .msideL,.mlay .mphone .msideR{position:absolute;top:42px;bottom:42px;width:var(--mthick);
+ background:linear-gradient(180deg,#1a5544 0%,#0b3128 26%,#02201a 100%);
+ -webkit-mask-image:linear-gradient(180deg,transparent,#000 8%,#000 92%,transparent);
+ mask-image:linear-gradient(180deg,transparent,#000 8%,#000 92%,transparent)}
 .mlay .mphone .msideL{left:0;transform-origin:left center;transform:rotateY(90deg)}
 .mlay .mphone .msideR{right:0;transform-origin:right center;transform:rotateY(-90deg)}
-.mlay .mphone .msideT,.mlay .mphone .msideB{position:absolute;left:22px;right:22px;height:var(--mthick);
- background:linear-gradient(90deg,#02201a,#154a3b 50%,#02201a)}
+.mlay .mphone .msideT,.mlay .mphone .msideB{position:absolute;left:42px;right:42px;height:var(--mthick);
+ background:linear-gradient(90deg,#02201a,#154a3b 50%,#02201a);
+ -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+ mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
 .mlay .mphone .msideT{top:0;transform-origin:center top;transform:rotateX(-90deg)}
 .mlay .mphone .msideB{bottom:0;transform-origin:center bottom;transform:rotateX(90deg)}
 .mlay .mshell{position:relative;background:#0A3F32;border-radius:40px;padding:9px;box-shadow:0 0 0 1px rgba(255,255,255,.07) inset}
