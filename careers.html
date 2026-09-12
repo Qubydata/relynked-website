@@ -266,8 +266,12 @@ footer .fl a:hover{opacity:1;color:var(--lime)}
   .ta{min-height:150px;padding:15px;font-size:.95rem}
   .chip{padding:11px 16px;font-size:.88rem}
   .dots i{width:16px}
-  .nav2{flex-wrap:wrap;padding-top:22px}
-  .nav2 .sm{padding:12px 18px}
+  /* the spacer and the action button both claimed the row, which squeezed the
+     label until it wrapped and the button grew tall */
+  .nav2{flex-wrap:wrap;padding-top:22px;gap:10px}
+  .nav2 .grow{display:none}
+  .nav2 .sm{padding:12px 18px;flex:0 0 auto}
+  .nav2 .btn{flex:1 1 auto;min-width:0;white-space:nowrap;padding:15px 20px}
   .done{padding:44px 20px 36px}
   .done h3{font-size:1.6rem}
   .tick{width:92px;height:92px}
