@@ -86,6 +86,13 @@ h3{font-size:1.35rem;letter-spacing:-.03em}
 .hero::before{content:"";position:absolute;right:-18vw;top:-12vh;width:64vw;height:64vw;border-radius:50%;
  background:radial-gradient(circle,rgba(231,254,37,.22),transparent 62%);pointer-events:none;animation:drift 18s ease-in-out infinite alternate}
 @keyframes drift{from{transform:translate(0,0)}to{transform:translate(-40px,30px)}}
+/* The hero sits in the page column, but its glow and the tablet's shadow should
+   run out to the window edge rather than stop at the column. Clip top and bottom
+   only; the layout wrapper stops anything spilling sideways into a scrollbar. */
+@supports (overflow:clip){
+ .dlay{overflow-x:clip}
+ .hero{overflow:visible;overflow-y:clip}
+}
 .hero h1{font-size:clamp(3.2rem,6.4vw,5.6rem);font-weight:900}
 .hero h1 .ln{display:block;overflow:hidden}
 .hero h1 .ln span{display:block;transform:translateY(110%);animation:lift 1s var(--ease) forwards}
@@ -202,6 +209,14 @@ section{padding:120px 0}
 .sc:hover::before{transform:scaleX(1)}
 .sc .ic{width:46px;height:46px;border-radius:13px;background:var(--forest);display:grid;place-items:center;margin-bottom:22px}
 .sc .ic svg{width:22px;height:22px;stroke:var(--lime);fill:none;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+/* Remy carries a MARK, not a line icon from the set. Two things in the
+   rule above have to be undone for it: the lime stroke would inherit
+   onto every bar and outline them, and a square 22px box letterboxes a
+   mark that is 1.59 times wider than it is tall, shrinking it to well
+   under its neighbours. So it is sized by HEIGHT and its width follows.
+   fill is left alone: every painted part of the mark carries its own
+   fill attribute, which beats the inherited fill:none. */
+.sc .ic.mark svg{width:auto;height:16.5px;stroke:none}
 .sc .dev{font-family:var(--m);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(22,22,22,.5);font-weight:700;margin-bottom:8px}
 .sc h3{margin-bottom:8px}
 .sc p{font-size:.88rem;color:rgba(22,22,22,.62);font-weight:500;line-height:1.55;flex:1}
@@ -316,6 +331,9 @@ footer{padding:80px 0 40px;margin-top:100px;border-top:1.5px solid rgba(1,63,50,
 .fg h4{font-family:var(--m);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:rgba(22,22,22,.5);margin-bottom:18px}
 .fg a{display:block;font-weight:600;font-size:.92rem;margin-bottom:10px;color:rgba(22,22,22,.75)}
 .fg a:hover{color:var(--forest)}
+/* .fg a is more specific than .logo, so without this the footer logo stacks the
+   mark above a small light wordmark instead of matching the one in the nav */
+.fg a.logo{display:flex;font-size:1.25rem;font-weight:800;color:var(--ink);margin-bottom:0}
 .fg p{font-size:.9rem;color:rgba(22,22,22,.6);max-width:36ch;line-height:1.6;margin-top:16px}
 .fb{display:flex;justify-content:space-between;margin-top:60px;padding-top:26px;border-top:1px solid rgba(1,63,50,.1);font-size:.8rem;color:rgba(22,22,22,.45);font-weight:600}
 

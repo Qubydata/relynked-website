@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Relynked Status</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
+<style>
+  /* Neutral grounds, semantic colour only. Green means working, red means
+     broken, amber means unknown. Nothing else is coloured, so colour always
+     carries meaning rather than decoration. */
+  :root{
+    --bg:#F5F7F9; --card:#FFFFFF; --line:#E4E8EC; --line-soft:#EEF1F4;
+    --t1:#0E1620; --t2:#57646F; --t3:#8B96A1;
+    --ok:#13915A; --ok-bg:#E6F5EE;
+    --bad:#CE2A1C; --bad-bg:#FCEBE9;
+    --warn:#B26A00; --warn-bg:#FDF2E2;
+    --grid:#EDF0F3;
+    --d:"Archivo",system-ui,sans-serif;
+    --b:"Manrope",system-ui,sans-serif;
+    --m:"JetBrains Mono",ui-monospace,monospace;
+    --shadow:0 1px 2px rgba(14,22,32,.04), 0 6px 20px -14px rgba(14,22,32,.25);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0B0F14; --card:#151B22; --line:#252E38; --line-soft:#1D242C;
+      --t1:#E9EEF3; --t2:#98A5B2; --t3:#6A7784;
+      --ok:#38D08A; --ok-bg:#122B20;
+      --bad:#FF6B5A; --bad-bg:#2E1714;
+      --warn:#F2B23A; --warn-bg:#2C2212;
+      --grid:#1F272F;
+      --shadow:none;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0B0F14; --card:#151B22; --line:#252E38; --line-soft:#1D242C;
+    --t1:#E9EEF3; --t2:#98A5B2; --t3:#6A7784;
+    --ok:#38D08A; --ok-bg:#122B20;
+    --bad:#FF6B5A; --bad-bg:#2E1714;
+    --warn:#F2B23A; --warn-bg:#2C2212;
+    --grid:#1F272F;
+    --shadow:none;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--t1);
+    font-family:var(--b); font-size:15px; line-height:1.5;
+    padding:0 18px; padding-block:22px 60px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1040px; margin:0 auto}
+
+  /* ── header ───────────────────────────────────────────── */
+  header{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:18px}
+  header h1{font-family:var(--d); font-weight:800; font-size:1.25rem; margin:0; letter-spacing:-.015em}
+  header .sub{font-family:var(--m); font-size:.75rem; color:var(--t3); margin-top:2px}
+  header .sp{flex:1 1 40px}
+  .btn{
+    font-family:var(--b); font-weight:600; font-size:.8125rem;
+    background:var(--card); color:var(--t1); border:1px solid var(--line);
+    border-radius:9px; padding:.5rem .8125rem; cursor:pointer;
+  }
+  .btn:hover{border-color:var(--t3)}
+  .btn:disabled{opacity:.5; cursor:default}
+  .btn:focus-visible{outline:2px solid var(--t2); outline-offset:2px}
+  /* Square icon buttons. Same shell as .btn so the header reads as one set
+     of controls; the label lives in aria-label and a title tooltip, because
+     an icon with no accessible name is a button nobody can describe. */
+  .iconbtn{
+    width:38px; height:38px; padding:0; display:grid; place-items:center;
+    border-radius:10px; flex:0 0 auto;
+  }
+  .iconbtn svg{width:18px; height:18px; stroke:currentColor; fill:none;
+    stroke-width:2; stroke-linecap:round; stroke-linejoin:round; display:block}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .iconbtn.busy svg{animation:spin .9s linear infinite; transform-origin:50% 50%}
+  @media (prefers-reduced-motion: reduce){
+    .iconbtn.busy svg{animation:none; opacity:.5}
+  }
+  /* The banner mark, drawn rather than typed: a glyph inherits whatever the
+     font decides, and these two need to read the same on every device. */
+  .banner .ring svg{width:18px; height:18px; stroke:currentColor; fill:none;
+    stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round; display:block}
+
+  /* ── banner ───────────────────────────────────────────── */
+  .banner{
+    border-radius:14px; padding:18px 20px; margin-bottom:16px;
+    display:flex; align-items:center; gap:14px; border:1px solid transparent;
+  }
+  .banner .ring{
+    width:34px; height:34px; border-radius:50%; flex:0 0 auto;
+    display:grid; place-items:center; font-size:1rem; font-weight:700;
+  }
+  .banner b{font-family:var(--d); font-weight:700; font-size:1.0625rem; display:block; letter-spacing:-.01em}
+  .banner span{font-size:.8125rem; opacity:.9}
+  .banner.ok{background:var(--ok-bg); border-color:color-mix(in srgb, var(--ok) 26%, transparent); color:var(--ok)}
+  .banner.ok b, .banner.ok span{color:var(--t1)}
+  .banner.ok .ring{background:var(--ok); color:var(--card)}
+  .banner.bad{background:var(--bad-bg); border-color:color-mix(in srgb, var(--bad) 30%, transparent)}
+  .banner.bad b{color:var(--bad)} .banner.bad span{color:var(--t2)}
+  .banner.bad .ring{background:var(--bad); color:#fff}
+  .banner.wait{background:var(--warn-bg); border-color:color-mix(in srgb, var(--warn) 28%, transparent)}
+  .banner.wait b{color:var(--warn)} .banner.wait span{color:var(--t2)}
+  .banner.wait .ring{background:var(--warn); color:#fff}
+
+  /* ── tiles ────────────────────────────────────────────── */
+  .tiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:12px; margin-bottom:12px}
+  .tile{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:15px 16px 10px; box-shadow:var(--shadow); position:relative; overflow:hidden;
+  }
+  .tile.down{border-color:color-mix(in srgb, var(--bad) 55%, var(--line))}
+  .tile .lab{
+    font-family:var(--m); font-size:.6875rem; text-transform:uppercase;
+    letter-spacing:.07em; color:var(--t3); display:flex; align-items:center; gap:6px;
+  }
+  .tile .dot{width:7px; height:7px; border-radius:50%; background:var(--ok); flex:0 0 auto}
+  .tile.down .dot{background:var(--bad)}
+  .tile.wait .dot{background:var(--warn)}
+  .tile .val{
+    font-family:var(--d); font-weight:800; font-size:1.75rem; letter-spacing:-.02em;
+    margin-top:5px; font-variant-numeric:tabular-nums; line-height:1.15;
+  }
+  .tile.down .val{color:var(--bad)}
+  .tile .val u{font-size:.875rem; font-weight:600; text-decoration:none; color:var(--t3); margin-left:2px}
+  .tile .sub{font-size:.75rem; color:var(--t2); min-height:1.1em}
+  .tile svg.spark{display:block; width:100%; height:32px; margin-top:8px}
+
+  /* ── chart card ───────────────────────────────────────── */
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:18px 20px; box-shadow:var(--shadow); margin-bottom:12px;
+  }
+  .card h2{
+    font-family:var(--d); font-weight:700; font-size:.9375rem; margin:0 0 2px; letter-spacing:-.01em;
+  }
+  .card .hint{font-size:.75rem; color:var(--t3); margin:0 0 14px}
+  .chart{width:100%; height:190px; display:block}
+  .axis{font-family:var(--m); font-size:9px; fill:var(--t3)}
+
+  /* ── detail rows ──────────────────────────────────────── */
+  .rows{background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden; box-shadow:var(--shadow); margin-bottom:12px}
+  .row{display:flex; align-items:center; gap:12px; padding:14px 18px; border-bottom:1px solid var(--line-soft)}
+  .row:last-child{border-bottom:0}
+  .row.bad{background:var(--bad-bg)}
+  .row .who{flex:1 1 200px; min-width:0}
+  .row .who b{font-size:.9375rem; display:block; font-weight:600}
+  .row .who i{font-style:normal; font-size:.8125rem; color:var(--t2)}
+  .row .msg{
+    font-family:var(--m); font-size:.75rem; color:var(--bad);
+    margin-top:5px; white-space:pre-wrap; word-break:break-word;
+  }
+  .row .num{font-family:var(--m); font-size:.8125rem; color:var(--t2); font-variant-numeric:tabular-nums}
+  .tag{
+    font-family:var(--m); font-size:.6875rem; font-weight:700; text-transform:uppercase;
+    letter-spacing:.05em; padding:.25rem .5rem; border-radius:6px; flex:0 0 auto;
+  }
+  .tag.ok{background:var(--ok-bg); color:var(--ok)}
+  .tag.bad{background:var(--bad); color:#fff}
+  .tag.wait{background:var(--warn-bg); color:var(--warn)}
+
+  /* ── links ────────────────────────────────────────────── */
+  h3.sec{
+    font-family:var(--m); font-size:.6875rem; text-transform:uppercase; letter-spacing:.09em;
+    color:var(--t3); margin:26px 0 10px; font-weight:700;
+  }
+  .links{display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px}
+  .links a{
+    background:var(--card); border:1px solid var(--line); border-radius:11px;
+    padding:12px 14px; text-decoration:none; color:var(--t1); font-weight:600; font-size:.875rem;
+    display:block; box-shadow:var(--shadow);
+  }
+  .links a:hover{border-color:var(--t3)}
+  .links a span{display:block; font-weight:500; font-size:.75rem; color:var(--t3); margin-top:2px}
+
+  /* ── platform section ─────────────────────────────────── */
+  .split{display:grid; grid-template-columns:minmax(230px,300px) 1fr; gap:12px; margin-bottom:12px}
+  @media (max-width:700px){ .split{grid-template-columns:1fr} }
+  .donutwrap{display:flex; align-items:center; gap:18px; flex-wrap:wrap}
+  .donut{width:124px; height:124px; flex:0 0 auto}
+  .legend{list-style:none; margin:0; padding:0; font-size:.8125rem; min-width:0}
+  .legend li{display:flex; align-items:center; gap:8px; margin:6px 0; white-space:nowrap}
+  .legend i{width:10px; height:10px; border-radius:3px; flex:0 0 auto}
+  .legend b{font-family:var(--m); font-variant-numeric:tabular-nums; margin-left:auto; padding-left:16px}
+  table.grid{width:100%; border-collapse:collapse; font-size:.8125rem}
+  table.grid th{
+    font-family:var(--m); font-size:.625rem; text-transform:uppercase; letter-spacing:.06em;
+    color:var(--t3); text-align:right; padding:0 0 8px; font-weight:700; white-space:nowrap;
+  }
+  table.grid th:first-child, table.grid td:first-child{text-align:left}
+  table.grid td{
+    padding:9px 0; border-top:1px solid var(--line-soft); text-align:right;
+    font-family:var(--m); font-variant-numeric:tabular-nums; white-space:nowrap;
+  }
+  table.grid td:first-child{font-family:var(--b); font-weight:600}
+  .empty{color:var(--t3); font-size:.8125rem; padding:10px 0}
+  .note{margin-top:22px; font-size:.8125rem; color:var(--t3); line-height:1.6}
+  .note b{color:var(--t2)}
+
+  @media (max-width:560px){
+    .tile .val{font-size:1.5rem}
+    .row{flex-wrap:wrap}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <span>
+      <h1>Relynked Status</h1>
+      <div class="sub" id="stamp">connecting…</div>
+    </span>
+    <span class="sp"></span>
+    <button class="btn iconbtn" id="theme" type="button" aria-label="Switch between light and dark" title="Switch theme"></button>
+    <button class="btn iconbtn" id="now" type="button" aria-label="Check now" title="Check now">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <polyline points="23 4 23 10 17 10"></polyline>
+        <polyline points="1 20 1 14 7 14"></polyline>
+        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+      </svg>
+    </button>
+  </header>
+
+  <div class="banner wait" id="banner">
+    <span class="ring" id="ring"></span>
+    <span><b id="bTitle">Checking</b><span id="bSub">Asking the API whether it can reach everything it needs.</span></span>
+  </div>
+
+  <div class="tiles" id="tiles"></div>
+
+  <div class="card">
+    <h2>Model response time</h2>
+    <p class="hint" id="chartHint">The slowest thing in a customer conversation, and the first to change when a provider is switched.</p>
+    <svg class="chart" id="chart" preserveAspectRatio="none" role="img" aria-label="Model response time over this session"></svg>
+  </div>
+
+  <div class="rows" id="rows"></div>
+
+  <h3 class="sec">The platform</h3>
+  <div class="tiles" id="ptiles"></div>
+  <div class="split">
+    <div class="card">
+      <h2>Businesses by tier</h2>
+      <p class="hint">Who is on what.</p>
+      <div class="donutwrap"><svg class="donut" id="donut" viewBox="0 0 42 42" role="img" aria-label="Businesses by tier"></svg><ul class="legend" id="legend"></ul></div>
+    </div>
+    <div class="card">
+      <h2>Model speed and spend</h2>
+      <p class="hint">Real customer conversations over 30 days, not a benchmark. p95 is what the slowest customer waited.</p>
+      <div id="models"></div>
+    </div>
+  </div>
+
+  <h3 class="sec">Where to fix things</h3>
+  <div class="links">
+    <a href="https://railway.com/dashboard" target="_blank" rel="noopener">Railway<span>API, variables, deploy logs</span></a>
+    <a href="https://console.neon.tech/" target="_blank" rel="noopener">Neon<span>Database and branches</span></a>
+    <a href="https://platform.openai.com/usage" target="_blank" rel="noopener">OpenAI<span>Model spend and keys</span></a>
+    <a href="https://console.groq.com/keys" target="_blank" rel="noopener">Groq<span>Fallback keys</span></a>
+    <a href="https://business.facebook.com/" target="_blank" rel="noopener">Meta Business<span>WhatsApp number</span></a>
+    <a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener">Meta App<span>Permissions, review</span></a>
+    <a href="https://dash.cloudflare.com/" target="_blank" rel="noopener">Cloudflare<span>Site, app, storage</span></a>
+    <a href="https://app.relynked.com/" target="_blank" rel="noopener">The app<span>What a business sees</span></a>
+  </div>
+
+  <p class="note">
+    <b>Everything here is measured, not assumed.</b> The model check is a real call through the
+    same code a customer message uses, and the database check is a real query. WhatsApp shows
+    credentials only, because the only cheap thing to call there would message a real customer.
+    The chart is built from this page's own checks, so it starts empty and resets if you reload.
+  </p>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var API = "https://relynked-api-production.up.railway.app/status";
+  // The database reading is fresh on every request and free; the model
+  // reading changes every 15 minutes. A minute is a compromise between a live
+  // database latency and not hammering an endpoint for answers it already gave.
+  var POLL_MS = 60000;
+  var KEEP = 96; // a day of model measurements at one every 15 minutes
+
+  var history = [];   // [{ t, ai, db, aiOk, dbOk }]
+  var busy = false;
+
+  /* ── icons ─────────────────────────────────────────────── */
+  var ICON = {
+    sun:  '<circle cx="12" cy="12" r="4.5"></circle><line x1="12" y1="1.5" x2="12" y2="3.5"></line>' +
+          '<line x1="12" y1="20.5" x2="12" y2="22.5"></line><line x1="4.2" y1="4.2" x2="5.6" y2="5.6"></line>' +
+          '<line x1="18.4" y1="18.4" x2="19.8" y2="19.8"></line><line x1="1.5" y1="12" x2="3.5" y2="12"></line>' +
+          '<line x1="20.5" y1="12" x2="22.5" y2="12"></line><line x1="4.2" y1="19.8" x2="5.6" y2="18.4"></line>' +
+          '<line x1="18.4" y1="5.6" x2="19.8" y2="4.2"></line>',
+    moon: '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>',
+    tick: '<polyline points="20 6 9 17 4 12"></polyline>',
+    bang: '<line x1="12" y1="6" x2="12" y2="13"></line><line x1="12" y1="17.5" x2="12" y2="17.5"></line>',
+    wait: '<polyline points="12 6.5 12 12 15.5 14"></polyline>'
+  };
+  function svg(name) {
+    return '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICON[name] + "</svg>";
+  }
+
+  /* ── theme ─────────────────────────────────────────────── */
+  var root = document.documentElement;
+  function stored(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function store(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* private window */ } }
+  var saved = stored("relynked.theme");
+  if (saved === "dark" || saved === "light") root.setAttribute("data-theme", saved);
+
+  function isDark() {
+    var set = root.getAttribute("data-theme");
+    if (set) return set === "dark";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  /* The button shows where a click WILL take you, not where you are: a moon
+     while light, a sun while dark. Showing the current state instead makes
+     people press it to find out. */
+  function paintThemeIcon() {
+    var btn = document.getElementById("theme");
+    var dark = isDark();
+    btn.innerHTML = svg(dark ? "sun" : "moon");
+    btn.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
+    btn.setAttribute("title", dark ? "Light theme" : "Dark theme");
+  }
+  document.getElementById("theme").addEventListener("click", function () {
+    var next = isDark() ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    store("relynked.theme", next);
+    paintThemeIcon();
+    draw();
+  });
+  paintThemeIcon();
+  /* Following the system setting means following it when it changes, which
+     it does at sunset on a phone. Only while the viewer has made no choice. */
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () {
+    if (!root.getAttribute("data-theme")) { paintThemeIcon(); draw(); }
+  });
+
+  /* ── helpers ───────────────────────────────────────────── */
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+  function ago(ms) {
+    var s = Math.round(ms / 1000);
+    if (s < 10) return "just now";
+    if (s < 60) return s + "s ago";
+    var m = Math.round(s / 60);
+    return m < 60 ? m + "m ago" : Math.round(m / 60) + "h ago";
+  }
+  function css(name) {
+    return getComputedStyle(root).getPropertyValue(name).trim();
+  }
+
+  /* ── charts ────────────────────────────────────────────── */
+  function sparkline(series, ok) {
+    // A tile sparkline: shape only, no axis. Fewer than two points draws
+    // nothing rather than a misleading flat line.
+    if (series.length < 2) return "";
+    var w = 100, h = 32, pad = 3;
+    var max = Math.max.apply(null, series), min = Math.min.apply(null, series);
+    var span = max - min || 1;
+    var pts = series.map(function (v, i) {
+      var x = (i / (series.length - 1)) * w;
+      var y = pad + (1 - (v - min) / span) * (h - pad * 2);
+      return x.toFixed(1) + "," + y.toFixed(1);
+    });
+    var colour = ok ? "var(--ok)" : "var(--bad)";
+    return '<svg class="spark" viewBox="0 0 ' + w + " " + h + '" preserveAspectRatio="none" aria-hidden="true">' +
+      '<polyline fill="none" stroke="' + colour + '" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" points="' + pts.join(" ") + '"></polyline>' +
+      "</svg>";
+  }
+
+  function draw() {
+    // The big chart: model latency over the session, with a real y axis.
+    // Only the model is plotted here. The database sits near 100ms and the
+    // model near 2000ms, so one shared axis would flatten the database into
+    // the baseline and tell you nothing. Its own sparkline serves it better
+    // than a second line on a scale it does not belong to.
+    var svg = document.getElementById("chart");
+    var pts = history.filter(function (p) { return p.ai != null; });
+    if (pts.length < 2) {
+      svg.innerHTML = '<text x="12" y="26" class="axis">Collecting. The model is measured every 15 minutes. Press Check now for one immediately.</text>';
+      return;
+    }
+    var W = 700, H = 190, L = 44, R = 10, T = 12, B = 22;
+    var max = Math.max.apply(null, pts.map(function (p) { return p.ai; }));
+    var top = Math.ceil(max / 500) * 500 || 500;
+    var x = function (i) { return L + (i / (pts.length - 1)) * (W - L - R); };
+    var y = function (v) { return T + (1 - v / top) * (H - T - B); };
+
+    var out = "";
+    // Horizontal guides at quarters of the scale, each one labelled, so
+    // every gridline names a value the chart actually reaches.
+    for (var g = 0; g <= 4; g++) {
+      var v = (top / 4) * g, yy = y(v);
+      out += '<line x1="' + L + '" y1="' + yy.toFixed(1) + '" x2="' + (W - R) + '" y2="' + yy.toFixed(1) +
+        '" stroke="' + css("--grid") + '" stroke-width="1"></line>' +
+        '<text x="' + (L - 7) + '" y="' + (yy + 3).toFixed(1) + '" class="axis" text-anchor="end">' + v + "</text>";
+    }
+    // Area under the line, then the line, then the latest point emphasised.
+    var line = pts.map(function (p, i) { return x(i).toFixed(1) + "," + y(p.ai).toFixed(1); });
+    var bad = pts[pts.length - 1].aiOk === false;
+    var stroke = bad ? css("--bad") : css("--ok");
+    out += '<polygon points="' + L + "," + (H - B) + " " + line.join(" ") + " " + (W - R) + "," + (H - B) +
+      '" fill="' + stroke + '" opacity="0.10"></polygon>';
+    out += '<polyline fill="none" stroke="' + stroke + '" stroke-width="2" stroke-linejoin="round" points="' + line.join(" ") + '"></polyline>';
+    var lx = x(pts.length - 1), ly = y(pts[pts.length - 1].ai);
+    out += '<circle cx="' + lx.toFixed(1) + '" cy="' + ly.toFixed(1) + '" r="3.5" fill="' + stroke + '"></circle>';
+    out += '<text x="' + (L) + '" y="' + (H - 6) + '" class="axis">' + pts.length +
+      (pts.length === 1 ? " measurement" : " measurements") + "</text>";
+    out += '<text x="' + (W - R) + '" y="' + (H - 6) + '" class="axis" text-anchor="end">now</text>';
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+    svg.innerHTML = out;
+  }
+
+  /* ── render ────────────────────────────────────────────── */
+  function tile(label, value, unit, sub, state, series) {
+    return '<div class="tile ' + state + '">' +
+      '<div class="lab"><span class="dot"></span>' + esc(label) + "</div>" +
+      '<div class="val">' + esc(value) + (unit ? "<u>" + esc(unit) + "</u>" : "") + "</div>" +
+      '<div class="sub">' + esc(sub) + "</div>" +
+      sparkline(series || [], state !== "down") +
+      "</div>";
+  }
+
+  function paint(d) {
+    var ai = d.checks.ai, db = d.checks.db, wa = d.checks.whatsapp;
+
+    /* THE MODEL RESULT IS CACHED SERVER-SIDE, so consecutive polls hand back
+       the SAME measurement. Plotting it every time drew flat steps that read
+       as a steady model and quietly doubled the apparent number of checks.
+       ai.at says when it was really taken, so a point is added only when that
+       changes. The database is measured on every request and is always new. */
+    var last = history[history.length - 1];
+    if (!last || last.aiAt !== ai.at) {
+      history.push({ t: Date.now(), aiAt: ai.at, ai: ai.ms, db: db.ms, aiOk: ai.ok, dbOk: db.ok });
+      if (history.length > KEEP) history.shift();
+    } else {
+      last.db = db.ms;
+      last.dbOk = db.ok;
+    }
+
+    var ok = d.status === "ok";
+    var banner = document.getElementById("banner");
+    banner.className = "banner " + (ok ? "ok" : "bad");
+    document.getElementById("ring").innerHTML = svg(ok ? "tick" : "bang");
+    document.getElementById("bTitle").textContent = ok ? "Everything is working" : "Something is down";
+    document.getElementById("bSub").textContent = ok
+      ? "Customers can message the business and get a reply."
+      : "The red card below says what broke. Open the matching console.";
+    document.getElementById("stamp").textContent =
+      "commit " + d.commit + " · checked just now";
+
+    document.getElementById("tiles").innerHTML =
+      tile("Model", ai.ms == null ? "—" : String(ai.ms), "ms",
+           ai.ok ? (ai.provider + " · " + ai.model + " · " + ago(Date.now() - Date.parse(ai.at))) : "not answering",
+           ai.ok ? "" : "down",
+           history.map(function (p) { return p.ai; }).filter(function (v) { return v != null; })) +
+      tile("Database", db.ms == null ? "—" : String(db.ms), "ms",
+           db.ok ? "responding" : "not answering",
+           db.ok ? "" : "down",
+           history.map(function (p) { return p.db; }).filter(function (v) { return v != null; })) +
+      tile("WhatsApp", wa.ok ? "Connected" : "Missing", "",
+           wa.ok ? "credentials present" : "credentials not set",
+           wa.ok ? "" : "down", []) +
+      tile("Fallback model", (ai.chain && ai.chain.length > 1) ? String(ai.chain.length - 1) : "None", "",
+           (ai.chain && ai.chain.length > 1) ? ai.chain.slice(1).join(", ") : "one provider only",
+           (ai.chain && ai.chain.length > 1) ? "" : "wait", []);
+
+    var rows = "";
+    [["Model provider", "Remy's brain. Down means customers get silence.", ai],
+     ["Database", "Orders, conversations, stock.", db],
+     ["WhatsApp", "Credentials for the business number.", wa]].forEach(function (r) {
+      var c = r[2];
+      rows += '<div class="row' + (c.ok ? "" : " bad") + '">' +
+        '<span class="who"><b>' + esc(r[0]) + "</b><i>" + esc(r[1]) + "</i>" +
+        (c.ok ? "" : '<span class="msg">' + esc(c.detail || "no detail given") + "</span>") +
+        "</span>" +
+        '<span class="num">' + (c.ms == null ? "" : c.ms + " ms") + "</span>" +
+        '<span class="tag ' + (c.ok ? "ok" : "bad") + '">' + (c.ok ? "up" : "down") + "</span></div>";
+    });
+    document.getElementById("rows").innerHTML = rows;
+    draw();
+  }
+
+  function fail(title, why, tone) {
+    var banner = document.getElementById("banner");
+    banner.className = "banner " + (tone || "bad");
+    document.getElementById("ring").innerHTML = svg(tone === "wait" ? "wait" : "bang");
+    document.getElementById("bTitle").textContent = title;
+    document.getElementById("bSub").textContent = why;
+    document.getElementById("rows").innerHTML =
+      '<div class="row bad"><span class="who"><b>Relynked API</b><i>relynked-api on Railway</i>' +
+      '<span class="msg">' + esc(why) + "</span></span>" +
+      '<span class="tag ' + (tone === "wait" ? "wait" : "bad") + '">' + (tone === "wait" ? "partial" : "down") + "</span></div>";
+    document.getElementById("tiles").innerHTML = "";
+  }
+
+  function check(fresh) {
+    if (busy) return;
+    busy = true;
+    var btn = document.getElementById("now");
+    btn.disabled = true;
+    btn.classList.add("busy");
+    var code = 0;
+    // A 503 is a successful fetch carrying the reason something is down, so
+    // the body is read whatever the status says.
+    fetch(API + (fresh ? "?fresh=1" : ""), { cache: "no-store" })
+      .then(function (r) { code = r.status; return r.json().catch(function () { return null; }); })
+      .then(function (d) {
+        if (d && d.checks) { paint(d); return; }
+        if (code === 404) {
+          fail("Status checks are not deployed", "The API is up but has no /status endpoint yet.", "wait");
+          return;
+        }
+        fail("The API is not answering", "It replied with " + code + " and nothing this page could read.");
+      })
+      .catch(function (e) {
+        fail("The API is not answering", "Could not reach it: " + ((e && e.message) || "network error"));
+      })
+      .then(function () { busy = false; btn.disabled = false; btn.classList.remove("busy"); });
+  }
+
+  /* ── the platform numbers ──────────────────────────────── */
+  /* Fetched from /api/metrics, same origin. The key lives in a Pages
+     Function; the browser never holds one. Behind Cloudflare Access, so an
+     unauthenticated visitor gets redirected to a login page and the JSON
+     parse fails, which is handled as "sign in" rather than as an error. */
+  var TIER_COLOURS = ["#2F6FED", "#12A167", "#E0A000", "#8B5CF6", "#DB2777", "#0EA5A4"];
+
+  function donut(slices, total) {
+    var svgEl = document.getElementById("donut");
+    if (!total) { svgEl.innerHTML = ""; return; }
+    var out = '<circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--line)" stroke-width="6"></circle>';
+    var offset = 25; // puts the first slice at twelve o'clock
+    slices.forEach(function (sl, i) {
+      var pct = (sl.count / total) * 100;
+      out += '<circle cx="21" cy="21" r="15.9" fill="none" stroke="' + TIER_COLOURS[i % TIER_COLOURS.length] +
+        '" stroke-width="6" stroke-dasharray="' + pct.toFixed(2) + " " + (100 - pct).toFixed(2) +
+        '" stroke-dashoffset="' + offset.toFixed(2) + '"></circle>';
+      offset -= pct;
+    });
+    svgEl.innerHTML = out;
+  }
+
+  function platform(m) {
+    var b = m.businesses, a = m.activity;
+    document.getElementById("ptiles").innerHTML =
+      tile("Businesses", String(b.total), "", "on Relynked", "", []) +
+      tile("WhatsApp connected", String(b.withWhatsApp), "",
+           b.withWhatsApp === b.total ? "all of them" : (b.total - b.withWhatsApp) + " still to connect",
+           b.withWhatsApp === 0 && b.total > 0 ? "wait" : "", []) +
+      tile("Customers", String(a.customersLast7Days), "", "messaged in 7 days", "", []) +
+      tile("Orders", String(a.ordersLast7Days), "", "placed in 7 days", "", []);
+
+    var slices = (b.byPlan || []).slice().sort(function (x, y) { return y.count - x.count; });
+    donut(slices, b.total);
+    document.getElementById("legend").innerHTML = slices.map(function (sl, i) {
+      return '<li><i style="background:' + TIER_COLOURS[i % TIER_COLOURS.length] + '"></i>' +
+        esc(sl.plan) + "<b>" + sl.count + "</b></li>";
+    }).join("") || '<li class="empty">No businesses yet.</li>';
+
+    var rows = m.model && m.model.byModel ? m.model.byModel : [];
+    if (!rows.length) {
+      document.getElementById("models").innerHTML =
+        '<p class="empty">No model calls recorded yet. Metering started today, so this fills as customers have conversations.</p>';
+      return;
+    }
+    document.getElementById("models").innerHTML =
+      '<table class="grid"><tr><th>Model</th><th>Calls</th><th>Avg</th><th>p95</th><th>Tokens in</th><th>Cached</th></tr>' +
+      rows.map(function (r) {
+        var cachedPct = r.inputTokens ? Math.round((r.cachedInputTokens / r.inputTokens) * 100) : 0;
+        return "<tr><td>" + esc(r.model) + "</td><td>" + r.calls + "</td><td>" + r.avgMs +
+          " ms</td><td>" + r.p95Ms + " ms</td><td>" + r.inputTokens.toLocaleString() +
+          "</td><td>" + (r.cachedInputTokens ? cachedPct + "%" : "none") + "</td></tr>";
+      }).join("") + "</table>";
+  }
+
+  function loadPlatform() {
+    /* The failure modes here are genuinely different and were previously all
+       reported as "sign in", which sent me looking in the wrong place. So the
+       status and the shape of the body are both reported: HTML means
+       Cloudflare Access redirected the fetch to its login page, which is a
+       configuration problem rather than an expired session. */
+    var code = 0, type = "";
+    fetch("/api/metrics", { cache: "no-store", credentials: "same-origin" })
+      .then(function (r) {
+        code = r.status;
+        type = r.headers.get("content-type") || "";
+        return r.text();
+      })
+      .then(function (body) {
+        var m = null;
+        try { m = JSON.parse(body); } catch (e) { m = null; }
+        if (m && m.businesses) { platform(m); return; }
+
+        var why;
+        if (m && m.detail) why = m.detail;
+        else if (/html/i.test(type) || /^\s*</.test(body)) {
+          why = "Cloudflare Access redirected this request instead of allowing it (HTTP " + code +
+                "). Add relynked.com/api/metrics as a destination on the Relynked Dashboard application, " +
+                "then reload.";
+        } else if (m && m.error) why = m.error + " (HTTP " + code + ")";
+        else why = "Unexpected reply, HTTP " + code + ".";
+        document.getElementById("models").innerHTML = '<p class="empty">' + esc(why) + "</p>";
+        document.getElementById("ptiles").innerHTML = "";
+      })
+      .catch(function (e) {
+        document.getElementById("models").innerHTML =
+          '<p class="empty">Could not reach /api/metrics: ' + esc((e && e.message) || "network error") + "</p>";
+      });
+  }
+
+  document.getElementById("ring").innerHTML = svg("wait");
+  document.getElementById("now").addEventListener("click", function () { check(true); });
+  check(false);
+  setInterval(function () { check(false); }, POLL_MS);
+  // Business counts move in days, not seconds.
+  loadPlatform();
+  setInterval(loadPlatform, 300000);
+  // The timestamp ages on its own between checks, so a stale page looks stale.
+  setInterval(function () {
+    if (!history.length) return;
+    var el = document.getElementById("stamp");
+    el.textContent = el.textContent.replace(/checked .*/, "checked " + ago(Date.now() - history[history.length - 1].t));
+  }, 5000);
+})();
+</script>
+</body>
+</html>
