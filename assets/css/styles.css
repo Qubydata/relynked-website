@@ -389,7 +389,8 @@ footer{padding:80px 0 40px;margin-top:100px;border-top:1.5px solid rgba(1,63,50,
 }
 /* ---------- broadening revision: sector strip, examples, product grid ---------- */
 .shown{font-family:var(--m);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:rgba(22,22,22,.45);margin-top:20px;text-align:center;line-height:1.7}
-.sect{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:48px}
+/* Three to a row: nine sectors fill three rows, and none sits alone. */
+.sect{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:48px}
 .tile{background:var(--paper);border:1.5px solid rgba(1,63,50,.1);border-radius:16px;padding:22px 20px;display:flex;flex-direction:column;gap:12px;transition:.3s var(--ease)}
 .tile:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(1,63,50,.12);border-color:transparent}
 .tile svg{width:24px;height:24px;stroke:var(--forest);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}

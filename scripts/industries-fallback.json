@@ -1,0 +1,929 @@
+{
+  "_note": "Fallback for scripts/build-industries.mjs, used only when the live /business-types API is unreachable or does not yet return categories and aliases. The live API wins whenever it has them. Barber and salon groups here are a best guess until the API returns its own.",
+  "categories": [
+    {
+      "key": "food_drink",
+      "label": "Food and drink",
+      "aliases": [],
+      "sort": 10
+    },
+    {
+      "key": "shops_retail",
+      "label": "Shops and retail",
+      "aliases": [],
+      "sort": 20
+    },
+    {
+      "key": "hair_styling",
+      "label": "Hair styling",
+      "aliases": [],
+      "sort": 30
+    },
+    {
+      "key": "other",
+      "label": "Something else",
+      "aliases": [],
+      "sort": 999
+    }
+  ],
+  "types": [
+    {
+      "key": "grill",
+      "label": "Grill or suya spot",
+      "modules": [
+        "menu",
+        "quantity"
+      ],
+      "vocabulary": {
+        "item": "item",
+        "items": "items",
+        "catalogue": "menu"
+      },
+      "sort": 10,
+      "category_key": "food_drink",
+      "aliases": [],
+      "groups": [
+        {
+          "key": "grills",
+          "label": "Grills",
+          "sort": 10,
+          "stockMode": "toggle",
+          "station": "kitchen",
+          "units": [
+            "stick",
+            "plate",
+            "portion",
+            "piece"
+          ]
+        },
+        {
+          "key": "mains",
+          "label": "Mains",
+          "sort": 20,
+          "stockMode": "toggle",
+          "station": "kitchen",
+          "units": [
+            "plate",
+            "portion"
+          ]
+        },
+        {
+          "key": "sides",
+          "label": "Sides",
+          "sort": 30,
+          "stockMode": "toggle",
+          "station": "kitchen",
+          "units": [
+            "portion",
+            "plate",
+            "piece"
+          ]
+        },
+        {
+          "key": "soups_swallows",
+          "label": "Soups and Swallows",
+          "sort": 40,
+          "stockMode": "toggle",
+          "station": "kitchen",
+          "units": [
+            "plate",
+            "wrap"
+          ]
+        },
+        {
+          "key": "drinks",
+          "label": "Drinks",
+          "sort": 50,
+          "stockMode": "count",
+          "station": "bar",
+          "units": [
+            "bottle",
+            "can",
+            "glass",
+            "cup"
+          ]
+        },
+        {
+          "key": "desserts",
+          "label": "Desserts",
+          "sort": 60,
+          "stockMode": "toggle",
+          "station": "kitchen",
+          "units": [
+            "cup",
+            "scoop",
+            "piece"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "restaurant",
+      "label": "Restaurant or buka",
+      "modules": [
+        "menu",
+        "quantity"
+      ],
+      "vocabulary": {
+        "item": "item",
+        "items": "items",
+        "catalogue": "menu"
+      },
+      "sort": 20,
+      "category_key": "food_drink",
+      "aliases": [],
+      "groups": [
+        {
+          "key": "rice_pasta",
+          "label": "Rice and Pasta",
+          "sort": 10,
+          "stockMode": "toggle",
+          "station": "kitchen",
+          "units": [
+            "plate",
+            "portion"
+          ]
+        },
+        {
+          "key": "soups_swallows",
+          "label": "Soups and Swallows",
+          "sort": 20,
+          "stockMode": "toggle",
+          "station": "kitchen",
+          "units": [
+            "plate",
+            "wrap"
+          ]
+        },
+        {
+          "key": "proteins",
+          "label": "Proteins",
+          "sort": 30,
+          "stockMode": "toggle",
+          "station": "kitchen",
+          "units": [
+            "piece",
+            "portion"
+          ]
+        },
+        {
+          "key": "sides",
+          "label": "Sides",
+          "sort": 40,
+          "stockMode": "toggle",
+          "station": "kitchen",
+          "units": [
+            "portion",
+            "plate"
+          ]
+        },
+        {
+          "key": "snacks",
+          "label": "Snacks",
+          "sort": 50,
+          "stockMode": "toggle",
+          "station": "kitchen",
+          "units": [
+            "piece",
+            "pack"
+          ]
+        },
+        {
+          "key": "drinks",
+          "label": "Drinks",
+          "sort": 60,
+          "stockMode": "count",
+          "station": "bar",
+          "units": [
+            "bottle",
+            "can",
+            "cup"
+          ]
+        },
+        {
+          "key": "desserts",
+          "label": "Desserts",
+          "sort": 70,
+          "stockMode": "toggle",
+          "station": "kitchen",
+          "units": [
+            "cup",
+            "piece"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "fast_food",
+      "label": "Fast food",
+      "modules": [
+        "menu",
+        "quantity"
+      ],
+      "vocabulary": {
+        "item": "item",
+        "items": "items",
+        "catalogue": "menu"
+      },
+      "sort": 30,
+      "category_key": "food_drink",
+      "aliases": [],
+      "groups": [
+        {
+          "key": "burgers_wraps",
+          "label": "Burgers and Wraps",
+          "sort": 10,
+          "stockMode": "toggle",
+          "station": "kitchen",
+          "units": [
+            "piece"
+          ]
+        },
+        {
+          "key": "chicken",
+          "label": "Chicken",
+          "sort": 20,
+          "stockMode": "toggle",
+          "station": "kitchen",
+          "units": [
+            "piece",
+            "pack",
+            "portion"
+          ]
+        },
+        {
+          "key": "pizza",
+          "label": "Pizza",
+          "sort": 30,
+          "stockMode": "toggle",
+          "station": "kitchen",
+          "units": [
+            "piece",
+            "slice"
+          ]
+        },
+        {
+          "key": "sides",
+          "label": "Sides",
+          "sort": 40,
+          "stockMode": "toggle",
+          "station": "kitchen",
+          "units": [
+            "portion",
+            "pack"
+          ]
+        },
+        {
+          "key": "drinks",
+          "label": "Drinks",
+          "sort": 50,
+          "stockMode": "count",
+          "station": "bar",
+          "units": [
+            "bottle",
+            "can",
+            "cup"
+          ]
+        },
+        {
+          "key": "desserts",
+          "label": "Desserts",
+          "sort": 60,
+          "stockMode": "toggle",
+          "station": "kitchen",
+          "units": [
+            "cup",
+            "piece"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "bar_lounge",
+      "label": "Bar or lounge",
+      "modules": [
+        "menu",
+        "quantity"
+      ],
+      "vocabulary": {
+        "item": "item",
+        "items": "items",
+        "catalogue": "menu"
+      },
+      "sort": 40,
+      "category_key": "food_drink",
+      "aliases": [],
+      "groups": [
+        {
+          "key": "drinks",
+          "label": "Drinks",
+          "sort": 10,
+          "stockMode": "count",
+          "station": "bar",
+          "units": [
+            "bottle",
+            "can",
+            "glass",
+            "shot"
+          ]
+        },
+        {
+          "key": "cocktails",
+          "label": "Cocktails",
+          "sort": 20,
+          "stockMode": "toggle",
+          "station": "bar",
+          "units": [
+            "glass",
+            "jug"
+          ]
+        },
+        {
+          "key": "shisha",
+          "label": "Shisha",
+          "sort": 30,
+          "stockMode": "toggle",
+          "station": "bar",
+          "units": [
+            "pot"
+          ]
+        },
+        {
+          "key": "grills",
+          "label": "Grills",
+          "sort": 40,
+          "stockMode": "toggle",
+          "station": "kitchen",
+          "units": [
+            "stick",
+            "plate",
+            "portion"
+          ]
+        },
+        {
+          "key": "small_chops",
+          "label": "Small Chops",
+          "sort": 50,
+          "stockMode": "toggle",
+          "station": "kitchen",
+          "units": [
+            "portion",
+            "pack"
+          ]
+        },
+        {
+          "key": "sides",
+          "label": "Sides",
+          "sort": 60,
+          "stockMode": "toggle",
+          "station": "kitchen",
+          "units": [
+            "portion",
+            "plate"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "bakery_cafe",
+      "label": "Bakery or cafe",
+      "modules": [
+        "menu",
+        "quantity"
+      ],
+      "vocabulary": {
+        "item": "item",
+        "items": "items",
+        "catalogue": "menu"
+      },
+      "sort": 50,
+      "category_key": "food_drink",
+      "aliases": [],
+      "groups": [
+        {
+          "key": "bread",
+          "label": "Bread",
+          "sort": 10,
+          "stockMode": "count",
+          "station": "kitchen",
+          "units": [
+            "loaf",
+            "piece"
+          ]
+        },
+        {
+          "key": "cakes",
+          "label": "Cakes",
+          "sort": 20,
+          "stockMode": "toggle",
+          "station": "kitchen",
+          "units": [
+            "slice",
+            "piece",
+            "cake"
+          ]
+        },
+        {
+          "key": "pastries",
+          "label": "Pastries",
+          "sort": 30,
+          "stockMode": "toggle",
+          "station": "kitchen",
+          "units": [
+            "piece",
+            "pack"
+          ]
+        },
+        {
+          "key": "coffee_tea",
+          "label": "Coffee and Tea",
+          "sort": 40,
+          "stockMode": "toggle",
+          "station": "bar",
+          "units": [
+            "cup"
+          ]
+        },
+        {
+          "key": "drinks",
+          "label": "Drinks",
+          "sort": 50,
+          "stockMode": "count",
+          "station": "bar",
+          "units": [
+            "bottle",
+            "can",
+            "cup"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "clothing_store",
+      "label": "Clothing store",
+      "modules": [
+        "quantity"
+      ],
+      "vocabulary": {
+        "item": "product",
+        "items": "products",
+        "catalogue": "products"
+      },
+      "sort": 60,
+      "category_key": "shops_retail",
+      "aliases": [],
+      "groups": [
+        {
+          "key": "clothing",
+          "label": "Clothing",
+          "sort": 10,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "piece"
+          ]
+        },
+        {
+          "key": "footwear",
+          "label": "Footwear",
+          "sort": 20,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "pair"
+          ]
+        },
+        {
+          "key": "bags",
+          "label": "Bags",
+          "sort": 30,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "piece"
+          ]
+        },
+        {
+          "key": "accessories",
+          "label": "Accessories",
+          "sort": 40,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "piece",
+            "pair",
+            "pack"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "shoe_store",
+      "label": "Shoe store",
+      "modules": [
+        "quantity"
+      ],
+      "vocabulary": {
+        "item": "product",
+        "items": "products",
+        "catalogue": "products"
+      },
+      "sort": 70,
+      "category_key": "shops_retail",
+      "aliases": [],
+      "groups": [
+        {
+          "key": "sneakers",
+          "label": "Sneakers",
+          "sort": 10,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "pair"
+          ]
+        },
+        {
+          "key": "slides_sandals",
+          "label": "Slides and Sandals",
+          "sort": 20,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "pair"
+          ]
+        },
+        {
+          "key": "formal",
+          "label": "Formal Shoes",
+          "sort": 30,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "pair"
+          ]
+        },
+        {
+          "key": "boots",
+          "label": "Boots",
+          "sort": 40,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "pair"
+          ]
+        },
+        {
+          "key": "accessories",
+          "label": "Accessories",
+          "sort": 50,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "piece",
+            "pack"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "phone_gadgets",
+      "label": "Phones and gadgets",
+      "modules": [
+        "quantity"
+      ],
+      "vocabulary": {
+        "item": "product",
+        "items": "products",
+        "catalogue": "products"
+      },
+      "sort": 80,
+      "category_key": "shops_retail",
+      "aliases": [],
+      "groups": [
+        {
+          "key": "phones",
+          "label": "Phones",
+          "sort": 10,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "piece"
+          ]
+        },
+        {
+          "key": "accessories",
+          "label": "Accessories",
+          "sort": 20,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "piece",
+            "pack"
+          ]
+        },
+        {
+          "key": "chargers_cables",
+          "label": "Chargers and Cables",
+          "sort": 30,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "piece"
+          ]
+        },
+        {
+          "key": "audio",
+          "label": "Audio",
+          "sort": 40,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "piece",
+            "pair"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "cosmetics_beauty",
+      "label": "Cosmetics and beauty",
+      "modules": [
+        "quantity"
+      ],
+      "vocabulary": {
+        "item": "product",
+        "items": "products",
+        "catalogue": "products"
+      },
+      "sort": 90,
+      "category_key": "shops_retail",
+      "aliases": [],
+      "groups": [
+        {
+          "key": "skincare",
+          "label": "Skincare",
+          "sort": 10,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "piece",
+            "bottle",
+            "jar"
+          ]
+        },
+        {
+          "key": "makeup",
+          "label": "Makeup",
+          "sort": 20,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "piece"
+          ]
+        },
+        {
+          "key": "hair",
+          "label": "Hair",
+          "sort": 30,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "piece",
+            "pack",
+            "bottle"
+          ]
+        },
+        {
+          "key": "fragrance",
+          "label": "Fragrance",
+          "sort": 40,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "bottle"
+          ]
+        },
+        {
+          "key": "body_care",
+          "label": "Body Care",
+          "sort": 50,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "bottle",
+            "piece",
+            "jar"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "supermarket",
+      "label": "Supermarket or provisions",
+      "modules": [
+        "quantity"
+      ],
+      "vocabulary": {
+        "item": "product",
+        "items": "products",
+        "catalogue": "products"
+      },
+      "sort": 100,
+      "category_key": "shops_retail",
+      "aliases": [],
+      "groups": [
+        {
+          "key": "food_items",
+          "label": "Food Items",
+          "sort": 10,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "piece",
+            "pack",
+            "bag",
+            "kg"
+          ]
+        },
+        {
+          "key": "drinks",
+          "label": "Drinks",
+          "sort": 20,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "bottle",
+            "can",
+            "pack",
+            "crate"
+          ]
+        },
+        {
+          "key": "household",
+          "label": "Household",
+          "sort": 30,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "piece",
+            "pack"
+          ]
+        },
+        {
+          "key": "toiletries",
+          "label": "Toiletries",
+          "sort": 40,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "piece",
+            "pack",
+            "bottle"
+          ]
+        },
+        {
+          "key": "baby",
+          "label": "Baby Items",
+          "sort": 50,
+          "stockMode": "count",
+          "station": null,
+          "units": [
+            "piece",
+            "pack"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "barber",
+      "label": "Barber shop",
+      "modules": [
+        "general"
+      ],
+      "vocabulary": {
+        "item": "service",
+        "items": "services",
+        "catalogue": "services"
+      },
+      "sort": 110,
+      "category_key": "hair_styling",
+      "aliases": [
+        "barbing salon",
+        "barbershop"
+      ],
+      "groups": [
+        {
+          "key": "cuts",
+          "label": "Cuts",
+          "sort": 10,
+          "stockMode": "toggle",
+          "station": null,
+          "units": [
+            "service"
+          ]
+        },
+        {
+          "key": "beard_grooming",
+          "label": "Beard and grooming",
+          "sort": 20,
+          "stockMode": "toggle",
+          "station": null,
+          "units": [
+            "service"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "salon",
+      "label": "Hair salon",
+      "modules": [
+        "general"
+      ],
+      "vocabulary": {
+        "item": "service",
+        "items": "services",
+        "catalogue": "services"
+      },
+      "sort": 120,
+      "category_key": "hair_styling",
+      "aliases": [
+        "hair maker",
+        "hairdresser",
+        "braider",
+        "weaves",
+        "wigs",
+        "locs",
+        "stylist"
+      ],
+      "groups": [
+        {
+          "key": "braids",
+          "label": "Braids",
+          "sort": 10,
+          "stockMode": "toggle",
+          "station": null,
+          "units": [
+            "service"
+          ]
+        },
+        {
+          "key": "weaves_wigs",
+          "label": "Weaves and wigs",
+          "sort": 20,
+          "stockMode": "toggle",
+          "station": null,
+          "units": [
+            "service"
+          ]
+        },
+        {
+          "key": "locs",
+          "label": "Locs",
+          "sort": 30,
+          "stockMode": "toggle",
+          "station": null,
+          "units": [
+            "service"
+          ]
+        },
+        {
+          "key": "styling",
+          "label": "Cuts and styling",
+          "sort": 40,
+          "stockMode": "toggle",
+          "station": null,
+          "units": [
+            "service"
+          ]
+        },
+        {
+          "key": "treatments",
+          "label": "Treatments",
+          "sort": 50,
+          "stockMode": "toggle",
+          "station": null,
+          "units": [
+            "service"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "other",
+      "label": "Something else",
+      "modules": [
+        "general"
+      ],
+      "vocabulary": {
+        "item": "item",
+        "items": "items",
+        "catalogue": "items"
+      },
+      "sort": 999,
+      "category_key": "other",
+      "aliases": [],
+      "groups": []
+    }
+  ]
+}
