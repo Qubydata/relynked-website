@@ -123,7 +123,10 @@ function loadData(api) {
 
 const COUNTABLE = new Set(('shop store salon spot restaurant buka bar lounge bakery cafe supermarket spa pharmacy ' +
   'hotel clinic boutique kiosk studio workshop showroom laundry parlour parlor market gym school club ' +
-  'house centre center outlet stall joint canteen eatery vendor seller dealer barber agency office').split(' '));
+  'house centre center outlet stall joint canteen eatery vendor seller dealer barber agency office ' +
+  // People, not places: "makeup artists", never "makeup artist businesses".
+  'artist stylist tech technician maker tailor designer photographer trainer cleaner mechanic planner caterer ' +
+  'dresser braider decorator consultant tutor').split(' '));
 
 const lc = s => s.toLowerCase();
 function pluralWord(w) {
