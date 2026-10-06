@@ -4,6 +4,11 @@
   --d:"Archivo",system-ui,sans-serif;--b:"Manrope",system-ui,sans-serif;--m:"JetBrains Mono",ui-monospace,monospace;
   --ease:cubic-bezier(.16,1,.3,1);--w:min(1760px,92vw);
 }
+/* THE FREE TRIAL LENGTH, in one place (founder, 2026-10-06). Every
+   <span class="trial-days"></span> on the site shows this text. To change the
+   trial, change only this line, for example to "14 days". */
+:root{--trial-days:"7 days"}
+.trial-days::after{content:var(--trial-days)}
 *{box-sizing:border-box;margin:0}
 html{scroll-behavior:smooth}
 body{font-family:var(--b);background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.5}
@@ -402,7 +407,7 @@ footer{padding:80px 0 40px;margin-top:100px;border-top:1.5px solid rgba(1,63,50,
 .sectnote{margin-top:34px;font-size:.92rem;color:rgba(22,22,22,.62);font-weight:500;line-height:1.6;max-width:70ch}
 .sectnote a{font-weight:800;color:var(--forest);border-bottom:2px solid var(--lime)}
 .egs{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px;padding-top:24px;border-top:1.5px solid rgba(1,63,50,.12)}
-.egs b{font-family:var(--m);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--forest);font-weight:700;display:block;margin-bottom:7px}
+.egs b{font-family:var(--d);font-size:1rem;letter-spacing:-.02em;color:var(--forest);font-weight:800;display:block;margin-bottom:6px}
 .egs p{font-size:.84rem;color:rgba(22,22,22,.6);line-height:1.55}
 .step .eg{font-family:var(--m);font-size:.58rem;letter-spacing:.05em;line-height:1.6;color:rgba(253,253,253,.42);display:block;margin-top:14px;padding-top:12px;border-top:1px solid rgba(253,253,253,.14);text-transform:uppercase}
 .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:56px}
@@ -642,3 +647,32 @@ footer{padding:80px 0 40px;margin-top:100px;border-top:1.5px solid rgba(1,63,50,
 .wu-card .ill-status p{color:#fff;font-size:.82rem;line-height:1.45}
 .wu-card .ill p{font-weight:500}
 @media(max-width:600px){.ill-chat{padding-bottom:64px}}
+
+/* ---------- section tabs on phones (founder, 2026-10-06) ----------
+   The phone site was one long scroll. Long pages now carry a bar of tabs that
+   sticks under the header, and only one section shows at a time. At 900px and
+   up the bar is hidden and every section shows, so desktop keeps the flowing
+   page. The script is assets/js/tabs.js. Without it nothing is hidden. */
+.ptabs{display:none}
+@media(max-width:900px){
+ html.tabs-js .ptabs{display:block;position:sticky;top:var(--tabtop,66px);z-index:45;
+  background:rgba(253,253,253,.95);-webkit-backdrop-filter:blur(14px) saturate(160%);backdrop-filter:blur(14px) saturate(160%);
+  border-bottom:1px solid rgba(1,63,50,.12)}
+ .ptabs-in{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:0 14px;-webkit-overflow-scrolling:touch}
+ .ptabs-in::-webkit-scrollbar{display:none}
+ .ptabs [role="tab"]{flex:1 0 auto;position:relative;border:0;background:none;margin:0;padding:15px 10px 14px;
+  font-family:var(--b);font-weight:800;font-size:.86rem;letter-spacing:-.01em;color:rgba(22,22,22,.55);white-space:nowrap;
+  cursor:pointer;-webkit-tap-highlight-color:transparent}
+ .ptabs [role="tab"]::after{content:"";position:absolute;left:10px;right:10px;bottom:0;height:3px;border-radius:3px 3px 0 0;
+  background:var(--lime);transform:scaleX(0);transition:transform .3s var(--ease)}
+ .ptabs [role="tab"][aria-selected="true"]{color:var(--forest)}
+ .ptabs [role="tab"][aria-selected="true"]::after{transform:scaleX(1);background:var(--forest)}
+ .ptabs [role="tab"]:focus-visible{outline:2px solid var(--forest);outline-offset:-4px;border-radius:8px}
+ html.tabs-js [data-panel]:not(.is-on){display:none!important}
+ html.tabs-js [data-panel]{scroll-margin-top:calc(var(--tabtop,66px) + var(--tabbar,50px))}
+ html.tabs-js [data-panel]:focus{outline:none}
+ html.tabs-js .tabs-flat{padding-top:0;padding-bottom:0}
+ html.tabs-js .wu[data-panel]{border-top:0;padding-top:36px}
+ html.tabs-js section[data-panel] .wu.first{padding-top:8px}
+}
+@media(prefers-reduced-motion:reduce){.ptabs [role="tab"]::after{transition:none}}

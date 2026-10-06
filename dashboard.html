@@ -461,11 +461,11 @@
       "commit " + d.commit + " · checked just now";
 
     document.getElementById("tiles").innerHTML =
-      tile("Model", ai.ms == null ? "—" : String(ai.ms), "ms",
+      tile("Model", ai.ms == null ? "n/a" : String(ai.ms), "ms",
            ai.ok ? (ai.provider + " · " + ai.model + " · " + ago(Date.now() - Date.parse(ai.at))) : "not answering",
            ai.ok ? "" : "down",
            history.map(function (p) { return p.ai; }).filter(function (v) { return v != null; })) +
-      tile("Database", db.ms == null ? "—" : String(db.ms), "ms",
+      tile("Database", db.ms == null ? "n/a" : String(db.ms), "ms",
            db.ok ? "responding" : "not answering",
            db.ok ? "" : "down",
            history.map(function (p) { return p.db; }).filter(function (v) { return v != null; })) +

@@ -20,7 +20,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/styles.css?v=20261005a">
+<link rel="stylesheet" href="/assets/css/styles.css?v=20261006a">
+<script src="/assets/js/tabs.js?v=20261006a"></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Relynked","applicationCategory":"BusinessApplication","operatingSystem":"Web, Android","url":"https://relynked.com/industries/fast-food","description":"Relynked is business management software for fast food restaurants in Nigeria. Your menu, stock, prep time and WhatsApp orders in one place. From ₦20,000 a month, no cut of your sales.","audience":{"@type":"BusinessAudience","audienceType":"fast food restaurants"},"offers":{"@type":"AggregateOffer","priceCurrency":"NGN","lowPrice":"20000","highPrice":"40000","offerCount":"2","url":"https://relynked.com/pricing"},"publisher":{"@type":"Organization","name":"Relynked Ltd","url":"https://relynked.com/"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://relynked.com/"},{"@type":"ListItem","position":2,"name":"Who it is for","item":"https://relynked.com/product#who-its-for"},{"@type":"ListItem","position":3,"name":"Fast food restaurants","item":"https://relynked.com/industries/fast-food"}]}</script>
 </head>
@@ -30,9 +31,9 @@
   <div class="wrap">
     <a class="logo" href="/"><svg class="mk" viewBox="0 0 336 338" aria-hidden="true"><rect width="336" height="338" rx="84" fill="#0A3F32"/><rect x="54" y="85" width="176" height="65" rx="32.5" fill="#fff"/><rect x="54" y="186" width="227" height="67" rx="33.5" fill="#E2E41A"/></svg>Relynked</a>
     <div class="links" id="menu">
-      <a href="/product">Products</a><a href="/how-it-works">How it works</a><a href="/pricing">Pricing</a><a href="/contact">Contact</a><a class="menu-cta" href="/contact">Book a walkthrough</a>
+      <a href="/product">Products</a><a href="/how-it-works">How it works</a><a href="/pricing">Pricing</a><a href="/contact">Contact</a><a class="menu-cta" href="https://app.relynked.com/">Start free</a>
     </div>
-    <a class="btn forest magnet" href="/contact">Book a walkthrough <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    <a class="btn forest magnet" href="https://app.relynked.com/">Start free <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
   </div>
 </nav>
@@ -41,29 +42,34 @@
 <section class="surfaces">
   <div class="wrap">
     <div class="reveal" style="max-width:860px">
-      <div class="eyebrow"><a href="/product#who-its-for">Who it is for</a>&nbsp;/&nbsp;Food and drink</div>
       <h1 style="font-size:clamp(2.4rem,4.8vw,4.2rem)">Business management software for fast food restaurants <span class="hl">in Nigeria.</span></h1>
       <p class="lead" style="margin-top:22px">Relynked runs your fast food restaurant from one place: your menu and prices, what is in stock, how long each item takes to prepare, your staff, your money, and every order that comes in on WhatsApp. Remy, the assistant inside Relynked, answers your customers on WhatsApp, shows them the menu and takes their order, so nobody waits for a reply while you are busy.</p>
-      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:34px"><a class="btn lime magnet" href="https://app.relynked.com/?plan=starter">Get started <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="btn ghost" href="/contact">Book a walkthrough</a></div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:34px"><a class="btn lime magnet" href="https://app.relynked.com/?plan=starter">Start free, no card needed <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="btn ghost" href="#pricing">See pricing</a></div>
     </div>
     
   </div>
 </section>
 
+<div class="ptabs"><div class="ptabs-in" role="tablist" aria-label="Sections of this page">
+  <button type="button" role="tab" aria-controls="problem" aria-selected="true">Orders</button>
+  <button type="button" role="tab" aria-controls="features" aria-selected="false" tabindex="-1">What you get</button>
+  <button type="button" role="tab" aria-controls="groups" aria-selected="false" tabindex="-1">Menu</button>
+  <button type="button" role="tab" aria-controls="pricing" aria-selected="false" tabindex="-1">Pricing</button>
+</div></div>
+
 <!-- ================= THE OLD WAY, THE RELYNKED WAY ================= -->
-<section style="padding:40px 0 20px">
+<section id="problem" data-panel class="is-on" style="padding:40px 0 20px">
   <div class="wrap">
     <article class="wu first">
       <div class="wu-head reveal">
-        <div class="wu-top"><span class="eyebrow">Relynked Floor</span><span class="flag live">Live</span></div>
-        <h2 class="wu-h">Your fast food restaurant, <em>without paper dockets and shouting.</em></h2>
+        <h2 class="wu-h">Orders at your fast food restaurant, <em>without paper dockets and shouting.</em></h2>
       </div>
       <div class="wu-ill reveal d1">
         <div class="ill ill-dockets" role="img" aria-label="Handwritten kitchen dockets on a spike, one crossed out, one with question marks">
           <div class="spike"></div>
           <div class="dk d1"><b>T4 &nbsp;7:31</b>2 jollof<br>1 pep. chicken<br>Chapman x3</div>
           <div class="dk d2"><b>T9 &nbsp;7:42</b>Goat pepper soup<br>2 plantain<br><span class="q hand">still waiting??</span></div>
-          <div class="dk d3"><b>T2 &nbsp;7:50</b><s>Grilled fish</s><br>Hennessy x2<br><span class="q hand">paid??</span></div>
+          <div class="dk d3"><b>T2 &nbsp;7:50</b><s>Grilled fish</s><br>Chapman x2<br><span class="q hand">paid??</span></div>
         </div>
       </div>
       <div class="wu-body reveal">
@@ -71,21 +77,21 @@
         <p class="wu-fix"><b>With Relynked:</b> WhatsApp orders from Remy land in the app for your team. In a busy venue, Relynked Floor puts every order on a screen: the kitchen and the bar see it at once with how long it has waited, and the bill follows it to payment.</p>
         <ul class="wu-list">
           <li>Remy takes WhatsApp orders on every plan, with your real prices and what you have.</li>
-          <li>Kitchen board, bar screen, till and waiter screens come with the Venue plan, on the devices you already have.</li>
+          <li>Standard comes with 1 screen. The full floor, with kitchen board, bar screen, till and waiter screens, comes with Enterprise, on the devices you already have.</li>
+          <li>The till and waiter screens keep taking orders when the network drops, and send them when it is back.</li>
           <li>Card machine and transfer payments wait until they are confirmed.</li>
         </ul>
-        <a class="wu-more" href="/how-it-works#floor">How the floor works <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="wu-more" href="/product#floor">How the floor works <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       </div>
     </article>
   </div>
 </section>
 
 <!-- ================= WHAT IT GETS ================= -->
-<section class="here">
+<section class="here" id="features" data-panel>
   <div class="wrap">
     <div class="reveal" style="max-width:760px">
-      <div class="eyebrow">What you get</div>
-      <h2>Everything your fast food restaurant runs on, <span class="hl">in one place.</span></h2>
+      <h2>What you get: everything your fast food restaurant runs on, <span class="hl">in one place.</span></h2>
       <p class="lead" style="margin-top:22px">One account for the whole business, a flat monthly price, and no percentage of your sales.</p>
     </div>
     <div class="hgrid">
@@ -99,11 +105,10 @@
   </div>
 </section>
 
-<section>
+<section id="groups" data-panel>
   <div class="wrap">
     <div class="reveal" style="max-width:760px">
-      <div class="eyebrow">Your menu</div>
-      <h2>Set up with the groups <span class="hl">you already use.</span></h2>
+      <h2>Your menu, set up with the groups <span class="hl">you already use.</span></h2>
       <p class="lead" style="margin-top:22px">Relynked starts your menu with the groups most fast food restaurants already sort things into, so you add your own items and go.</p>
     </div>
     <div class="sect">
@@ -117,23 +122,22 @@
   </div>
 </section>
 
-<section class="surfaces" id="pricing">
+<section class="surfaces" id="pricing" data-panel>
   <div class="wrap">
     <div class="reveal" style="max-width:760px">
-      <div class="eyebrow">Pricing</div>
-      <h2>A flat monthly price. <span class="hl">No cut of your sales.</span></h2>
-      <p class="lead" style="margin-top:22px">Pay by the month or the year. Relynked takes no percentage of your sales and no fee per transaction. <a href="/pricing" style="color:var(--forest);text-decoration:underline">See full pricing</a>.</p>
+      <h2>Pricing: a flat monthly price. <span class="hl">No cut of your sales.</span></h2>
+      <p class="lead" style="margin-top:22px">Try it free for <span class="trial-days"></span>, with no card. Then pay by the month or the year. Relynked takes no percentage of your sales and no fee per transaction. Meta's charges for WhatsApp messages are paid separately, from your Relynked wallet. <a href="/pricing" style="color:var(--forest);text-decoration:underline">See full pricing</a>.</p>
     </div>
     <div class="plans">
-      <div class="plan  reveal"><div class="pn">Starter</div><div class="pp">₦20,000 <small>/ month</small></div><div class="pd">For a fast food restaurant getting started on Relynked.</div>
-        <ul><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Your menu, prices and stock</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Your customers, and what they order</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Remy answering your customers on WhatsApp</li></ul>
-        <a class="btn ghost" href="https://app.relynked.com/?plan=starter">Get started</a></div>
-      <div class="plan hot d1 reveal"><div class="pn">Standard</div><div class="pp">₦40,000 <small>/ month</small></div><div class="pd">For a busier business with a team.</div>
-        <ul><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Everything in Starter</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Manager and staff logins, each on the record</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Priority help from our team</li></ul>
-        <a class="btn lime" href="https://app.relynked.com/?plan=standard">Get started</a></div>
-      <div class="plan d2 reveal"><div class="pn">Venue</div><div class="pp">₦150,000 <small>/ venue / month</small></div><div class="pd">About ₦150,000 a month for each venue, agreed with you after a walkthrough. The full point of sale, on the devices you already have. Our engineers set them up and lock them to Relynked.</div>
-        <ul><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Everything in Standard</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Your own devices, set up and locked to Relynked</li></ul>
-        <a class="btn ghost" href="/contact">Book a walkthrough</a></div>
+      <div class="plan  reveal"><div class="pn">Basic</div><div class="pp">₦20,000 <small>/ month</small></div><div class="pd">For an owner with a small team.</div>
+        <ul><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>You plus 2 staff</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Remy answering your customers on WhatsApp</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Up to 500 chats a month</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Your menu, prices and stock</li></ul>
+        <a class="btn ghost" href="https://app.relynked.com/?plan=starter">Start free</a></div>
+      <div class="plan hot d1 reveal"><div class="pn">Standard</div><div class="pp">₦40,000 <small>/ month</small></div><div class="pd">For a busier business with a bigger team.</div>
+        <ul><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Everything in Basic</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>You plus 5 staff</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>1 screen at your place</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Up to 1,000 chats a month</li></ul>
+        <a class="btn lime" href="https://app.relynked.com/?plan=standard">Start free</a></div>
+      <div class="plan d2 reveal"><div class="pn">Enterprise</div><div class="pp" style="font-size:2.2rem">From ₦150,000 <small>/ month</small></div><div class="pd">For bigger venues and businesses with several branches, agreed with you after a call.</div>
+        <ul><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Everything in Standard</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>More staff, screens and chats</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Several branches under one owner</li></ul>
+        <a class="btn ghost" href="/contact">Book a call</a></div>
     </div>
   </div>
 </section>
@@ -141,14 +145,14 @@
 <section>
   <div class="wrap">
     <div class="reveal" style="max-width:760px">
-      <div class="eyebrow">Food and drink</div>
-      <h2>Also on Relynked.</h2>
+      <h2>Also on Relynked in food and drink.</h2>
     </div>
     <div class="sect">
       <a class="tile reveal" href="/industries/grill"><b>Grills and suya spots</b><span class="more" style="font-weight:800;font-size:.82rem;color:var(--forest)">See how it works</span></a>
-      <a class="tile reveal d1" href="/industries/restaurant"><b>Restaurants and bukas</b><span class="more" style="font-weight:800;font-size:.82rem;color:var(--forest)">See how it works</span></a>
-      <a class="tile reveal d2" href="/industries/bar"><b>Bars and lounges</b><span class="more" style="font-weight:800;font-size:.82rem;color:var(--forest)">See how it works</span></a>
-      <a class="tile reveal d3" href="/industries/bakery"><b>Bakeries and cafes</b><span class="more" style="font-weight:800;font-size:.82rem;color:var(--forest)">See how it works</span></a>
+      <a class="tile reveal d1" href="/industries/restaurant"><b>Restaurants</b><span class="more" style="font-weight:800;font-size:.82rem;color:var(--forest)">See how it works</span></a>
+      <a class="tile reveal d2" href="/industries/buka"><b>Buka or mama put businesses</b><span class="more" style="font-weight:800;font-size:.82rem;color:var(--forest)">See how it works</span></a>
+      <a class="tile reveal d3" href="/industries/bar"><b>Bars and lounges</b><span class="more" style="font-weight:800;font-size:.82rem;color:var(--forest)">See how it works</span></a>
+      <a class="tile reveal" href="/industries/bakery"><b>Bakeries and cafes</b><span class="more" style="font-weight:800;font-size:.82rem;color:var(--forest)">See how it works</span></a>
     </div>
     <p class="sectnote reveal"><a href="/product#who-its-for">See every business Relynked is set up for</a></p>
   </div>
@@ -157,8 +161,8 @@
 <!-- ================= CTA ================= -->
 <div class="cta-band reveal" id="cta">
   <h2>Run your fast food restaurant on Relynked.</h2>
-  <p>Sign up on the Starter plan and set up your menu today, or book a walkthrough and we will set it up with you.</p>
-  <div class="row"><a class="btn lime magnet" href="https://app.relynked.com/?plan=starter">Get started <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="btn ghost" style="color:var(--paper);border-color:rgba(253,253,253,.3)" href="/contact">Book a walkthrough</a></div>
+  <p>Try it free for <span class="trial-days"></span>, with no card needed, and set up your menu today.</p>
+  <div class="row"><a class="btn lime magnet" href="https://app.relynked.com/?plan=starter">Start free, no card needed <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="btn ghost" style="color:var(--paper);border-color:rgba(253,253,253,.3)" href="/pricing">See pricing</a></div>
 </div>
 
 <footer>

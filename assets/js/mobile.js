@@ -30,16 +30,16 @@ document.querySelectorAll('.macc button').forEach(b=>b.onclick=()=>{
   const a=b.parentElement,body=a.querySelector('.mbody'),open=a.classList.toggle('mopen');
   body.style.maxHeight=open?body.scrollHeight+'px':0;
 });
-/* the phone in the hero alternates between the two people who sign a handover.
+/* the phone in the hero alternates between the two people in a handover.
    Copy is taken from the chef and storekeeper screen spec, not invented. */
 const APPS=[
 {role:'Store · Intake',who:'Just say what came in',
  say:'"From Mile 12 Market: 5 crates tomatoes 24k each"',
  rows:[['5 × Crate of tomatoes','₦24,000 each']],
- tot:['Delivery total','₦120,000'], act:'Sign and record'},
-{role:'Kitchen · Asked for',who:'Awaiting signature',
+ tot:['Delivery total','₦120,000'], act:'Record delivery'},
+{role:'Kitchen · Asked for',who:'Waiting to receive',
  rows:[['2 × Crate tomatoes','Received'],['1 × Bag rice','Received']],
- good:'Everything matched.<br>The kitchen reconciles clean.', act:'Sign for delivery'}
+ good:'Everything matched.<br>The kitchen reconciles clean.', act:'Receive delivery'}
 ];
 let ai=0;
 function drawApp(){

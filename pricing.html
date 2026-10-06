@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Pricing · Relynked</title>
-<meta name="description" content="Relynked pricing: one business management system, from ₦20,000 a month to start, to about ₦150,000 a month per venue with the full point of sale. No percentage of your sales.">
+<meta name="description" content="Relynked pricing: Basic ₦20,000 a month, Standard ₦40,000 a month, Enterprise from ₦150,000 a month. A free trial with no card, and no percentage of your sales.">
 <link rel="canonical" href="https://relynked.com/pricing">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" href="/assets/img/logo.svg" type="image/svg+xml">
@@ -14,7 +14,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/styles.css?v=20261005a">
+<link rel="stylesheet" href="/assets/css/styles.css?v=20261006a">
+<script src="/assets/js/tabs.js?v=20261006a"></script>
 </head>
 <body>
 
@@ -22,74 +23,88 @@
   <div class="wrap">
     <a class="logo" href="/"><svg class="mk" viewBox="0 0 336 338" aria-hidden="true"><rect width="336" height="338" rx="84" fill="#0A3F32"/><rect x="54" y="85" width="176" height="65" rx="32.5" fill="#fff"/><rect x="54" y="186" width="227" height="67" rx="33.5" fill="#E2E41A"/></svg>Relynked</a>
     <div class="links" id="menu">
-      <a href="/product">Products</a><a href="/how-it-works">How it works</a><a href="/pricing">Pricing</a><a href="/contact">Contact</a><a class="menu-cta" href="/contact">Book a walkthrough</a>
+      <a href="/product">Products</a><a href="/how-it-works">How it works</a><a href="/pricing">Pricing</a><a href="/contact">Contact</a><a class="menu-cta" href="https://app.relynked.com/">Start free</a>
     </div>
-    <a class="btn forest magnet" href="/contact">Book a walkthrough <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    <a class="btn forest magnet" href="https://app.relynked.com/">Start free <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
   </div>
 </nav>
 
-<!-- ================= PRICING ================= -->
-<!-- ADDED 2026-09-23 for Paystack review: plans and prices approved by the founder on 2026-09-23 -->
-<section class="surfaces" id="pricing">
+<!-- ================= PRICING =================
+     Plans and prices from the founder, 2026-10-06: Basic, Standard, Enterprise.
+     The free trial length lives in ONE place: --trial-days at the top of
+     assets/css/styles.css. Every span with class "trial-days" shows it. -->
+<section class="surfaces" id="pricing" style="padding-bottom:56px">
   <div class="wrap">
-    <div class="reveal" style="max-width:760px">
-      <div class="eyebrow">Pricing</div>
-      <h2>One system for the whole business. <span class="hl">No cut of your sales.</span></h2>
-      <p class="lead" style="margin-top:22px">Relynked is a business management system. It runs what you sell and make, your stock, your staff, your money, and every conversation with your customers, in one place. Start with what you need today and grow into the rest on the same account, with nothing to move and nothing to learn twice. Remy, the assistant inside Relynked, answers your customers on WhatsApp from day one.</p>
+    <div class="reveal" style="max-width:780px">
+      <h1 style="font-size:clamp(2.4rem,4.8vw,4.2rem)">One system for the whole business. <span class="hl">No cut of your sales.</span></h1>
+      <p class="lead" style="margin-top:22px">Relynked runs what you sell, your stock, your staff, your money and every chat with your customers, in one place. Remy, the assistant inside Relynked, answers your customers on WhatsApp from day one. Try it free for <span class="trial-days"></span>, with no card.</p>
     </div>
-    <div class="plans">
-      <div class="plan reveal"><div class="pn">Starter</div><div class="pp">₦20,000 <small>/ month</small></div><div class="pd">For a business getting started on Relynked. Or pay yearly: ₦200,000 a year, which is 10 months' price for 12 months.</div>
-        <ul><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Your products and services, prices and stock</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Orders and payments in one place</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Your customers, and what they order</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Remy answering your customers on WhatsApp</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>About 500 customer conversations a month</li></ul>
-        <a class="btn ghost" href="https://app.relynked.com/?plan=starter">Get started</a></div>
-      <div class="plan hot reveal d1"><div class="pn">Standard</div><div class="pp">₦40,000 <small>/ month</small></div><div class="pd">For a busier business with a team. Or pay yearly: ₦400,000 a year, which is 10 months' price for 12 months.</div>
-        <ul><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Everything in Starter</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Manager and staff logins, each on the record</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>About 2,000 customer conversations a month</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Priority help from our team</li></ul>
-        <a class="btn lime" href="https://app.relynked.com/?plan=standard">Get started</a></div>
-      <div class="plan reveal d2"><div class="pn">Venue</div><div class="pp">₦150,000 <small>/ venue / month</small></div><div class="pd">About ₦150,000 a month for each venue, agreed with you after a walkthrough. The full point of sale for bars, restaurants and shops. Every order, tab, count and handover on the record, on the devices you already have. Our engineers set them up and lock them to Relynked, and only suggest new ones if yours cannot do the job. Coming to more businesses soon.</div>
-        <ul><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Everything in Standard</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Your own devices, set up and locked to Relynked</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Bar and kitchen queues, tabs and handovers</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Blind stock counts and fake goods checks</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Works through a power cut</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Several venues under one owner: talk to us</li></ul>
-        <a class="btn ghost" href="/contact">Book a walkthrough</a></div>
+  </div>
+</section>
+
+<div class="ptabs"><div class="ptabs-in" role="tablist" aria-label="Pricing sections">
+  <button type="button" role="tab" aria-controls="plans" aria-selected="true">Plans</button>
+  <button type="button" role="tab" aria-controls="paying" aria-selected="false" tabindex="-1">How paying works</button>
+  <button type="button" role="tab" aria-controls="questions" aria-selected="false" tabindex="-1">Questions</button>
+</div></div>
+
+<section class="surfaces is-on" id="plans" data-panel style="padding-top:8px">
+  <div class="wrap">
+    <div class="plans" style="margin-top:32px">
+      <div class="plan reveal"><div class="pn">Basic</div><div class="pp">₦20,000 <small>/ month</small></div><div class="pd">For an owner with a small team. Or pay yearly: ₦200,000 a year, which is 10 months' price for 12 months.</div>
+        <ul><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>You plus 2 staff</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Remy answering your customers on WhatsApp</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Up to 500 chats a month</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Your products or services, prices and stock</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Orders and payments in one place</li></ul>
+        <a class="btn ghost" href="https://app.relynked.com/?plan=starter">Start free</a></div>
+      <div class="plan hot reveal d1"><div class="pn">Standard</div><div class="pp">₦40,000 <small>/ month</small></div><div class="pd">For a busier business with a bigger team. Or pay yearly: ₦400,000 a year, which is 10 months' price for 12 months.</div>
+        <ul><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Everything in Basic</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>You plus 5 staff</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>1 screen at your place</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Up to 1,000 chats a month</li></ul>
+        <a class="btn lime" href="https://app.relynked.com/?plan=standard">Start free</a></div>
+      <div class="plan reveal d2"><div class="pn">Enterprise</div><div class="pp" style="font-size:2.2rem">From ₦150,000 <small>/ month</small></div><div class="pd">For bigger venues and businesses with several branches. The price is agreed with you after a call.</div>
+        <ul><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Everything in Standard</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>More staff, screens and chats</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Till, kitchen, bar and store screens on the devices you have</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Blind stock counts</li><li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Several branches under one owner</li></ul>
+        <a class="btn ghost" href="/contact">Book a call</a></div>
     </div>
-    <p class="reveal" style="margin-top:28px;max-width:760px;font-size:.98rem;line-height:1.65"><b>Founding businesses:</b> our first 20 businesses get the full Standard plan at ₦30,000 a month, fixed for their first 12 months. <a href="/contact" style="text-decoration:underline">Ask about a founding place.</a></p>
-    <p class="reveal" style="margin-top:34px;max-width:760px;font-size:.92rem;line-height:1.65;color:rgba(22,22,22,.7)">All prices are in Nigerian naira. Yearly plans: pay for 10 months, get 12. Relynked charges no percentage of your sales and no fee per transaction. When your customers pay you, the payment company that handles that payment charges its own fee, which is separate from Relynked and set by that company. You can cancel at any time. See our <a href="/refund-policy" style="color:var(--forest);text-decoration:underline">refund policy</a> and <a href="/terms#subscriptions" style="color:var(--forest);text-decoration:underline">terms of service</a>.</p>
+    <p class="reveal" style="margin-top:28px;max-width:760px;font-size:.98rem;line-height:1.65"><b>Free trial:</b> <span class="trial-days"></span> on us, with no card. Pick a plan when the trial ends.</p>
+    <p class="reveal" style="margin-top:14px;max-width:760px;font-size:.98rem;line-height:1.65"><b>WhatsApp message charges:</b> Meta, the company behind WhatsApp, charges for some messages. That charge is not part of your plan. It is paid separately, from your Relynked wallet.</p>
+    <p class="reveal" style="margin-top:22px;max-width:760px;font-size:.92rem;line-height:1.65;color:rgba(22,22,22,.7)">All prices are in Nigerian naira. Yearly plans: pay for 10 months, get 12. Relynked charges no percentage of your sales and no fee per transaction. When your customers pay you, the payment company that handles that payment charges its own fee. That fee is separate from Relynked. You can cancel at any time. See our <a href="/refund-policy" style="color:var(--forest);text-decoration:underline">refund policy</a> and <a href="/terms#subscriptions" style="color:var(--forest);text-decoration:underline">terms of service</a>.</p>
   </div>
 </section>
 
 <!-- ================= HOW PAYING WORKS ================= -->
-<section class="here">
+<section class="here" id="paying" data-panel>
   <div class="wrap">
     <div class="reveal" style="max-width:720px">
-      <div class="eyebrow">How paying works</div>
       <h2>Simple to pay, <span class="hl">fair when you're late.</span></h2>
       <p class="lead" style="margin-top:22px">No card machine to buy, no contract to sign, and nothing deleted if a month runs late.</p>
     </div>
     <div class="hgrid">
-      <div class="hc reveal"><svg viewBox="0 0 24 24"><path d="M3 10h18M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 21h18M12 3 3 8h18z"/></svg><b>Pay by bank transfer</b><p>Every business gets its own Relynked account number. Send your subscription to it by bank transfer and it is credited to your account automatically. Card or direct debit autopay will be offered as an option later.</p></div>
+      <div class="hc reveal"><svg viewBox="0 0 24 24"><path d="M3 10h18M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 21h18M12 3 3 8h18z"/></svg><b>Top up by bank transfer</b><p>Every business gets its own Relynked account number. Send money to it by bank transfer and it lands in your Relynked wallet by itself. Your plan is paid from the wallet, and so are WhatsApp message charges.</p></div>
       <div class="hc reveal d1"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><b>Your sales stay yours</b><p>Money your customers pay goes straight to your business through a licensed payment company. Relynked never holds it and never takes a cut of it.</p></div>
-      <div class="hc reveal d2"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>If a payment is missed</b><p>We remind you 3 days before renewal. After that you get 7 days' grace with everything working, then 7 more days with warnings. On day 15 the WhatsApp assistant pauses until you pay. Nothing is deleted.</p></div>
+      <div class="hc reveal d2"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>If a payment is missed</b><p>We remind you 3 days before renewal. After that you get 7 days' grace with everything working, then 7 more days with warnings. On day 15 Remy pauses until you pay. Nothing is deleted.</p></div>
     </div>
   </div>
 </section>
 
 <!-- ================= FAQ ================= -->
-<section>
+<section id="questions" data-panel>
   <div class="wrap">
-    <div class="reveal" style="text-align:center"><div class="eyebrow" style="justify-content:center">Questions</div><h2>The ones we get asked first.</h2></div>
+    <div class="reveal" style="text-align:center"><h2>The questions we get asked first.</h2></div>
     <div class="faq reveal">
-      <div class="q"><button>Do you take a percentage of my sales?<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><div class="a"><p>No. Relynked charges one flat monthly or yearly fee. We take no percentage of your sales and no charge per transaction. When a customer pays you by card or transfer, the payment company that processes it charges its own fee. That fee is separate, and it is charged by that company, not by Relynked.</p></div></div>
+      <div class="q"><button>Is there a free trial?<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><div class="a"><p>Yes. You get <span class="trial-days"></span> on us, and we do not ask for a card. When the trial ends, pick a plan and top up your wallet to carry on.</p></div></div>
+      <div class="q"><button>Are WhatsApp message charges included?<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><div class="a"><p>No. Meta, the company behind WhatsApp, charges for some messages. That charge is separate from your plan. It is paid from your Relynked wallet.</p></div></div>
+      <div class="q"><button>Do you take a percentage of my sales?<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><div class="a"><p>No. Relynked charges one flat monthly or yearly fee. We take no percentage of your sales and no charge per transaction. When a customer pays you by card or transfer, the payment company that processes it charges its own fee. That fee is charged by that company, not by Relynked.</p></div></div>
       <div class="q"><button>Does Relynked hold my customers' money?<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><div class="a"><p>No. When a customer pays for an order, the money goes directly to your business through a licensed payment company. Relynked does not hold it, move it or refund it. Refunds of those payments are between you and your customer.</p></div></div>
-      <div class="q"><button>How do I pay for my subscription?<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><div class="a"><p>By bank transfer into your own Relynked account number, which you get when you sign up. Payments into it are credited to your subscription automatically. Paying by card or direct debit on autopay will be added as an option later.</p></div></div>
-      <div class="q"><button>What happens if I pay late?<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><div class="a"><p>We send a reminder 3 days before your renewal date. If the payment does not arrive, you have 7 days' grace with everything still working, then 7 more days with warnings. On day 15 the WhatsApp assistant pauses until you pay. Your data, orders and settings are kept, and everything starts again as soon as the payment lands.</p></div></div>
+      <div class="q"><button>How do I pay for my plan?<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><div class="a"><p>By bank transfer into your own Relynked account number, which you get when you sign up. Money you send lands in your Relynked wallet, and your plan is paid from there.</p></div></div>
+      <div class="q"><button>What happens if I pay late?<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><div class="a"><p>We send a reminder 3 days before your renewal date. If the payment does not arrive, you have 7 days' grace with everything still working, then 7 more days with warnings. On day 15 Remy pauses until you pay. Your data, orders and settings are kept, and everything starts again as soon as the payment lands.</p></div></div>
       <div class="q"><button>Can I cancel?<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><div class="a"><p>Yes, at any time. Your plan stays active until the end of the period you have paid for, then stops. If you cancel within 7 days of your very first payment, we refund it in full. The full rules are in our <a href="/refund-policy">refund policy</a>.</p></div></div>
-      <div class="q"><button>Can prices change?<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><div class="a"><p>We will always give you at least 30 days' notice before a price change applies to your account. A yearly plan keeps its price until the year you have paid for ends, and a founding business keeps its ₦30,000 price for its first 12 months.</p></div></div>
+      <div class="q"><button>Can prices change?<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><div class="a"><p>We will always give you at least 30 days' notice before a price change applies to your account. A yearly plan keeps its price until the year you have paid for ends.</p></div></div>
     </div>
   </div>
 </section>
 
 <!-- ================= CTA ================= -->
 <div class="cta-band reveal" id="cta">
-  <h2>See it running in your own business.</h2>
-  <p>A forty-minute walkthrough at your place, on the devices you already have, set up with your own products and people. No commitment, no card required.</p>
-  <div class="row"><a class="btn lime magnet" href="/contact">Book a walkthrough <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="btn ghost" style="color:var(--paper);border-color:rgba(253,253,253,.3)" href="tel:+2349162216711">Call 0916 221 6711</a></div>
+  <h2>Start free today.</h2>
+  <p>Try Relynked for <span class="trial-days"></span> on us, with no card needed. Add what you sell, and let Remy answer your next customer on WhatsApp.</p>
+  <div class="row"><a class="btn lime magnet" href="https://app.relynked.com/">Start free, no card needed <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="btn ghost" style="color:var(--paper);border-color:rgba(253,253,253,.3)" href="/contact">Enterprise? Talk to us</a></div>
 </div>
 
 <footer>

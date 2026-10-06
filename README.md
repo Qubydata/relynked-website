@@ -5,7 +5,15 @@ Static site, no build step. Live at https://relynked.com.
 Hosted on Cloudflare Pages, project `relynked`, in the Qubydata Cloudflare account.
 Deploying is one command, run from this folder:
 
-    CLOUDFLARE_API_TOKEN=$(cat ~/cf-token.txt)     CLOUDFLARE_ACCOUNT_ID=d98789131749b5406fb336071454a0d4     npx wrangler pages deploy . --project-name relynked --branch main
+    node scripts/build-headers.mjs && CLOUDFLARE_API_TOKEN=$(cat ~/cf-token.txt)     CLOUDFLARE_ACCOUNT_ID=d98789131749b5406fb336071454a0d4     npx wrangler pages deploy . --project-name relynked --branch main
+
+`scripts/build-headers.mjs` writes `_headers`: the content security policy and
+the other security headers (security review 2026-09-30). Pages allow scripts only
+from this site, and a script inside a page (careers, press, dashboard, the Shift
+mock-up) only by the hash of its exact text, so the script must run after any
+change to such a script, or that page's script stops working on the live site.
+A new outside source (a font, an embed, an API) must be added to the policy in
+that script first.
 
 Links and assets are root absolute, so this no longer previews over file://.
 To view it locally, run `python -m http.server` in this folder and open
@@ -13,14 +21,15 @@ http://localhost:8000.
 
 ## Files
 
-    index.html          Home      hero, ticker, why it exists, quote, CTA
-    product.html        Product   the two products, bottle verification, CTA
-    how-it-works.html   How it works   custody chain, blind counts, built for Nigeria, CTA
-    pricing.html        Pricing   plans, FAQ, CTA
+    index.html          Home      hero, who it is for, ticker, why it exists, what it does, CTA
+    product.html        Product   the two products, the write-ups (Remy, payments, stock, staff, floor), who it is for, CTA
+    how-it-works.html   How it works   every step, blind counts, built for Nigeria, CTA
+    pricing.html        Pricing   Basic, Standard, Enterprise, how paying works, FAQ, CTA
     contact.html        Contact   phone, address, Google map, what a walkthrough covers
 
     assets/css/styles.css   the whole stylesheet, lifted unchanged from the original page
     assets/js/main.js       sticky nav, scroll reveal, count-up, FAQ, magnetic buttons, hero board
+    assets/js/tabs.js       the section tabs on phones (see "Tabs on phones" below)
     assets/img/             drop photographs here as they arrive
     reference/              the original single-page file, kept untouched as the reference
     industries/             "Who Relynked is for" pages, GENERATED, do not edit by hand
@@ -57,7 +66,7 @@ Also run the script after adding a new page to the site, so the sitemap lists it
 
 ## House rules
 
-- The header and footer are identical on all five pages. Change one, change all five.
+- The header and footer are identical on all the main pages. Change one, change all five.
 - There is no Home link in the nav. The Relynked logo in the header and in the footer is
   the way back to `index.html`.
 - Inner pages carry `class="nav solid always-solid"` so the nav is legible before you scroll.
@@ -67,7 +76,7 @@ Also run the script after adding a new page to the site, so the sitemap lists it
 
 ## Photo placeholders
 
-Three `.ph` blocks are waiting for photographs, on home, product and contact.
+Two `.ph` blocks are waiting for photographs, on home and contact.
 Each carries a `.tag` describing the shot. Replace the block with an `<img>` when
 the photo exists.
 
@@ -98,13 +107,44 @@ not, it is too narrow.
 The hero device still shows a kitchen pass board, deliberately, because concrete beats
 abstract. The caption beneath it does the broadening work by naming it as one deployment.
 
-The sector strip on the home page carries honest status chips: Live, In build, Planned.
-**Do not mark anything Live that is not.** Change a chip by swapping the class on the
-`.flag` span: `live`, `build` or `soon`.
+**Only what is live goes on the site** (founder, 2026-10-06). No "Coming soon", no status
+chips, no sectors that are not on the sign-up list, and nothing that tells a competitor what
+is being built. The sector strip on the home page links only to kinds of business people can
+sign up as today. Before a claim goes up, check it in the live code: the phone app does not
+work offline (only the floor till and waiter screens queue orders), and the database is in
+Frankfurt, Germany, so never say the data stays in Nigeria.
 
-The anti-counterfeit section deliberately does not describe the mechanism. No serials, no
-scanning flow, no outcome list, no screenshots of the verification screen. That belongs
-in a sales conversation, not on a public page.
+No small eyebrow labels above headings and no tiny explanation lines under them: what such
+a label would say goes into the headline or the first sentence.
+
+## Calls to action
+
+The main button everywhere is "Start free" (or "Start free, no card needed"), opening the app
+sign-up at https://app.relynked.com, with "See pricing" beside it. Only Enterprise offers a
+call: "Book a call" on its plan card, and the contact page. The app still calls the Basic plan
+`starter`, so Basic buttons open `?plan=starter`.
+
+## Plans and the free trial
+
+Basic ₦20,000 a month (you plus 2 staff, up to 500 chats a month), Standard ₦40,000 (you plus
+5 staff, 1 screen, up to 1,000 chats), Enterprise from ₦150,000 after a call. Meta's WhatsApp
+message charges are paid separately, from the wallet. The plan cards on industry pages come
+from `pricingBlock` in `scripts/build-industries.mjs`.
+
+The free trial length is written once, as `--trial-days` at the top of
+`assets/css/styles.css`. Every `<span class="trial-days"></span>` shows it. Change that one
+line (for example to "14 days") and every page follows.
+
+## Tabs on phones
+
+Below 900px, long pages (home, products, how it works, pricing, every industry page) show a
+bar of tabs that sticks under the header, and only one section shows at a time. At 900px and
+up the bar is hidden and the page flows as before. Markup: a `.ptabs` bar of
+`<button role="tab" aria-controls="ID">`, and each section carries `id="ID" data-panel`,
+the first one also `class="is-on"`. `assets/js/tabs.js` loads in the head so nothing jumps.
+A link to `#anything` opens the tab that holds it, choosing a tab writes its id into the
+address, and arrow keys, Home and End move between tabs. The bar must sit outside the
+sections (straight in the body, or in `.mlay` on home), or it stops sticking.
 
 ## Company details
 
