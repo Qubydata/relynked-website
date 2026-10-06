@@ -252,6 +252,108 @@ const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(
 const ld = obj => `<script type="application/ld+json">${JSON.stringify(obj).replace(/</g, '\\u003c')}</script>`;
 const svg = p => `<svg viewBox="0 0 24 24" aria-hidden="true">${p}</svg>`;
 const ARROW = '<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+
+// One write-up per kind of business, problem first (founder, 2026-10-05): the
+// owner's own problem in plain words, a drawing of the old way in HTML and CSS,
+// then what Relynked does and a few plain specifics. The status chip must say
+// the truth: "live" only for what a customer can use today, otherwise "soon".
+// Styles are the .wu and .ill-* rules in assets/css/styles.css.
+const WRITEUP = {
+  food: t => `<!-- ================= THE OLD WAY, THE RELYNKED WAY ================= -->
+<section style="padding:40px 0 20px">
+  <div class="wrap">
+    <article class="wu first">
+      <div class="wu-head reveal">
+        <div class="wu-top"><span class="eyebrow">Relynked Floor</span><span class="flag live">Live</span></div>
+        <h2 class="wu-h">Your ${esc(t.singular)}, <em>without paper dockets and shouting.</em></h2>
+      </div>
+      <div class="wu-ill reveal d1">
+        <div class="ill ill-dockets" role="img" aria-label="Handwritten kitchen dockets on a spike, one crossed out, one with question marks">
+          <div class="spike"></div>
+          <div class="dk d1"><b>T4 &nbsp;7:31</b>2 jollof<br>1 pep. chicken<br>Chapman x3</div>
+          <div class="dk d2"><b>T9 &nbsp;7:42</b>Goat pepper soup<br>2 plantain<br><span class="q hand">still waiting??</span></div>
+          <div class="dk d3"><b>T2 &nbsp;7:50</b><s>Grilled fish</s><br>Hennessy x2<br><span class="q hand">paid??</span></div>
+        </div>
+      </div>
+      <div class="wu-body reveal">
+        <p class="wu-story">An order is written on paper, walked to the kitchen and shouted to the bar. A docket goes missing, a table waits 40 minutes, and at close nobody can say what was never paid for.</p>
+        <p class="wu-fix"><b>With Relynked:</b> WhatsApp orders from Remy land in the app for your team. In a busy venue, Relynked Floor puts every order on a screen: the kitchen and the bar see it at once with how long it has waited, and the bill follows it to payment.</p>
+        <ul class="wu-list">
+          <li>Remy takes WhatsApp orders on every plan, with your real prices and what you have.</li>
+          <li>Kitchen board, bar screen, till and waiter screens come with the Venue plan, on the devices you already have.</li>
+          <li>Card machine and transfer payments wait until they are confirmed.</li>
+        </ul>
+        <a class="wu-more" href="/how-it-works#floor">How the floor works ${ARROW}</a>
+      </div>
+    </article>
+  </div>
+</section>`,
+  shop: t => `<!-- ================= THE OLD WAY, THE RELYNKED WAY ================= -->
+<section style="padding:40px 0 20px">
+  <div class="wrap">
+    <article class="wu first">
+      <div class="wu-head reveal">
+        <div class="wu-top"><span class="eyebrow">Walk-in sales</span><span class="flag soon">Coming soon</span></div>
+        <h2 class="wu-h">Walk-in sales, <em>without the exercise book.</em></h2>
+      </div>
+      <div class="wu-ill reveal d1">
+        <div class="ill ill-book" role="img" aria-label="A page from a shop's sales notebook, with a crossed out line, an unpaid debt and a cash shortage">
+          <div class="dt">Sat 4/10/26</div>
+          <div class="ln"><span>2 ctn Indomie</span><span>18,000</span></div>
+          <div class="ln"><span>Peak milk x3 (trf)</span><span>3,300</span></div>
+          <div class="ln x"><span>Semo 1kg</span><span>2,200</span></div>
+          <div class="ln cr"><span>Mama Tobi, oil + sugar (owe)</span><span>4,800</span></div>
+          <div class="ln"><span>Coke x6</span><span>3,000</span></div>
+          <div class="ln"><span>Diesel</span><span>&minus;6,500</span></div>
+          <div class="ln tot"><span>Cash in hand</span><span>21,300</span></div>
+          <div class="ln q"><span>short 1,000??</span><span></span></div>
+        </div>
+      </div>
+      <div class="wu-body reveal">
+        <p class="wu-story">Every ${esc(t.singular)} has one: the notebook under the counter. Each sale, who took goods to pay later, the diesel money, and the cash at night. A line gets crossed out with no name beside it, "trf" means a transfer nobody checked, and the night ends with "short 1,000??".</p>
+        <p class="wu-fix"><b>Coming to Relynked:</b> record a walk-in sale on your phone, or your sales girl's phone, in three taps. Stock goes down by itself, transfers are checked, the credit list has names and dates, and the night count says who and when.</p>
+        <ul class="wu-list">
+          <li>Works with no network. The sale is saved on the phone and sent later.</li>
+          <li>Nothing is rubbed out. A change is a new line with a name and a time.</li>
+          <li>Today, Remy already takes your WhatsApp orders and keeps your stock, so you can start now.</li>
+        </ul>
+      </div>
+    </article>
+  </div>
+</section>`,
+  service: t => `<!-- ================= THE OLD WAY, THE RELYNKED WAY ================= -->
+<section style="padding:40px 0 20px">
+  <div class="wrap">
+    <article class="wu first">
+      <div class="wu-head reveal">
+        <div class="wu-top"><span class="eyebrow">Bookings</span><span class="flag live">Live</span></div>
+        <h2 class="wu-h">Bookings, <em>without the diary and the clash at 2pm.</em></h2>
+      </div>
+      <div class="wu-ill reveal d1">
+        <div class="ill ill-diary" role="img" aria-label="A paper booking diary with two customers in the same 2pm slot and a no-show">
+          <div class="dt">Saturday 12 October</div>
+          <div class="sl"><span>10:00</span><span>Kemi</span></div>
+          <div class="sl"><span>12:00</span><span><s>Funke</s> moved to 3?</span></div>
+          <div class="sl"><span>2:00</span><span class="clash">Bisi + Amaka (from DM) <span class="q">??</span></span></div>
+          <div class="sl"><span>3:00</span><span>Funke?</span></div>
+          <div class="sl"><span>4:00</span><span>Tola <span class="q hand">no show</span></span></div>
+          <div class="sl"><span>5:30</span><span>&nbsp;</span></div>
+        </div>
+      </div>
+      <div class="wu-body reveal">
+        <p class="wu-story">Bookings live in a diary and in your DMs. Two customers get the same 2pm, one booking never makes it into the book, and a customer who booked never shows up.</p>
+        <p class="wu-fix"><b>With Relynked:</b> Remy books your customers on WhatsApp at times you are actually free, and holds the right amount of time for each service. The day's bookings wait for you in the app.</p>
+        <ul class="wu-list">
+          <li>Each service has its own length, so a long one holds all the time it needs.</li>
+          <li>Ask for a deposit to hold a booking.</li>
+          <li>Your staff and your customers, in one place.</li>
+        </ul>
+      </div>
+    </article>
+  </div>
+</section>`,
+};
+
 const TICK = '<svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>';
 
 function shell() {
@@ -384,6 +486,8 @@ ${siblings.map((s, i) => `      <a class="tile reveal${i % 4 ? ` d${i % 4}` : ''
     ${aka}
   </div>
 </section>
+
+${WRITEUP[t.family] ? WRITEUP[t.family](t) : ''}
 
 <!-- ================= WHAT IT GETS ================= -->
 <section class="here">

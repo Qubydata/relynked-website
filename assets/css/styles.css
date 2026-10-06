@@ -467,3 +467,178 @@ footer{padding:80px 0 40px;margin-top:100px;border-top:1.5px solid rgba(1,63,50,
 /* legal links in the footer bar need to look clickable */
 .fb a{text-decoration:underline;text-decoration-color:rgba(1,63,50,.35);text-underline-offset:3px}
 .fb a:hover{color:var(--forest);text-decoration-color:var(--forest)}
+
+/* ---------- write-ups: the problem first, a drawing of the old way, then what Relynked does ----------
+   Founder, 2026-10-05: every product section opens with the owner's own problem in
+   plain words, shows the old way as a simple drawing (HTML and CSS, never a stock
+   photo), then the Relynked way and a few plain specifics. Status chips use the
+   .flag classes: live or soon. Never colour a card's side edge. */
+.wu-intro{max-width:780px}
+.wu{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);grid-template-areas:"head ill" "body ill";
+ column-gap:72px;row-gap:0;align-items:start;padding:80px 0;border-top:1.5px solid rgba(1,63,50,.12)}
+.wu-intro + .wu,.wu.first{border-top:0}
+.wu.flip{grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);grid-template-areas:"ill head" "ill body"}
+.wu-head{grid-area:head;align-self:end}
+.wu-body{grid-area:body}
+.wu-ill{grid-area:ill;align-self:center;background:var(--mist);border-radius:22px;padding:44px 32px;display:grid;place-items:center;min-height:380px}
+.surfaces .wu-ill{background:var(--paper)}
+.wu-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.wu-top .eyebrow{margin-bottom:0}
+.wu-h{font-size:clamp(1.9rem,3vw,2.7rem);letter-spacing:-.045em;line-height:1.04}
+.wu-h em{font-style:normal;background:linear-gradient(transparent 60%,var(--lime) 60%,var(--lime) 90%,transparent 90%);
+ -webkit-box-decoration-break:clone;box-decoration-break:clone;padding:0 .04em}
+.wu-story{margin-top:22px;font-size:1.08rem;line-height:1.65;color:rgba(22,22,22,.72);font-weight:500;max-width:58ch}
+.wu-fix{margin-top:16px;font-size:1.08rem;line-height:1.65;color:var(--ink);font-weight:600;max-width:58ch}
+.wu-fix b{font-family:var(--d);font-weight:800;color:var(--forest)}
+.wu-list{list-style:none;padding:0;margin:24px 0 0;display:grid;gap:11px;max-width:58ch}
+.wu-list li{position:relative;padding-left:22px;font-size:.95rem;line-height:1.55;color:rgba(22,22,22,.72);font-weight:500}
+.wu-list li::before{content:"";position:absolute;left:2px;top:.5em;width:8px;height:8px;border-radius:50%;background:var(--forest);box-shadow:0 0 0 3px var(--lime)}
+.wu-list li.later::before{background:rgba(22,22,22,.3);box-shadow:0 0 0 3px var(--mist)}
+.wu-list li .flag{margin-left:4px;vertical-align:2px;white-space:nowrap;display:inline-block}
+.wu-more{display:inline-flex;align-items:center;gap:6px;margin-top:24px;font-weight:800;font-size:.9rem;color:var(--forest);border-bottom:2px solid var(--lime)}
+
+/* the Ask Remy mark: a forest circle with a lime dot (founder, 2026-10-05) */
+.rdot{display:inline-grid;place-items:center;width:1.2em;height:1.2em;border-radius:50%;background:var(--forest);vertical-align:-.25em;flex:none}
+.rdot::after{content:"";width:.44em;height:.44em;border-radius:50%;background:var(--lime)}
+
+/* compact write-ups for what is coming soon: three across, a small drawing on top */
+.wu-soon{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:40px}
+.wu-card{background:var(--paper);border:1.5px solid rgba(1,63,50,.1);border-radius:22px;padding:22px 22px 26px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.wu-card .wu-ill{min-height:300px;padding:28px 16px;border-radius:16px;align-self:stretch}
+.surfaces .wu-card .wu-ill{background:var(--mist)}
+.wu-card h3{font-size:1.35rem;line-height:1.1;margin-top:6px}
+.wu-card h3 em{font-style:normal;background:linear-gradient(transparent 62%,var(--lime) 62%,var(--lime) 92%,transparent 92%);-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.wu-card p{font-size:.92rem;line-height:1.6;color:rgba(22,22,22,.68);font-weight:500}
+.wu-card p b{color:var(--ink)}
+.wu-card .wu-top{margin-bottom:0}
+
+/* home summary: four problems, four answers */
+.wu-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:48px}
+.wu-tile{background:var(--paper);border:1.5px solid rgba(1,63,50,.1);border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:12px;transition:.35s var(--ease);min-width:0}
+.wu-tile:hover{transform:translateY(-4px);box-shadow:0 22px 44px rgba(1,63,50,.12)}
+.wu-tile .old{font-family:var(--m);font-size:.74rem;line-height:1.5;color:rgba(22,22,22,.62);background:var(--mist);border-radius:12px;padding:12px 14px;font-weight:600}
+.wu-tile .old s{text-decoration-color:var(--red)}
+.wu-tile h3{font-size:1.2rem;line-height:1.12}
+.wu-tile p{font-size:.88rem;line-height:1.55;color:rgba(22,22,22,.64);font-weight:500;flex:1}
+.wu-tile .go{font-weight:800;font-size:.82rem;color:var(--forest);display:flex;align-items:center;gap:6px}
+.wu-tile .flag{align-self:flex-start}
+
+/* ----- the drawings ----- */
+.ill{width:100%;max-width:400px;font-family:var(--b);color:var(--ink);text-align:left}
+.hand{font-family:"Segoe Print","Bradley Hand","Comic Sans MS",cursive;font-weight:700}
+/* a phone lock screen full of notifications */
+.ill-lock{background:linear-gradient(180deg,#123b31,#0b2420);border-radius:34px;padding:22px 14px 22px;box-shadow:0 26px 50px rgba(1,63,50,.28);max-width:330px;color:#fff}
+.ill-lock .clock{text-align:center;font-family:var(--d);font-weight:700;font-size:3rem;letter-spacing:-.04em;line-height:1}
+.ill-lock .date{text-align:center;font-size:.78rem;opacity:.75;margin:4px 0 14px}
+.ill-lock .nt{background:rgba(253,253,253,.92);color:var(--ink);border-radius:16px;padding:8px 12px;margin-top:7px;font-size:.78rem;line-height:1.35}
+.ill-lock .nt .h{display:flex;justify-content:space-between;font-size:.6rem;font-weight:700;color:rgba(22,22,22,.5);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.ill-lock .nt b{display:block;font-size:.8rem}
+.ill-lock .more{text-align:center;font-size:.72rem;font-weight:700;margin-top:10px;opacity:.8}
+/* a transfer screenshot in a chat */
+.ill-chat{background:#E9E2D6;border-radius:24px;padding:16px 14px 18px;box-shadow:0 22px 44px rgba(1,63,50,.16);max-width:330px;position:relative}
+.ill-chat .bub{background:#fff;border-radius:14px;border-top-left-radius:4px;padding:8px;max-width:88%;font-size:.78rem;box-shadow:0 1px 1px rgba(0,0,0,.08)}
+.ill-chat .bub.me{background:#DCF7C5;margin-left:auto;border-top-left-radius:14px;border-top-right-radius:4px;margin-top:8px;padding:8px 10px;max-width:70%}
+.ill-chat .bub small{display:block;text-align:right;font-size:.6rem;color:rgba(22,22,22,.45);margin-top:3px}
+.ill-chat .rcpt{background:#fff;border:1px solid #eee;border-radius:10px;padding:12px;text-align:center}
+.ill-chat .rcpt .ok{width:34px;height:34px;border-radius:50%;background:#1F9D55;margin:0 auto 6px;display:grid;place-items:center}
+.ill-chat .rcpt .ok::after{content:"";width:12px;height:7px;border-left:3px solid #fff;border-bottom:3px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+.ill-chat .rcpt .t{font-weight:800;font-size:.8rem}
+.ill-chat .rcpt .amt{font-family:var(--d);font-weight:800;font-size:1.6rem;letter-spacing:-.03em;margin:2px 0 6px}
+.ill-chat .rcpt .rw{display:flex;justify-content:space-between;font-size:.64rem;color:rgba(22,22,22,.55);padding:2px 0;gap:8px}
+.ill-chat .rcpt .rw span:last-child{color:var(--ink);font-weight:600;text-align:right}
+.stick{background:#FFF27A;color:#5a3d00;padding:10px 12px;font-size:.82rem;line-height:1.25;box-shadow:0 10px 20px rgba(0,0,0,.14)}
+.stick.pink{background:#FFD5CF;color:#7a1d10}
+.ill-chat .stick{position:absolute;right:-18px;bottom:-22px;transform:rotate(4deg);max-width:150px}
+/* a stock sheet taped behind the door */
+.ill-sheet{background:#FFFDF6;border-radius:4px;padding:20px 20px 24px;box-shadow:0 1px 0 rgba(1,63,50,.1),0 20px 40px rgba(1,63,50,.14);transform:rotate(1.4deg);position:relative;max-width:350px;
+ background-image:repeating-linear-gradient(to bottom,transparent 0 29px,#d5e0ec 29px 30px);background-position:0 52px}
+.ill-sheet::before{content:"";position:absolute;top:-10px;left:50%;width:90px;height:22px;margin-left:-45px;background:rgba(231,254,37,.6);transform:rotate(-3deg)}
+.ill-sheet .ttl{font-family:var(--m);font-weight:700;font-size:.8rem;letter-spacing:.12em;height:32px}
+.ill-sheet .ln{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;height:30px;font-family:var(--m);font-size:.76rem;color:rgba(22,22,22,.75);white-space:nowrap}
+.ill-sheet .ln .tal{letter-spacing:.1em;color:var(--ink)}
+.ill-sheet .ln s{text-decoration-color:var(--red);text-decoration-thickness:2px}
+.ill-sheet .q{color:var(--red)}
+/* one phone, everybody's phone */
+.ill-shared{position:relative;max-width:270px;margin:0 auto}
+.ill-shared .ph2{background:#111;border-radius:30px;padding:9px;box-shadow:0 24px 46px rgba(1,63,50,.25)}
+.ill-shared .scr2{background:#fff;border-radius:22px;padding:12px 12px 16px;min-height:280px}
+.ill-shared .bar2{display:flex;align-items:center;gap:8px;padding-bottom:10px;border-bottom:1px solid #eee;margin-bottom:8px}
+.ill-shared .av{width:28px;height:28px;border-radius:50%;background:var(--mist);display:grid;place-items:center;font-size:.62rem;font-weight:800;color:var(--forest);flex:none}
+.ill-shared .bar2 b{font-size:.8rem;display:block}.ill-shared .bar2 span{font-size:.64rem;color:rgba(22,22,22,.5)}
+.ill-shared .m{font-size:.74rem;background:var(--mist);border-radius:12px;padding:7px 10px;margin:6px 0;max-width:85%}
+.ill-shared .m.me{background:#DCF7C5;margin-left:auto}
+.ill-shared .m small{display:block;font-size:.58rem;color:rgba(22,22,22,.45);text-align:right}
+.ill-shared .stick{position:absolute}
+.ill-shared .s1{left:-44px;top:44px;transform:rotate(-6deg);max-width:128px}
+.ill-shared .s2{right:-40px;bottom:26px;transform:rotate(5deg);max-width:128px}
+/* a chat list of staff updates */
+.ill-list{background:#fff;border-radius:22px;box-shadow:0 22px 44px rgba(1,63,50,.16);overflow:hidden;max-width:340px}
+.ill-list .hd{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--forest);color:#fff;font-family:var(--d);font-weight:800;font-size:.95rem}
+.ill-list .hd span{font-family:var(--b);font-size:.66rem;font-weight:700;background:var(--lime);color:var(--forest);border-radius:20px;padding:3px 8px}
+.ill-list .row{display:flex;align-items:center;gap:10px;padding:8px 14px;border-top:1px solid #f0f0f0}
+.ill-list .hd + .row{border-top:0}
+.ill-list .av{width:30px;height:30px;border-radius:50%;background:var(--mist);display:grid;place-items:center;font-size:.6rem;font-weight:800;color:var(--forest);flex:none}
+.ill-list .tx{flex:1;min-width:0}
+.ill-list .tx b{display:block;font-size:.76rem}
+.ill-list .tx span{display:block;font-size:.7rem;color:rgba(22,22,22,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ill-list .n{min-width:18px;height:18px;border-radius:9px;background:#25D366;color:#fff;font-size:.6rem;font-weight:800;display:grid;place-items:center;padding:0 5px}
+/* a "new number" status post */
+.ill-status{background:#1F6F5C;color:#fff;border-radius:22px;padding:30px 20px 22px;max-width:300px;text-align:center;box-shadow:0 22px 44px rgba(1,63,50,.22);position:relative}
+.ill-status .bars{display:flex;gap:4px;position:absolute;top:10px;left:14px;right:14px}
+.ill-status .bars i{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.4)}
+.ill-status .bars i:first-child{background:#fff}
+.ill-status .big{font-family:var(--d);font-weight:900;font-size:1.45rem;letter-spacing:-.02em;line-height:1.1;margin:6px 0 10px}
+.ill-status p{font-size:.82rem;line-height:1.45;opacity:.92}
+.ill-status .num{display:inline-block;margin:8px 0;background:#fff;color:#1F6F5C;font-family:var(--m);font-weight:700;border-radius:10px;padding:6px 10px;font-size:.88rem}
+.ill-status .old{text-decoration:line-through;opacity:.75}
+.ill-status .seen{margin-top:12px;font-size:.66rem;opacity:.7}
+/* the shop exercise book (the same drawing as the walk-in design) */
+.ill-book{background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(1,63,50,.1),0 18px 40px rgba(0,0,0,.1);padding:18px 18px 22px;transform:rotate(-1.2deg);max-width:350px;
+ background-image:repeating-linear-gradient(to bottom,transparent 0 27px,#c9d8ea 27px 28px);background-position:0 46px;font-family:var(--m);font-size:.78rem}
+.ill-book .dt{font-weight:700;height:28px}
+.ill-book .ln{display:flex;justify-content:space-between;gap:10px;height:28px;align-items:flex-end;color:rgba(22,22,22,.72);white-space:nowrap;overflow:hidden}
+.ill-book .ln span:first-child{overflow:hidden;text-overflow:ellipsis}
+.ill-book .ln.x span:first-child{text-decoration:line-through;text-decoration-color:var(--red)}
+.ill-book .ln.cr{color:#9a6400}
+.ill-book .ln.tot{color:var(--ink);font-weight:700}
+.ill-book .q{color:var(--red)}
+/* kitchen dockets on a spike */
+.ill-dockets{position:relative;height:310px;max-width:360px}
+.ill-dockets .spike{position:absolute;left:50%;bottom:8px;width:6px;height:240px;margin-left:-3px;background:linear-gradient(90deg,#8a8f8c,#d8dcda,#8a8f8c);border-radius:3px}
+.ill-dockets .spike::after{content:"";position:absolute;left:-44px;width:94px;bottom:-8px;height:12px;border-radius:6px;background:#3c403e}
+.ill-dockets .dk{position:absolute;width:148px;background:#FFFDF2;padding:12px 12px 14px;font-family:var(--m);font-size:.72rem;line-height:1.55;box-shadow:0 10px 22px rgba(0,0,0,.12);color:rgba(22,22,22,.8)}
+.ill-dockets .dk b{display:block;font-size:.85rem;border-bottom:1px dashed rgba(22,22,22,.25);margin-bottom:4px;padding-bottom:2px}
+.ill-dockets .d1{left:50%;margin-left:-74px;top:0;transform:rotate(-3deg)}
+.ill-dockets .d2{left:0;top:110px;transform:rotate(-12deg)}
+.ill-dockets .d3{right:0;top:132px;transform:rotate(9deg)}
+.ill-dockets s{text-decoration-color:var(--red);text-decoration-thickness:2px}
+.ill-dockets .q{color:var(--red)}
+/* the bookings diary */
+.ill-diary{background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(1,63,50,.1),0 18px 40px rgba(0,0,0,.1);padding:18px 18px 22px;transform:rotate(1deg);max-width:350px;font-family:var(--m);font-size:.78rem}
+.ill-diary .dt{font-weight:700;padding-bottom:8px;border-bottom:2px solid var(--ink);margin-bottom:4px}
+.ill-diary .sl{display:grid;grid-template-columns:3.4rem minmax(0,1fr);gap:8px;padding:7px 0;border-bottom:1px solid #dfe5e0;color:rgba(22,22,22,.75)}
+.ill-diary .sl span:first-child{color:rgba(22,22,22,.45)}
+.ill-diary .clash{border:2px solid var(--red);border-radius:14px;padding:2px 6px;margin:2px -8px;transform:rotate(-1deg)}
+.ill-diary .q{color:var(--red)}
+.ill-diary s{text-decoration-color:var(--red)}
+
+@media(max-width:1080px){.wu-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.wu{column-gap:48px}.wu-soon{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+@media(max-width:900px){
+ .wu,.wu.flip{grid-template-columns:minmax(0,1fr);grid-template-areas:"head" "ill" "body";padding:56px 0}
+ .wu-ill{margin:28px 0 4px;min-height:0;padding:36px 22px}
+}
+@media(max-width:700px){.wu-soon{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){
+ .wu-tiles{grid-template-columns:minmax(0,1fr)}
+ .wu-ill{padding:32px 16px;border-radius:18px}
+ .ill-shared{max-width:240px}
+ .ill-shared .stick{font-size:.7rem;padding:7px 9px;max-width:104px}
+ .ill-shared .s1{left:-22px;top:70px}.ill-shared .s2{right:-20px;bottom:14px}
+ .ill-chat .stick{right:-6px}
+ .ill-book,.ill-sheet,.ill-diary{transform:none}
+ .ill-dockets{transform:scale(.9);transform-origin:top center;height:290px}
+}
+.wu-tile .go svg,.wu-more svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.wu-card .ill-status p{color:#fff;font-size:.82rem;line-height:1.45}
+.wu-card .ill p{font-weight:500}
+@media(max-width:600px){.ill-chat{padding-bottom:64px}}
