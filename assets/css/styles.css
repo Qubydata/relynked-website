@@ -339,6 +339,11 @@ footer{padding:80px 0 40px;margin-top:100px;border-top:1.5px solid rgba(1,63,50,
 /* .fg a is more specific than .logo, so without this the footer logo stacks the
    mark above a small light wordmark instead of matching the one in the nav */
 .fg a.logo{display:flex;font-size:1.25rem;font-weight:800;color:var(--ink);margin-bottom:0}
+/* Instagram, the one social account (founder, 2026-10-06). 44px tap target, the
+   glyph lines up with the tagline above it. */
+.fg a.soc{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin:14px 0 0 -12px;border-radius:12px;color:rgba(22,22,22,.75);transition:color .25s,background .25s}
+.fg a.soc:hover{color:var(--forest);background:var(--mist)}
+.fg a.soc svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .fg p{font-size:.9rem;color:rgba(22,22,22,.6);max-width:36ch;line-height:1.6;margin-top:16px}
 .fb{display:flex;justify-content:space-between;margin-top:60px;padding-top:26px;border-top:1px solid rgba(1,63,50,.1);font-size:.8rem;color:rgba(22,22,22,.45);font-weight:600}
 

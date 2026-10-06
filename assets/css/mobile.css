@@ -256,6 +256,8 @@ body.mnavopen .mmenu a:nth-child(3){transition-delay:.22s}body.mnavopen .mmenu a
 .mlay footer .mfl a{font-size:.86rem;font-weight:700;background:var(--mmist);padding:9px 14px;border-radius:100px;color:rgba(22,22,22,.75)}
 .mlay footer .mfc{font-size:.88rem;color:rgba(22,22,22,.62);font-weight:600;line-height:1.7}
 .mlay footer .mfc a{font-weight:800;color:var(--mforest);display:block;margin-bottom:6px}
+.mlay footer .msoc{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin-top:20px;border-radius:100px;background:var(--mmist);color:var(--mforest)}
+.mlay footer .msoc svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .mlay footer .mfb{margin-top:28px;padding-top:20px;border-top:1px solid rgba(10,63,50,.1);
  font-size:.74rem;color:rgba(22,22,22,.45);font-weight:600;line-height:1.7}
 

@@ -392,7 +392,7 @@ ${sh.tail}
 `;
 }
 
-const ORG = { '@type': 'Organization', name: 'Relynked Ltd', url: `${SITE}/` };
+const ORG = { '@type': 'Organization', name: 'Relynked Ltd', url: `${SITE}/`, sameAs: ['https://www.instagram.com/relynkedltd/'] };
 const OFFERS = { '@type': 'AggregateOffer', priceCurrency: 'NGN', lowPrice: '20000', highPrice: '40000', offerCount: '2', url: `${SITE}/pricing` };
 
 function crumbs(items) {
