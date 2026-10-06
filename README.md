@@ -128,7 +128,9 @@ call: "Book a call" on its plan card, and the contact page. The app still calls 
 
 Basic ₦20,000 a month (you plus 2 staff, up to 500 chats a month), Standard ₦40,000 (you plus
 5 staff, 1 screen, up to 1,000 chats), Enterprise from ₦150,000 after a call. Meta's WhatsApp
-message charges are paid separately, from the wallet. The plan cards on industry pages come
+message charges are not part of the plan. The wallet is not switched on, so the site never
+mentions it: money sent to a business's account number pays its plan automatically, and any
+extra stays as credit towards the next month. The plan cards on industry pages come
 from `pricingBlock` in `scripts/build-industries.mjs`.
 
 The free trial length is written once, as `--trial-days` at the top of

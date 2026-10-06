@@ -421,7 +421,7 @@ function pricingBlock(t) {
   <div class="wrap">
     <div class="reveal" style="max-width:760px">
       <h2>Pricing: a flat monthly price. <span class="hl">No cut of your sales.</span></h2>
-      <p class="lead" style="margin-top:22px">Try it free for <span class="trial-days"></span>, with no card. Then pay by the month or the year. Relynked takes no percentage of your sales and no fee per transaction. Meta's charges for WhatsApp messages are paid separately, from your Relynked wallet. <a href="/pricing" style="color:var(--forest);text-decoration:underline">See full pricing</a>.</p>
+      <p class="lead" style="margin-top:22px">Try it free for <span class="trial-days"></span>, with no card. Then pay by the month or the year. Relynked takes no percentage of your sales and no fee per transaction. Meta's charges for WhatsApp messages are not part of your plan. <a href="/pricing" style="color:var(--forest);text-decoration:underline">See full pricing</a>.</p>
     </div>
     <div class="plans">
 ${cards.join('\n')}
