@@ -683,3 +683,57 @@ footer{padding:80px 0 40px;margin-top:100px;border-top:1.5px solid rgba(1,63,50,
  html.tabs-js section[data-panel] .wu.first{padding-top:8px}
 }
 @media(prefers-reduced-motion:reduce){.ptabs [role="tab"]::after{transition:none}}
+
+/* ---------- phone polish (2026-10-10) ----------
+   What makes a page feel sized for the hand: a 20px gutter, one short type
+   scale (the same six steps as the phone home in mobile.css), 44px tap
+   targets, one call to action that never leaves the screen (Start free in
+   the header), and cards that read as objects. Desktop is untouched. */
+@media(max-width:900px){
+ .nav,.nav.solid{padding:10px 0}
+ .nav .wrap{gap:10px}
+ .nav .wrap>.btn{display:inline-flex;margin-left:auto;min-height:44px;padding:0 18px;font-size:.9375rem}
+ .nav .wrap>.btn svg{display:none}
+ .burger{width:44px;height:44px;flex:none}
+ .logo{min-height:44px}
+ .totop{display:none}
+ .btn{min-height:52px}
+ .links a{min-height:52px;display:flex;align-items:center}
+}
+@media(max-width:600px){
+ .wrap{max-width:none;padding-left:20px;padding-right:20px}
+ section{padding:64px 0}
+ /* the first section clears the fixed header with room to breathe */
+ .nav~section:first-of-type{padding-top:100px}
+ h2{font-size:clamp(1.75rem,7.6vw,2rem);line-height:1.06}
+ .lead{font-size:1.0625rem}
+ .cta-band{margin:0 20px;border-radius:28px;padding:48px 24px}
+ .cta-band h2{font-size:clamp(1.75rem,7.6vw,2rem)}
+ .cta-band p{font-size:.9375rem}
+ .btn{font-size:1rem;min-height:56px}
+ .wu-card,.wu-tile,.sc,.plan{border-radius:24px}
+ .wu-card{padding:24px}
+ .wu-card h3,.wu-tile h3{font-size:1.375rem}
+ .wu-card p,.wu-tile p,.sc p,.plan li,.plan .pd,.q .a p{font-size:.9375rem}
+ .wu-tile .go,.sc .more{font-size:.9375rem;min-height:44px;margin-top:6px}
+ .plan{padding:28px 24px}
+ .plan .pn{font-family:var(--d);font-size:1.0625rem;letter-spacing:-.02em;text-transform:none;opacity:1}
+ .q button{font-size:1.0625rem;min-height:64px;padding:18px 0}
+ /* footer: column titles in words, not tiny capitals, and every link a 44px row */
+ footer{padding:48px 0 32px;margin-top:56px}
+ .fg{gap:28px}
+ .fg h4{font-family:var(--b);font-size:.9375rem;letter-spacing:0;text-transform:none;color:var(--ink);font-weight:800;margin-bottom:4px}
+ .fg a{display:flex;align-items:center;min-height:44px;margin-bottom:0;font-size:.9375rem}
+ .fg a.soc{margin-left:-10px}
+ .fb{font-size:.8125rem;color:rgba(22,22,22,.55)}
+ .fb a{display:inline-flex;align-items:center;min-height:44px}
+}
+@media(max-width:900px) and (prefers-reduced-motion:no-preference){
+ .wu-tile:hover,.plan:hover{transform:none}
+ .btn:active,.wu-tile:active,.sc:active,.plan:active{transform:scale(.97)}
+ html.tabs-js [data-panel].is-on{animation:panelin .38s var(--ease)}
+ @keyframes panelin{from{opacity:0;transform:translateY(10px)}}
+}
+/* a soft cross-fade between pages instead of a white flash, where the
+   browser supports it (Chrome on Android, Safari); no script */
+@media(prefers-reduced-motion:no-preference){@view-transition{navigation:auto}}

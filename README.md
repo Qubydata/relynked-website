@@ -183,9 +183,27 @@ regardless, because `.lead` is capped at 56 characters.
 
 One responsive site, no separate mobile version. Breakpoints are 1080, 900 and 600 px.
 
-Below 900px the nav links become a dropdown card opened by the burger button, and the
-header's own booking button is hidden because the menu carries its own lime one. The
-menu closes on a link click, on Escape, and on a click outside it.
+Below 900px the nav links become a dropdown card opened by the burger button. The
+header keeps a compact Start free pill beside the burger on every page, home included, so
+the one call to action never leaves the screen. There is no bottom bar and no back-to-top
+button on phones: they took screen space and covered content. The menu closes on a link
+click, on Escape, and on a click outside it.
+
+Phone rules (2026-10-10, see `remy-hq/research/competitors/mobile-view-and-sites.md`):
+
+- A 20px side gutter below 600px; the page column no longer shrinks to 92 percent first.
+- One type scale on phones, the same at 360, 390 and 430 wide: 40 (hero), 28 to 32
+  (section heads), 22 (card titles), 17 (leads, plan names, questions), 15 (body),
+  13 (small print). The tokens are `--t-*` at the top of `mobile.css`.
+- Every tap target is at least 44px tall, footer links included. Inline links inside a
+  sentence are the only exception.
+- Cards: 24px corners and 24px padding; the whole card is the link.
+- The four "what changes" cards on the phone home stack like a deck as you scroll
+  (`position:sticky`, no script). Keep them the same height (`min-height` in `mobile.css`)
+  or the card underneath shows below the one on top.
+- Motion: reveals rise 20px over 0.6s, a tab opens with a short rise, cards and buttons
+  give a little under the thumb, and pages cross-fade (`@view-transition`). All of it is
+  off when the device asks for reduced motion.
 
 ## Photos
 

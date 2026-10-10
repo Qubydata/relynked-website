@@ -1,9 +1,10 @@
 (function(){
 const $=s=>document.querySelector(s);
 /* nav */
+/* the header carries the one call to action on phones, so it is always on
+   screen; it only turns solid once the page moves */
 addEventListener('scroll',()=>{
   $('#mnav').classList.toggle('msolid',scrollY>30);
-  $('#mdock').classList.toggle('mup',scrollY>420);
 },{passive:true});
 /* menu */
 $('#mburger').onclick=()=>document.body.classList.toggle('mnavopen');
