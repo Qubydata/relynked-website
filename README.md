@@ -129,7 +129,7 @@ call: "Book a call" on its plan card, and the contact page. The app still calls 
 Basic ₦20,000 a month (up to 500 chats a month), Standard ₦40,000 (1 screen, up to 1,000
 chats), Enterprise from ₦150,000 after a call. Staff are unlimited on every plan. The plan
 only counts the people who answer customers on the business's WhatsApp number or use Remy:
-the owner plus 2 on Basic, the owner plus 5 on Standard, more on Enterprise by agreement. Meta's WhatsApp
+the owner plus 2 on Basic, the owner plus 5 on Standard, the owner plus 10 on Enterprise. Meta's WhatsApp
 message charges are not part of the plan. The wallet is not switched on, so the site never
 mentions it: money sent to a business's account number pays its plan automatically, and any
 extra stays as credit towards the next month. The plan cards on industry pages come

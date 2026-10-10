@@ -414,7 +414,7 @@ function pricingBlock(t) {
       ['Everything in Basic', 'Unlimited staff. 5 can answer on your WhatsApp number and use Remy', '1 screen at your place', 'Up to 1,000 chats a month'],
       '<a class="btn lime" href="https://app.relynked.com/?plan=standard">Start free</a>'),
     plan('d2', 'Enterprise', 'From ₦150,000', '/ month', 'For bigger venues and businesses with several branches, agreed with you after a call.',
-      ['Everything in Standard', 'Unlimited staff, and more on your WhatsApp number and Remy', 'More screens and chats', 'Several branches under one owner'],
+      ['Everything in Standard', 'Unlimited staff. 10 can answer on your WhatsApp number and use Remy', 'More screens and chats', 'Several branches under one owner'],
       '<a class="btn ghost" href="/contact">Book a call</a>'),
   ];
   return `<section class="surfaces" id="pricing" data-panel>
