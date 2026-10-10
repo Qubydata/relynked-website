@@ -28,6 +28,13 @@
  *   in date (exp in the future, nbf and iat not in the future, a minute of
  *     clock slack).
  *
+ * A refusal answers one plain 401 (access_token_refused), never which check
+ * failed; the reason goes to the function's own log. An unknown key id
+ * fetches the keys again at most once a minute, so made-up tokens cannot
+ * make this hammer Cloudflare. Who viewed (the token's email) is logged, and
+ * sent to the API as x-relynked-viewer for its own log (security review
+ * 2026-10-10, web-18 and web-19).
+ *
  * Settings on the Pages project (Settings, Variables and secrets):
  *   ADMIN_METRICS_KEY      the API's admin key (secret)
  *   CF_ACCESS_TEAM_DOMAIN  the Zero Trust team domain, e.g. relynked.cloudflareaccess.com
@@ -53,6 +60,8 @@ const json = (body, status) =>
 /* ── the Access token ─────────────────────────────────────────────────── */
 
 const CERTS_TTL_MS = 10 * 60_000;
+const FORCED_FETCH_GAP_MS = 60_000;
+let lastForcedFetch = 0;
 const CLOCK_SLACK_S = 60;
 let certsCache = null; // { team, at, keys: Map<kid, CryptoKey> }
 
@@ -116,8 +125,11 @@ async function verifyAccessToken(token, { team, aud, now = Date.now() }) {
     if (!header || header.alg !== "RS256" || typeof header.kid !== "string") return { error: "bad_algorithm" };
 
     let keys = await loadKeys(team, false);
-    // A key id not seen yet: the team may have rotated its keys. Fetch once more.
-    if (!keys.has(header.kid)) keys = await loadKeys(team, true);
+    // A key id not seen yet: the team may have rotated its keys. Fetch once more, at most once a minute.
+    if (!keys.has(header.kid) && Date.now() - lastForcedFetch >= FORCED_FETCH_GAP_MS) {
+      lastForcedFetch = Date.now();
+      keys = await loadKeys(team, true);
+    }
     const key = keys.get(header.kid);
     if (!key) return { error: "unknown_key" };
     const signed = new TextEncoder().encode(`${parts[0]}.${parts[1]}`);
@@ -171,14 +183,17 @@ export async function onRequestGet(context) {
   }
   const verified = await verifyAccessToken(assertion, { team, aud });
   if (verified.error) {
-    // The reason is a short code, never the token.
-    return json({ error: "access_token_refused", reason: verified.error }, 401);
+    // The reason is logged here, never told to the caller, and never the token.
+    console.warn(JSON.stringify({ event: "metrics_access_refused", reason: verified.error }));
+    return json({ error: "access_token_refused" }, 401);
   }
+  const viewer = typeof verified.claims.email === "string" ? verified.claims.email.slice(0, 200) : String(verified.claims.sub || "").slice(0, 200);
+  console.log(JSON.stringify({ event: "metrics_viewed", viewer }));
 
   let upstream;
   try {
     upstream = await fetch(API, {
-      headers: { "x-admin-key": key },
+      headers: { "x-admin-key": key, "x-relynked-viewer": viewer },
       // A dashboard tile is not worth hanging a page for.
       signal: AbortSignal.timeout(15000),
     });
