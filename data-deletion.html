@@ -39,6 +39,12 @@
     <div class="legal reveal d1" style="margin-top:56px">
       <div class="meta">Effective 24 September 2026 &middot; Relynked Ltd, RC 9837720 &middot; applies to the Relynked app, including Remy, the assistant inside it</div>
 
+      <!-- A deletion request's status, shown only when Meta's link brings a code (assets/js/deletion-status.js). -->
+      <div id="delstatus" class="note" role="status" hidden style="margin:0 0 1.5rem;padding:1rem 1.125rem;border-radius:14px;background:#eef7c9">
+        <strong data-title></strong>
+        <p data-text style="margin:0.375rem 0 0"></p>
+      </div>
+
       <h3 style="margin-top:0">Delete your account in the app</h3>
       <ol>
         <li>Open the Relynked app and sign in.</li>
@@ -83,5 +89,6 @@
 <button class="totop" id="totop" aria-label="Back to top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
 
 <script src="/assets/js/main.js"></script>
+<script src="/assets/js/deletion-status.js"></script>
 </body>
 </html>
