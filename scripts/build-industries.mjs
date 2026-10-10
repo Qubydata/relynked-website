@@ -408,13 +408,13 @@ function pricingBlock(t) {
         ${btn}</div>`;
   const cards = [
     plan('', 'Basic', '₦20,000', '/ month', 'For an owner with a small team.',
-      ['You plus 2 staff', 'Remy answering your customers on WhatsApp', 'Up to 500 chats a month', t.family === 'service' ? 'Your services and prices' : t.family === 'food' ? 'Your menu, prices and stock' : 'Your products, prices and stock'],
+      ['Unlimited staff. 2 can answer on your WhatsApp number and use Remy', 'Remy answering your customers on WhatsApp', 'Up to 500 chats a month', t.family === 'service' ? 'Your services and prices' : t.family === 'food' ? 'Your menu, prices and stock' : 'Your products, prices and stock'],
       `<a class="btn ghost" href="${APP_SIGNUP}">Start free</a>`),
     plan('hot d1', 'Standard', '₦40,000', '/ month', 'For a busier business with a bigger team.',
-      ['Everything in Basic', 'You plus 5 staff', '1 screen at your place', 'Up to 1,000 chats a month'],
+      ['Everything in Basic', 'Unlimited staff. 5 can answer on your WhatsApp number and use Remy', '1 screen at your place', 'Up to 1,000 chats a month'],
       '<a class="btn lime" href="https://app.relynked.com/?plan=standard">Start free</a>'),
     plan('d2', 'Enterprise', 'From ₦150,000', '/ month', 'For bigger venues and businesses with several branches, agreed with you after a call.',
-      ['Everything in Standard', 'More staff, screens and chats', 'Several branches under one owner'],
+      ['Everything in Standard', 'Unlimited staff, and more on your WhatsApp number and Remy', 'More screens and chats', 'Several branches under one owner'],
       '<a class="btn ghost" href="/contact">Book a call</a>'),
   ];
   return `<section class="surfaces" id="pricing" data-panel>
