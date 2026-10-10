@@ -1,9 +1,17 @@
 :root{
   --forest:#013F32;--lime:#E7FE25;--paper:#FDFDFD;--ink:#161616;
-  --forest-2:#02594A;--forest-3:#0B2A24;--mist:#EEF3EF;--amber:#E0A000;--red:#C4331B;
+  --forest-2:#02594A;--forest-3:#0B2A24;--mist:#F0F2F2;--amber:#E0A000;--red:#C4331B;
   --d:"Archivo",system-ui,sans-serif;--b:"Manrope",system-ui,sans-serif;--m:"JetBrains Mono",ui-monospace,monospace;
   --ease:cubic-bezier(.16,1,.3,1);--w:min(1760px,92vw);
 }
+/* WHITE LIFT (founder, 2026-10-10: white lift replaces the pale green). The
+   pale green fills read as "irritating" and "nauseous", so --mist above is the
+   plain grey now (it was #EEF3EF, a pale green), and a chosen thing LIFTS: the
+   others stay grey, the chosen one turns white with this soft shadow and a
+   bolder label. Never a tint, never a coloured border, never a side edge. The
+   lime on dark sections and the lime sweep behind key words are accents, not
+   fills, and stay. */
+:root{--sel:#FFFFFF;--sel-sh:0 1px 2px rgba(15,20,18,.06),0 8px 22px rgba(15,20,18,.08)}
 /* THE FREE TRIAL LENGTH, in one place (founder, 2026-10-06). Every
    <span class="trial-days"></span> on the site shows this text. To change the
    trial, change only this line, for example to "14 days". */
@@ -29,7 +37,7 @@ h3{font-size:1.35rem;letter-spacing:-.03em}
 .legal .meta{font-family:var(--m);font-size:.8rem;letter-spacing:.04em;color:rgba(22,22,22,.5);margin-bottom:26px}
 .legal .jump{display:flex;flex-wrap:wrap;gap:9px;margin:0 0 60px}
 .legal .jump a{font-family:var(--m);font-size:.72rem;letter-spacing:.01em;color:var(--forest);background:var(--mist);padding:8px 13px;border-radius:20px;white-space:nowrap;line-height:1}
-.legal .jump a:hover{background:var(--lime)}
+.legal .jump a:hover{background:var(--sel);box-shadow:var(--sel-sh)}
 .legal h3{margin:70px 0 20px;font-size:1.5rem}
 .legal h3:first-of-type{margin-top:0}
 .legal h4{font-family:var(--m);font-weight:700;font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;color:var(--forest);opacity:.85;margin:38px 0 14px}
@@ -85,7 +93,7 @@ h3{font-size:1.35rem;letter-spacing:-.03em}
 .btn.forest{background:var(--forest);color:var(--paper)}
 .btn.forest:hover{background:var(--forest-2)}
 .btn.ghost{background:transparent;color:var(--forest);border:1.5px solid rgba(1,63,50,.25)}
-.btn.ghost:hover{border-color:var(--forest);background:rgba(1,63,50,.04)}
+.btn.ghost:hover{border-color:var(--forest);background:rgba(22,22,22,.04)}
 
 .logo svg.mk{background:none;border-radius:0;display:block;flex:none}
 /* ---------- hero ---------- */
@@ -322,6 +330,14 @@ section{padding:120px 0}
 .q button{width:100%;background:none;border:0;text-align:left;padding:24px 0;display:flex;justify-content:space-between;align-items:center;gap:20px;font-family:var(--d);font-weight:700;font-size:1.15rem;letter-spacing:-.025em;color:var(--ink)}
 .q button svg{width:22px;height:22px;stroke:var(--forest);fill:none;stroke-width:2.4;stroke-linecap:round;flex:none;transition:.35s var(--ease)}
 .q.open button svg{transform:rotate(45deg)}
+/* The open question lifts into a white card (founder, 2026-10-10: white lift):
+   the soft shadow, its rules hidden, the text kept on the same line as the
+   closed ones by padding out as far as the card grows. */
+.q{transition:background .3s var(--ease),box-shadow .3s var(--ease),border-color .3s var(--ease)}
+.q.open{background:var(--sel);box-shadow:var(--sel-sh);border-radius:20px;border-top-color:transparent;
+ margin:0 -14px;padding:0 14px;position:relative;z-index:1}
+.q.open+.q{border-top-color:transparent}
+.q.open:last-child{border-bottom-color:transparent}
 .q .a{max-height:0;overflow:hidden;transition:max-height .5s var(--ease)}
 .q .a p{padding:0 0 26px;color:rgba(22,22,22,.65);line-height:1.65;max-width:64ch}
 
@@ -665,16 +681,17 @@ footer{padding:80px 0 40px;margin-top:100px;border-top:1.5px solid rgba(1,63,50,
  html.tabs-js .ptabs{display:block;position:sticky;top:var(--tabtop,66px);z-index:45;
   background:rgba(253,253,253,.95);-webkit-backdrop-filter:blur(14px) saturate(160%);backdrop-filter:blur(14px) saturate(160%);
   border-bottom:1px solid rgba(1,63,50,.12)}
- .ptabs-in{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:0 14px;-webkit-overflow-scrolling:touch}
+ /* WHITE LIFT (founder, 2026-10-10): the tabs sit in one grey track and the
+    open one lifts out of it, white with a soft shadow, in place of the
+    coloured underline. */
+ .ptabs-in{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin:8px 14px;padding:4px;border-radius:100px;
+  background:var(--mist);-webkit-overflow-scrolling:touch}
  .ptabs-in::-webkit-scrollbar{display:none}
- .ptabs [role="tab"]{flex:1 0 auto;position:relative;border:0;background:none;margin:0;padding:15px 10px 14px;
-  font-family:var(--b);font-weight:800;font-size:.86rem;letter-spacing:-.01em;color:rgba(22,22,22,.55);white-space:nowrap;
-  cursor:pointer;-webkit-tap-highlight-color:transparent}
- .ptabs [role="tab"]::after{content:"";position:absolute;left:10px;right:10px;bottom:0;height:3px;border-radius:3px 3px 0 0;
-  background:var(--lime);transform:scaleX(0);transition:transform .3s var(--ease)}
- .ptabs [role="tab"][aria-selected="true"]{color:var(--forest)}
- .ptabs [role="tab"][aria-selected="true"]::after{transform:scaleX(1);background:var(--forest)}
- .ptabs [role="tab"]:focus-visible{outline:2px solid var(--forest);outline-offset:-4px;border-radius:8px}
+ .ptabs [role="tab"]{flex:1 0 auto;position:relative;border:0;background:none;margin:0;padding:10px 14px;min-height:44px;
+  border-radius:100px;font-family:var(--b);font-weight:700;font-size:.86rem;letter-spacing:-.01em;color:rgba(22,22,22,.6);
+  white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .2s var(--ease),box-shadow .2s var(--ease),color .2s}
+ .ptabs [role="tab"][aria-selected="true"]{color:var(--ink);font-weight:800;background:var(--sel);box-shadow:var(--sel-sh)}
+ .ptabs [role="tab"]:focus-visible{outline:2px solid var(--forest);outline-offset:-2px}
  html.tabs-js [data-panel]:not(.is-on){display:none!important}
  html.tabs-js [data-panel]{scroll-margin-top:calc(var(--tabtop,66px) + var(--tabbar,50px))}
  html.tabs-js [data-panel]:focus{outline:none}
@@ -682,7 +699,7 @@ footer{padding:80px 0 40px;margin-top:100px;border-top:1.5px solid rgba(1,63,50,
  html.tabs-js .wu[data-panel]{border-top:0;padding-top:36px}
  html.tabs-js section[data-panel] .wu.first{padding-top:8px}
 }
-@media(prefers-reduced-motion:reduce){.ptabs [role="tab"]::after{transition:none}}
+@media(prefers-reduced-motion:reduce){.ptabs [role="tab"],.q{transition:none}}
 
 /* ---------- phone polish (2026-10-10) ----------
    What makes a page feel sized for the hand: a 20px gutter, one short type

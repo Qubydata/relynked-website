@@ -3,7 +3,9 @@
 
 :root{
   --mforest:#0A3F32;--mforest-2:#02594A;--mforest-3:#072A22;--mlime:#E7FE25;--mpaper:#FDFDFD;--mink:#161616;
-  --mmist:#EEF3EF;--mamber:#E0A000;--mred:#C4331B;
+  /* the plain grey, not the pale green #EEF3EF it was (founder, 2026-10-10:
+     white lift replaces the pale green; see the note in styles.css) */
+  --mmist:#F0F2F2;--mamber:#E0A000;--mred:#C4331B;
   --md:"Archivo",system-ui,sans-serif;--mb:"Manrope",system-ui,sans-serif;--mm:"JetBrains Mono",ui-monospace,monospace;
   --mease:cubic-bezier(.16,1,.3,1);--mpad:20px;
   /* phone type scale: six steps, the same at 360, 390 and 430 wide */
