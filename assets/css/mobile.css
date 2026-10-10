@@ -16,7 +16,7 @@ body.mnavopen{overflow:hidden}
 .mlay button{font:inherit;cursor:pointer;border:0;background:none}
 .mw{padding:0 var(--mpad)}
 .mlay h1,.mlay h2,.mlay h3{font-family:var(--md);font-weight:800;letter-spacing:-.045em;line-height:1.05}
-h2{font-size:2rem}
+.mlay h2{font-size:2rem}
 .meyebrow{font-family:var(--mm);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
  color:var(--mforest);opacity:.72;margin-bottom:12px;display:flex;align-items:center;gap:8px}
 .meyebrow::before{content:"";width:16px;height:2px;background:var(--mlime)}
