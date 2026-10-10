@@ -345,3 +345,6 @@ body.mnavopen .mmenu a:nth-child(3){transition-delay:.22s}body.mnavopen .mmenu a
  .mlay .mbtn,.mlay .mnavcta,.mlay .wu-tile,.mlay .mpcard,.mlay .msx,.mlay .mex{transition:transform .18s var(--mease),background-color .2s}
  .mlay .mbtn:active,.mlay .mnavcta:active,.mlay .wu-tile:active,.mlay .mpcard:active,.mlay .msx:active{transform:scale(.97)}
 }
+/* the trademark sign sits small and high beside the wordmark, as on the desktop logo */
+.mlogo .wm{white-space:nowrap}
+.mlogo .tm{font-size:.45em;font-weight:700;letter-spacing:0;margin-left:2px;vertical-align:super;line-height:0}
