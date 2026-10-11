@@ -362,7 +362,8 @@ function shell() {
   return { headLinks, nav, tail };
 }
 
-function page({ title, description, canonical, jsonld, body }, sh) {
+function page({ title, description, canonical, jsonld, body, image }, sh) {
+  const img = `https://relynked.com${image || '/assets/img/og-relynked.png'}`;
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -377,14 +378,14 @@ ${MARK}
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:url" content="${canonical}">
-<meta property="og:image" content="https://relynked.com/assets/img/og-relynked.png">
+<meta property="og:image" content="${img}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Relynked: Business management system built by business owners for business owners">
+<meta property="og:image:alt" content="${esc(title)}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(description)}">
-<meta name="twitter:image" content="https://relynked.com/assets/img/og-relynked.png">
+<meta name="twitter:image" content="${img}">
 ${sh.headLinks}
 <script src="/assets/js/tabs.js?v=20261006a"></script>
 ${jsonld.map(ld).join('\n')}
@@ -421,7 +422,7 @@ const save = (name) => {
 };
 
 function pricingBlock(t) {
-  const plan = (cls, name, price, per, desc, items, btn) => `      <div class="plan ${cls} reveal"><div class="pn">${name}</div><div class="pp"${price.startsWith('From') ? ' style="font-size:2.2rem"' : ''}>${price}${per ? ` <small>${per}</small>` : ''}</div>${save(name)}<div class="pd">${desc}</div>
+  const plan = (cls, name, price, per, desc, items, btn) => `      <div class="plan ${cls} reveal"><div class="pn">${name}</div><div class="pp"${price.startsWith('From') ? ' style="font-size:1.9rem"' : ''}>${price}${per ? ` <small>${per}</small>` : ''}</div>${save(name)}<div class="pd">${desc}</div>
         <ul>${items.map(i => `<li>${TICK}${i}</li>`).join('')}</ul>
         ${btn}</div>`;
   const cards = [
@@ -446,7 +447,7 @@ function pricingBlock(t) {
     <div class="plans" style="margin-top:28px">
 ${cards.join('\n')}
     </div>
-    <p class="pnote">A chat is one customer's conversation in a day.</p>
+    <p class="pnote">A customer chat is one customer's conversation with your business on WhatsApp. If they go quiet for 8 hours and then write again, that is a new chat. <a href="/terms#chats" style="color:var(--forest);text-decoration:underline">How chats are counted</a>.</p>
     </div>
   </div>
 </section>`;
@@ -546,6 +547,7 @@ ${more}
     title: titleText,
     description,
     canonical: t.url,
+    image: `/assets/img/og/industries/${t.slug}.png`,
     jsonld: [
       {
         '@context': 'https://schema.org', '@type': 'SoftwareApplication',

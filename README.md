@@ -31,6 +31,8 @@ http://localhost:8000.
     assets/js/main.js       sticky nav, scroll reveal, count-up, FAQ, magnetic buttons, hero board
     assets/js/tabs.js       the section tabs on phones (see "Tabs on phones" below)
     assets/img/             drop photographs here as they arrive
+    assets/img/og/          the link preview pictures (1200x630), one per page, made by scripts/build-og.mjs
+    scripts/build-og.mjs    makes those pictures (a tool, not part of the site; its header says how to run it)
     reference/              the original single-page file, kept untouched as the reference
     industries/             "Who Relynked is for" pages, GENERATED, do not edit by hand
     scripts/build-industries.mjs      builds industries/, sitemap.xml and robots.txt

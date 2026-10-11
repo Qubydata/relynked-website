@@ -315,7 +315,7 @@ section{padding:120px 0}
 .plan.hot{background:var(--forest);color:var(--paper);border-color:var(--forest)}
 .plan .pn{font-family:var(--m);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;opacity:.6}
 .plan .pp{font-family:var(--d);font-size:2.6rem;font-weight:800;letter-spacing:-.05em;margin:14px 0 4px}
-.plan .pp small{font-family:var(--b);font-size:.9rem;font-weight:600;opacity:.6;letter-spacing:0}
+.plan .pp small{font-family:var(--b);font-size:.9rem;font-weight:600;opacity:.6;letter-spacing:0;white-space:nowrap}
 .plan .pd{font-size:.9rem;opacity:.7;margin-bottom:24px;line-height:1.5}
 .plan ul{list-style:none;padding:0;margin:0 0 28px;display:flex;flex-direction:column;gap:11px;flex:1}
 .plan li{display:flex;gap:10px;font-size:.9rem;font-weight:600}
@@ -334,6 +334,7 @@ section{padding:120px 0}
  -webkit-tap-highlight-color:transparent;transition:background .2s var(--ease),box-shadow .2s var(--ease),color .2s}
 .bsw input{position:absolute;opacity:0;width:100%;height:100%;inset:0;margin:0;cursor:pointer}
 .bsw label:has(input:checked){color:var(--ink);font-weight:800;background:var(--sel);box-shadow:var(--sel-sh)}
+.bsw label:has(input:checked)::before{content:"";width:5px;height:10px;margin:-3px 9px 0 0;border:solid var(--forest);border-width:0 2.4px 2.4px 0;transform:rotate(45deg);flex:none}
 .bsw label:has(input:focus-visible){outline:2px solid var(--forest);outline-offset:1px}
 .bill .bq,.bill .by{display:none}
 .bill:has(input[value="q"]:checked) .bm,.bill:has(input[value="y"]:checked) .bm{display:none}
