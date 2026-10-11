@@ -239,6 +239,9 @@ body.mnavopen .mmenu a:nth-child(3){transition-delay:.22s}body.mnavopen .mmenu a
 .mpt.mhot{background:var(--mforest);color:var(--mpaper);border-color:var(--mforest)}
 .mpt.mhot .mpu{color:rgba(253,253,253,.6)}
 .mpt.mhot li svg{stroke:var(--mlime)}
+.mlay .psave{margin:0 0 14px;font-size:var(--t-sm)}
+.mlay .pnote{margin-top:16px;font-size:var(--t-sm);color:rgba(22,22,22,.66)}
+.mlay .bsw{margin-top:4px}
 
 /* ---------- cta ---------- */
 .mctab{margin:0 var(--mpad);border-radius:28px;background:var(--mforest);color:var(--mpaper);padding:48px 26px;

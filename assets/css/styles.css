@@ -322,6 +322,28 @@ section{padding:120px 0}
 .plan li svg{width:17px;height:17px;stroke:var(--forest);fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;flex:none;margin-top:2px}
 .plan.hot li svg{stroke:var(--lime)}
 .plan .btn{justify-content:center}
+/* BILLING SWITCH (founder, 2026-10-11): Monthly / Quarterly / Yearly. Pure CSS,
+   so it works with no JavaScript: three radio buttons inside .bill, and the
+   chosen one decides which price span shows (.bm monthly, .bq quarterly,
+   .by yearly). Monthly is the checked one in the HTML, so it is the default.
+   The chosen label LIFTS (white lift): grey track, white chosen pill. Browsers
+   without :has() hide the switch and keep showing Monthly. */
+.bsw{display:flex;gap:4px;width:max-content;max-width:100%;margin:0 auto;padding:4px;border:0;border-radius:100px;background:var(--mist)}
+.bsw label{position:relative;display:flex;align-items:center;justify-content:center;min-height:44px;padding:0 22px;border-radius:100px;
+ font-family:var(--b);font-weight:700;font-size:.92rem;letter-spacing:-.01em;color:rgba(22,22,22,.6);cursor:pointer;white-space:nowrap;
+ -webkit-tap-highlight-color:transparent;transition:background .2s var(--ease),box-shadow .2s var(--ease),color .2s}
+.bsw input{position:absolute;opacity:0;width:100%;height:100%;inset:0;margin:0;cursor:pointer}
+.bsw label:has(input:checked){color:var(--ink);font-weight:800;background:var(--sel);box-shadow:var(--sel-sh)}
+.bsw label:has(input:focus-visible){outline:2px solid var(--forest);outline-offset:1px}
+.bill .bq,.bill .by{display:none}
+.bill:has(input[value="q"]:checked) .bm,.bill:has(input[value="y"]:checked) .bm{display:none}
+.bill:has(input[value="q"]:checked) .bq,.bill:has(input[value="y"]:checked) .by{display:inline}
+.psave{font-size:.88rem;font-weight:800;color:var(--forest);margin:0 0 14px;min-height:1.4em}
+.plan.hot .psave,.mpt.mhot .psave{color:var(--lime)}
+.pnote{margin-top:18px;max-width:760px;font-size:.92rem;line-height:1.65;color:rgba(22,22,22,.7)}
+@supports not selector(:has(a)){.bsw{display:none}}
+@media(prefers-reduced-motion:reduce){.bsw label{transition:none}}
+@media(max-width:900px){.bsw label{padding:0 16px;font-size:.88rem}}
 
 /* faq */
 .faq{max-width:820px;margin:48px auto 0}

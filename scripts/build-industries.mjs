@@ -377,6 +377,14 @@ ${MARK}
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:url" content="${canonical}">
+<meta property="og:image" content="https://relynked.com/assets/img/og-relynked.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Relynked: Business management system built by business owners for business owners">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${esc(title)}">
+<meta name="twitter:description" content="${esc(description)}">
+<meta name="twitter:image" content="https://relynked.com/assets/img/og-relynked.png">
 ${sh.headLinks}
 <script src="/assets/js/tabs.js?v=20261006a"></script>
 ${jsonld.map(ld).join('\n')}
@@ -402,16 +410,26 @@ function crumbs(items) {
   };
 }
 
+const SWITCH = '<fieldset class="bsw"><legend style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Billing period</legend><label><input type="radio" name="bill" value="m" checked>Monthly</label><label><input type="radio" name="bill" value="q">Quarterly</label><label><input type="radio" name="bill" value="y">Yearly</label></fieldset>';
+const SAVES = {
+  Basic: ['Pay yearly and save ₦40,000', 'Save ₦3,000 a quarter', 'Save ₦40,000 a year'],
+  Standard: ['Pay yearly and save ₦80,000', 'Save ₦6,000 a quarter', 'Save ₦80,000 a year'],
+};
+const save = (name) => {
+  const s = SAVES[name];
+  return s ? `<div class="psave"><span class="bm">${s[0]}</span><span class="bq">${s[1]}</span><span class="by">${s[2]}</span></div>` : '<div class="psave">Talk to us</div>';
+};
+
 function pricingBlock(t) {
-  const plan = (cls, name, price, per, desc, items, btn) => `      <div class="plan ${cls} reveal"><div class="pn">${name}</div><div class="pp"${price.startsWith('From') ? ' style="font-size:2.2rem"' : ''}>${price} <small>${per}</small></div><div class="pd">${desc}</div>
+  const plan = (cls, name, price, per, desc, items, btn) => `      <div class="plan ${cls} reveal"><div class="pn">${name}</div><div class="pp"${price.startsWith('From') ? ' style="font-size:2.2rem"' : ''}>${price}${per ? ` <small>${per}</small>` : ''}</div>${save(name)}<div class="pd">${desc}</div>
         <ul>${items.map(i => `<li>${TICK}${i}</li>`).join('')}</ul>
         ${btn}</div>`;
   const cards = [
-    plan('', 'Basic', '₦20,000', '/ month', 'For an owner with a small team.',
-      ['Unlimited staff. 2 can answer on your WhatsApp number and use Remy', 'Remy answering your customers on WhatsApp', 'Up to 500 chats a month', t.family === 'service' ? 'Your services and prices' : t.family === 'food' ? 'Your menu, prices and stock' : 'Your products, prices and stock'],
+    plan('', 'Basic', '<span class="bm">₦20,000 <small>/ month</small></span><span class="bq">₦57,000 <small>/ quarter</small></span><span class="by">₦200,000 <small>/ year</small></span>', '', 'For an owner with a small team.',
+      ['Unlimited staff. 2 can answer on your WhatsApp number and use Remy', 'Remy answering your customers on WhatsApp', 'Up to 500 customer chats a month, each answered in full', t.family === 'service' ? 'Your services and prices' : t.family === 'food' ? 'Your menu, prices and stock' : 'Your products, prices and stock'],
       `<a class="btn ghost" href="${APP_SIGNUP}">Start free</a>`),
-    plan('hot d1', 'Standard', '₦40,000', '/ month', 'For a busier business with a bigger team.',
-      ['Everything in Basic', 'Unlimited staff. 5 can answer on your WhatsApp number and use Remy', '1 screen at your place', 'Up to 1,000 chats a month'],
+    plan('hot d1', 'Standard', '<span class="bm">₦40,000 <small>/ month</small></span><span class="bq">₦114,000 <small>/ quarter</small></span><span class="by">₦400,000 <small>/ year</small></span>', '', 'For a busier business with a bigger team.',
+      ['Everything in Basic', 'Unlimited staff. 5 can answer on your WhatsApp number and use Remy', '1 screen at your place', 'Up to 1,000 customer chats a month, each answered in full'],
       '<a class="btn lime" href="https://app.relynked.com/?plan=standard">Start free</a>'),
     plan('d2', 'Enterprise', 'From ₦150,000', '/ month', 'For bigger venues and businesses with several branches, agreed with you after a call.',
       ['Everything in Standard', 'Unlimited staff. 10 can answer on your WhatsApp number and use Remy', 'More screens and chats', 'Several branches under one owner'],
@@ -423,8 +441,12 @@ function pricingBlock(t) {
       <h2>Pricing: a flat monthly price. <span class="hl">No cut of your sales.</span></h2>
       <p class="lead" style="margin-top:22px">Try it free for <span class="trial-days"></span>, with no card. Then pay by the month or the year. Relynked takes no percentage of your sales and no fee per transaction. Meta's charges for WhatsApp messages are not part of your plan. <a href="/pricing" style="color:var(--forest);text-decoration:underline">See full pricing</a>.</p>
     </div>
-    <div class="plans">
+    <div class="bill">
+    ${SWITCH}
+    <div class="plans" style="margin-top:28px">
 ${cards.join('\n')}
+    </div>
+    <p class="pnote">A chat is one customer's conversation in a day.</p>
     </div>
   </div>
 </section>`;
