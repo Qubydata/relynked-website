@@ -447,7 +447,7 @@ function pricingBlock(t) {
     <div class="plans" style="margin-top:28px">
 ${cards.join('\n')}
     </div>
-    <p class="pnote">A customer chat is one customer's conversation with your business on WhatsApp. If they go quiet for 8 hours and then write again, that is a new chat. <a href="/terms#chats" style="color:var(--forest);text-decoration:underline">How chats are counted</a>.</p>
+    <p class="pnote">A customer chat is one customer's conversation with your business on WhatsApp. If they go quiet for 8 hours and then write again, that is a new chat. Your chats start again every month, even if you pay quarterly or yearly. <a href="/terms#chats" style="color:var(--forest);text-decoration:underline">How chats are counted</a>.</p>
     </div>
   </div>
 </section>`;
