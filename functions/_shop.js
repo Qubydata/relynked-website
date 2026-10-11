@@ -24,7 +24,31 @@
  * secret beside it, so the API's rate limits count each visitor, not
  * Cloudflare. Nothing else of the visitor's is passed on: no cookies, no
  * referrer.
+ *
+ * <handle>.relynked.com (the Worker in the backend repo, deploy/shop-subdomains-worker)
+ * asks this same function for relynked.com/<handle>. That request comes from
+ * Cloudflare, so the Worker names the visitor in x-relynked-visitor and proves
+ * it is the Worker with x-relynked-worker (SHOP_WORKER_SECRET, 32 characters
+ * or more, the same on the Worker and on this Pages project). Without a match
+ * the header is ignored and the request's own address counts.
  */
+
+/** Constant time comparison of two strings. */
+function same(a, b) {
+  if (typeof a !== "string" || typeof b !== "string" || a.length !== b.length || a.length === 0) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
+/** The visitor's address: the Worker's word for it when the Worker proves itself, else Cloudflare's. */
+export function visitorOf(request, env) {
+  const secret = env.SHOP_WORKER_SECRET || "";
+  if (secret.length >= 32 && same(request.headers.get("x-relynked-worker"), secret)) {
+    return request.headers.get("x-relynked-visitor") || "";
+  }
+  return request.headers.get("cf-connecting-ip") || "";
+}
 
 // The site's own pages and folders, and Relynked's own paths: never a shop page.
 export const NOT_A_PAGE = new Set([
@@ -70,7 +94,7 @@ export async function toApi(context, apiPath) {
   }
   const headers = {
     "x-relynked-proxy": env.SHOP_PAGES_PROXY_SECRET,
-    "x-relynked-client-ip": request.headers.get("cf-connecting-ip") || "",
+    "x-relynked-client-ip": visitorOf(request, env),
     accept: request.headers.get("accept") || "*/*",
   };
   let body;
