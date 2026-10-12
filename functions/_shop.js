@@ -152,3 +152,20 @@ export async function toApi(context, apiPath) {
   }
   return response;
 }
+
+/**
+ * relynked.com/<handle> itself. Shared by functions/[handle].js and functions/[handle]/[[rest]].js: Pages lets the
+ * optional catch-all [[rest]] answer a bare /<handle> (with an empty rest) ahead of [handle].js, so both call this.
+ *
+ * The site's own files always win, and not by asking the site first: Cloudflare Pages answers any path it has no
+ * file for with the home page (200), so "was it a 404?" can never tell. _routes.json (scripts/build-shop-routes.mjs,
+ * run before every deploy) keeps every file and folder the site has out of the functions, and NOT_A_PAGE keeps the
+ * reserved words out. What reaches here is a name no file has.
+ */
+export async function servePage(context) {
+  const raw = String(context.params.handle || "");
+  const handle = raw.toLowerCase();
+  if (!shopsOn(context.env) || !isHandle(handle)) return context.next();
+  if (raw !== handle) return Response.redirect(new URL(`/${handle}`, context.request.url).toString(), 301);
+  return toApi(context, `/shop-pages/${handle}`);
+}
