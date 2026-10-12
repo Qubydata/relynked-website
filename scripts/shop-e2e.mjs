@@ -82,14 +82,24 @@ const sectionOf = (id) => {
 if (!body.includes(COMBO)) {
   console.log(`  skip  the shop has no "${COMBO}"`);
 } else {
-  const first = sectionOf("s0");
-  ok(/^<section id="s0" data-sec="s0"><h2>Combos/.test(first), "Combos is the first group", "is the test server on the build with the Combos section?");
+  // The page in order: Hot deals, then Top sellers (when there is a ranking), then Combos, then the other groups.
+  const groupIds = [...body.matchAll(/<section id="(s\d+)" data-sec="\1"><h2>([^<]+)</g)].map((m) => ({ id: m[1], title: m[2], at: m.index }));
+  const combosGroup = groupIds.find((g) => g.title === "Combos");
+  const order = [
+    ...(body.indexOf('id="hot"') >= 0 ? [["Hot deals", body.indexOf('id="hot"')]] : []),
+    ...(topSectionEarly ? [["Top sellers", body.indexOf('id="top"')]] : []),
+    ...groupIds.map((g) => [g.title, g.at]),
+  ].sort((a, b) => a[1] - b[1]).map((x) => x[0]);
+  const leading = order.filter((t) => t === "Hot deals" || t === "Top sellers").length;
+  ok(!!combosGroup && order.indexOf("Combos") === leading && order.slice(0, leading).every((t) => t === "Hot deals" || t === "Top sellers"), "Combos comes right after Hot deals and Top sellers, before the other groups", order.join(", "));
+  const first = combosGroup ? sectionOf(combosGroup.id) : "";
   ok(first.includes(COMBO), "the combo is listed under Combos");
   ok((body.match(new RegExp(`data-n="${COMBO}"`, "g")) || []).length === 1, "and only once, not also in Mains");
   ok(body.indexOf('id="hot"') < body.indexOf('<section id="s0"') && (!topSectionEarly || body.indexOf('id="top"') < body.indexOf('<section id="s0"')), "Combos comes after Hot deals and Top sellers");
   const tabs = [...body.matchAll(/data-a="nav" data-t="([^"]+)">([^<]+)</g)].map((m) => m[2]);
   ok(tabs.indexOf("Combos") >= 0 && tabs.indexOf("Combos") === tabs.filter((t) => t === "Hot deals" || t === "Top sellers").length, "the tab bar has Combos right after Hot deals and Top sellers", tabs.join(", "));
-  ok(!sectionOf("s1").includes(COMBO), "Mains no longer lists it");
+  const mains = groupIds.find((g) => g.title === "Mains");
+  ok(!mains || !sectionOf(mains.id).includes(COMBO), "Mains no longer lists it");
 }
 
 // 1b. The redesign (backend feat/shop-page-design): pinned header with search, Top sellers only with a real ranking,
