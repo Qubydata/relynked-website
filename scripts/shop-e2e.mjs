@@ -4,11 +4,12 @@
  *   node scripts/shop-e2e.mjs [--base https://shop-staging.relynked-3wg.pages.dev] [--handle mama-put-kitchen] [--code 5km4yrr]
  *
  * Run it once the test server has SHOP_PAGES_ENABLED=true, SHOP_PAGES_BASE_URL (the preview address) and the shared
- * SHOP_PAGES_PROXY_SECRET. It only reads, except one deliberately bad report (which is refused and files nothing).
+ * SHOP_PAGES_PROXY_SECRET. It only reads, except one deliberately bad report and one nonsense cart (both refused, nothing kept).
  * Exit code 0 when every check passes, 1 otherwise. Needs Node 18 or newer and nothing else.
  *
  * What it checks: the page (products, hot deal, the category sections and tabs built from what the shop stocks, the
- * footer link, no ads or outside scripts), the security headers on the page, a photo, the report page and the short
+ * footer link, no ads or outside scripts), the redesign (search in the header, the order sheet, the cart sent for its
+ * Ref, light by default, Top sellers only with a ranking, a nonsense cart refused), the security headers on the page, a photo, the report page and the short
  * link; a refused report; the site's own pages still served as before; reserved names and an unknown name never
  * showing a shop; capital letters redirecting.
  */
@@ -67,6 +68,23 @@ ok(!/adsbygoogle|googlesyndication|doubleclick|adservice|<iframe|banner-ad|spons
 const outside = [...body.matchAll(/<(?:script|img|link)\b[^>]*\b(?:src|href)="(https?:\/\/[^"]+)"/gi)].map((m) => m[1]).filter((u) => !u.includes("relynked"));
 ok(outside.length === 0, "no scripts, images or styles loaded from other sites", outside.slice(0, 2).join(" "));
 ok(!/[–—]/.test(body), "no em or en dashes in the page");
+
+// 1b. The redesign (backend feat/shop-page-design): pinned header with search, Top sellers only with a real ranking,
+// the cart and order sheet, the cart posted to this site for the Ref, light by default.
+console.log("\nThe page design");
+ok(/<input id="sq" type="search"[^>]*aria-label="Search /.test(body), "the header has a search field");
+ok(/<section class="sheet" id="sheet" role="dialog" aria-label="Your (order|booking)"/.test(body), "the cart opens an order sheet");
+ok(/Nothing is paid on this page\./.test(body), "the sheet says nothing is paid on the page");
+ok(body.includes(`data-order="/${HANDLE}/order"`), "the cart is sent to this site for the Ref", "no data-order on the page");
+ok(/:root\{[^}]*--bg:#fff;[^}]*color-scheme:light\}/.test(body) && /:root\.dk\{[^}]*color-scheme:dark\}/.test(body), "light by default, dark only when chosen");
+const topSection = /<section class="top" id="top">/.test(body);
+const topTab = />Top sellers</.test(body.replace(/<section class="top"[\s\S]*?<\/section>/, ""));
+ok(topSection === topTab, "Top sellers tab and row come together (shown only with a real ranking)", `row ${topSection}, tab ${topTab}`);
+const badOrder = await get(`/${HANDLE}/order`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ lines: "nonsense" }) });
+ok(badOrder.status === 400 && !/"ref"/.test(badOrder.text), "a nonsense cart is refused and gets no Ref (nothing kept)", `got ${badOrder.status}`);
+ok(/no-store/.test(badOrder.h("cache-control")), "the order answer is never cached", badOrder.h("cache-control"));
+const noShopOrder = await get(`/no-such-shop-${Date.now()}/order`, { method: "POST", headers: { "content-type": "application/json" }, body: "{}" });
+ok(noShopOrder.status === 404, "an order to a shop that does not exist is a 404", `got ${noShopOrder.status}`);
 
 // 2. Headers on the page.
 console.log("\nHeaders on the page");
