@@ -5,7 +5,7 @@ Static site, no build step. Live at https://relynked.com.
 Hosted on Cloudflare Pages, project `relynked`, in the Qubydata Cloudflare account.
 Deploying is one command, run from this folder:
 
-    node scripts/build-headers.mjs && CLOUDFLARE_API_TOKEN=$(cat ~/cf-token.txt)     CLOUDFLARE_ACCOUNT_ID=d98789131749b5406fb336071454a0d4     npx wrangler pages deploy . --project-name relynked --branch main
+    node scripts/build-shop-routes.mjs && node scripts/build-headers.mjs && CLOUDFLARE_API_TOKEN=$(cat ~/cf-token.txt)     CLOUDFLARE_ACCOUNT_ID=d98789131749b5406fb336071454a0d4     npx wrangler pages deploy . --project-name relynked --branch main
 
 `scripts/build-headers.mjs` writes `_headers`: the content security policy and
 the other security headers (security review 2026-09-30). Pages allow scripts only
@@ -247,3 +247,14 @@ The stylesheet switches animations off for anyone who asks their device for redu
 motion. The hero used to open from a hidden state that only the animation undid, so it
 came up blank for those users. The reduced-motion block at the foot of the stylesheet
 now sets those elements visible, and the lime sweep on show.
+
+## Shop pages (relynked.com/<handle>, relynked.com/s/<code>)
+
+Pages Functions in `functions/` (`[handle].js`, `[handle]/[[rest]].js`, `s/[code].js`, helper `_shop.js`) pass a
+business's shop page, its photos and its report page to the Relynked API, which draws them. They are OFF unless
+the Pages project has `SHOP_PAGES_ENABLED=true`, `SHOP_PAGES_API` (the API's https origin) and
+`SHOP_PAGES_PROXY_SECRET` (32 characters or more, the same value as the API's `SHOP_PAGES_PROXY_SECRET`);
+off, every path is served as before. Pages answers any path it has no file for with the home page, so the site's
+own files are kept out of the function by `_routes.json`: run `node scripts/build-shop-routes.mjs` before every
+deploy (the deploy line above does) and add any new reserved word to `NOT_A_PAGE` in `functions/_shop.js`.
+Test it on the preview first (`--branch shop-staging`, preview environment variables) with `node scripts/shop-e2e.mjs`.

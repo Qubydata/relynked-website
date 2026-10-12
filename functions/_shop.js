@@ -82,6 +82,11 @@ export function isHandle(seg) {
   return typeof seg === "string" && HANDLE.test(seg) && !seg.includes("--") && /[a-z]/.test(seg) && !NOT_A_PAGE.has(seg);
 }
 
+/** Whether shop pages are switched on and configured on this Pages project. Off: every path goes on to the site's files as before. */
+export function shopsOn(env) {
+  return env.SHOP_PAGES_ENABLED === "true" && /^https:\/\/[a-z0-9.-]+$/.test(env.SHOP_PAGES_API || "") && (env.SHOP_PAGES_PROXY_SECRET || "").length >= 32;
+}
+
 const PASS_BACK = ["content-type", "cache-control", "content-security-policy", "x-robots-tag", "location", "link", "retry-after", "referrer-policy", "x-content-type-options", "x-frame-options", "permissions-policy"];
 
 /**
@@ -91,9 +96,7 @@ const PASS_BACK = ["content-type", "cache-control", "content-security-policy", "
  */
 export async function toApi(context, apiPath) {
   const { request, env } = context;
-  if (env.SHOP_PAGES_ENABLED !== "true" || !/^https:\/\/[a-z0-9.-]+$/.test(env.SHOP_PAGES_API || "") || (env.SHOP_PAGES_PROXY_SECRET || "").length < 32) {
-    return context.next();
-  }
+  if (!shopsOn(env)) return context.next();
   const method = request.method;
   if (method !== "GET" && method !== "HEAD" && method !== "POST") return new Response("Method not allowed", { status: 405 });
   const url = new URL(request.url);
