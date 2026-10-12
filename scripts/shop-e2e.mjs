@@ -69,6 +69,29 @@ const outside = [...body.matchAll(/<(?:script|img|link)\b[^>]*\b(?:src|href)="(h
 ok(outside.length === 0, "no scripts, images or styles loaded from other sites", outside.slice(0, 2).join(" "));
 ok(!/[–—]/.test(body), "no em or en dashes in the page");
 
+// 1a. Combos (backend feat/shop-page-fast): every combo sits in its own Combos section and tab, right after Hot deals and
+// Top sellers, whichever group it was saved in, once only. The test shop's "Jollof Rice, Chicken and Plantain Combo" is
+// saved in Mains (with or without parts linked). Needs the test server on the build that has the Combos section.
+console.log("\nCombos");
+const topSectionEarly = /<section class="top" id="top">/.test(body);
+const COMBO = "Jollof Rice, Chicken and Plantain Combo";
+const sectionOf = (id) => {
+  const start = body.indexOf(`<section id="${id}" data-sec="${id}">`);
+  return start < 0 ? "" : body.slice(start, body.indexOf("</section>", start) + 10);
+};
+if (!body.includes(COMBO)) {
+  console.log(`  skip  the shop has no "${COMBO}"`);
+} else {
+  const first = sectionOf("s0");
+  ok(/^<section id="s0" data-sec="s0"><h2>Combos/.test(first), "Combos is the first group", "is the test server on the build with the Combos section?");
+  ok(first.includes(COMBO), "the combo is listed under Combos");
+  ok((body.match(new RegExp(`data-n="${COMBO}"`, "g")) || []).length === 1, "and only once, not also in Mains");
+  ok(body.indexOf('id="hot"') < body.indexOf('<section id="s0"') && (!topSectionEarly || body.indexOf('id="top"') < body.indexOf('<section id="s0"')), "Combos comes after Hot deals and Top sellers");
+  const tabs = [...body.matchAll(/data-a="nav" data-t="([^"]+)">([^<]+)</g)].map((m) => m[2]);
+  ok(tabs.indexOf("Combos") >= 0 && tabs.indexOf("Combos") === tabs.filter((t) => t === "Hot deals" || t === "Top sellers").length, "the tab bar has Combos right after Hot deals and Top sellers", tabs.join(", "));
+  ok(!sectionOf("s1").includes(COMBO), "Mains no longer lists it");
+}
+
 // 1b. The redesign (backend feat/shop-page-design): pinned header with search, Top sellers only with a real ranking,
 // the cart and order sheet, the cart posted to this site for the Ref, light by default.
 console.log("\nThe page design");
