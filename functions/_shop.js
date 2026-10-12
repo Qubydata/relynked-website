@@ -4,6 +4,7 @@
  *   relynked.com/<handle>                 the business's page
  *   relynked.com/<handle>/photo/<file>    its web sized photos
  *   relynked.com/<handle>/report          the report page (GET) and a report (POST)
+ *   relynked.com/<handle>/order           the cart the page posts for the Ref in its WhatsApp message (POST)
  *   relynked.com/s/<code>                 the permanent short link
  *
  * WHY HERE AND NOT A REDIRECT. The address customers share and print is

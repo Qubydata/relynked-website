@@ -15,5 +15,7 @@ export async function onRequest(context) {
   if (!shopsOn(context.env) || !isHandle(handle)) return context.next();
   if (rest.length === 2 && rest[0] === "photo" && PHOTO.test(rest[1])) return toApi(context, `/shop-pages/${handle}/photo/${rest[1]}`);
   if (rest.length === 1 && rest[0] === "report") return toApi(context, `/shop-pages/${handle}/report`);
+  // The cart the page posts just before it opens WhatsApp, to get the Ref written at the end of the message (small JSON, POST only).
+  if (rest.length === 1 && rest[0] === "order" && context.request.method === "POST") return toApi(context, `/shop-pages/${handle}/order`);
   return context.next();
 }
