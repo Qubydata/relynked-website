@@ -80,7 +80,7 @@ ok(page.h("x-frame-options") === "DENY", "X-Frame-Options DENY");
 ok(/strict-origin/.test(page.h("referrer-policy")), "referrer policy");
 ok(/camera=\(\)/.test(page.h("permissions-policy")), "permissions policy");
 ok(/max-age=\d{7,}/.test(page.h("strict-transport-security")), "HSTS");
-ok(/public/.test(page.h("cache-control")), "cache rule is public (30 seconds at the edge)", page.h("cache-control"));
+ok(/public/.test(page.h("cache-control")), "cache rule is public (a few seconds at the edge)", page.h("cache-control"));
 ok(/noindex/.test(page.h("x-robots-tag")) || !page.h("x-robots-tag"), "indexing header is sane", page.h("x-robots-tag"));
 ok(!page.h("set-cookie"), "no cookies set");
 
