@@ -40,7 +40,7 @@ const get = async (path, opts = {}) => {
   const text = await res.text();
   return { res, text, status: res.status, h: (n) => res.headers.get(n) || "" };
 };
-const SHOP_MARKERS = ["Report this page", "Made with Relynked", 'data-a="add"'];
+const SHOP_MARKERS = ["Report this page", 'data-a="add"']; // the footer "Made with Relynked" also shows on the not-found page, so it is not a shop marker
 const showsShop = (text) => SHOP_MARKERS.some((m) => text.includes(m));
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const PHOTO = /\/[a-z0-9-]+\/photo\/[0-9a-f-]{36}-[tl]\.jpg/;
