@@ -50,11 +50,29 @@ export function visitorOf(request, env) {
   return request.headers.get("cf-connecting-ip") || "";
 }
 
-// The site's own pages and folders, and Relynked's own paths: never a shop page.
+// Names that are never a shop page: the site's own pages and folders, Relynked's own paths and host words
+// (www, app, staff, api, staging, floor, kitchen ...), and the words the API refuses as handles. The API
+// keeps the same lists (shop-pages/handles.ts RESERVED_HANDLES and reserved-hosts.ts); a word here only
+// saves a trip to the API, the API refuses them all again.
 export const NOT_A_PAGE = new Set([
+  // The site's own pages, folders and files.
   "api", "assets", "functions", "industries", "o", "s", "reference", "scripts", "app", "staff", "www", "admin", "login",
   "support", "help", "pricing", "product", "careers", "contact", "press", "privacy", "terms", "refund-policy",
   "data-deletion", "how-it-works", "dashboard", "index", "robots", "sitemap", "favicon", "furjejkwnfuh737-x3-shift26",
+  // Relynked's apps, services and host words.
+  "mail", "email", "status", "cdn", "static", "floor", "kitchen", "bar", "pos", "waiter", "till", "store", "storekeeper",
+  "cashier", "bartender", "docs", "git", "next", "pages", "remy", "relynked", "vettar", "qubydata", "auth", "oauth",
+  "webhooks", "health", "pay", "payments", "checkout", "billing", "wallet",
+  // Paths a person would expect to be Relynked's.
+  "signup", "sign-up", "signin", "sign-in", "register", "account", "settings", "security", "legal", "blog", "about",
+  "shop", "shops", "order", "orders", "page", "report", "abuse", "download", "home", "new", "edit", "me", "my", "you",
+  "official", "verify", "verified", "verification", "kyc", "bvn", "nin", "otp", "password", "reset", "refund", "refunds",
+  "invoice", "receipt", "receipts", "careers-team", "team", "jobs", "customercare", "customer-care", "customerservice",
+  "customer-service", "helpdesk", "help-desk", "partners", "partner", "agents", "agent", "investors", "media", "news",
+  "app-store", "play-store",
+  // The names a mail or web host uses, and test words.
+  "ftp", "smtp", "imap", "pop", "pop3", "webmail", "vpn", "autodiscover", "autoconfig", "ns1", "ns2", "mx",
+  "staging", "dev", "beta", "preview", "stage", "test", "demo", "example", "simple",
 ]);
 
 const HANDLE = /^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/;
