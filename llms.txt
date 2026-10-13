@@ -1,0 +1,57 @@
+# Relynked
+
+> Relynked is a business app for small businesses in Nigeria: shops, salons, food vendors and one-venue lounges. It keeps what you sell, your stock, your staff, your orders and your payments in one place, and Remy, the assistant inside it, answers customers on WhatsApp in English or Pidgin. It is made by Relynked Ltd (RC 9837720) in Benin City, Edo State.
+
+- Who it is for: small businesses in Nigeria that sell products or book services (shops, supermarkets, clothing and shoe sellers, phone shops, bakeries, grills, bukas, restaurants, bars and lounges, hair salons, barbers, makeup artists, nail and lash technicians, spas, car washes).
+- Price, in Nigerian naira: Basic ₦20,000 a month, Standard ₦40,000 a month, Enterprise from ₦150,000 a month (agreed after a call). Quarterly: ₦57,000 (Basic), ₦114,000 (Standard). Yearly: ₦200,000 (Basic), ₦400,000 (Standard).
+- Free trial: 7 days, no card needed.
+- Staff: unlimited on every plan. The plan counts only the people who answer customers on the business's WhatsApp number or use Remy: the owner plus 2 on Basic, plus 5 on Standard, plus 10 on Enterprise.
+- No percentage of sales and no fee per transaction. Meta's charges for some WhatsApp messages are separate from the plan.
+- Relynked does not hold customers' money: customers pay the business through a licensed payment company.
+- Sign up: https://app.relynked.com/ (no card needed).
+- Contact: hello@relynked.com, 0911 567 1307, 7B Edegbe Street, off Giwa-Amu Street, GRA, Benin City, Edo State, Nigeria.
+
+## Key pages
+
+- [Facts about Relynked](https://relynked.com/about-relynked): Short, quotable answers: what it is, who it is for, price, how it differs, what it does not do.
+- [Pricing](https://relynked.com/pricing): Basic, Standard and Enterprise in naira, how paying works, and the questions people ask first.
+- [Products](https://relynked.com/product): Relynked Business and Remy, each everyday problem and what Relynked does about it, and every kind of business it is set up for.
+- [How it works](https://relynked.com/how-it-works): How goods, services and money are recorded step by step, with a name and a time on each.
+- [Contact](https://relynked.com/contact): Phone, email, address and how to book a call about Enterprise.
+
+## Who it is for
+
+- [Bakeries and cafes](https://relynked.com/industries/bakery)
+- [Bars and lounges](https://relynked.com/industries/bar)
+- [Barber shops](https://relynked.com/industries/barber-shop)
+- [Buka or mama put businesses](https://relynked.com/industries/buka)
+- [Car wash businesses](https://relynked.com/industries/car-wash)
+- [Clothing stores](https://relynked.com/industries/clothing-store)
+- [Cosmetics and beauty shops](https://relynked.com/industries/cosmetics-and-beauty)
+- [Fabrics and aso ebi businesses](https://relynked.com/industries/fabrics-and-aso-ebi)
+- [Fast food restaurants](https://relynked.com/industries/fast-food)
+- [Foodstuff and grains businesses](https://relynked.com/industries/foodstuff-and-grains)
+- [Frozen foods businesses](https://relynked.com/industries/frozen-foods)
+- [Grills and suya spots](https://relynked.com/industries/grill)
+- [Hair salons](https://relynked.com/industries/hair-salon)
+- [Makeup artists](https://relynked.com/industries/makeup-artist)
+- [Nail and lash technicians](https://relynked.com/industries/nail-and-lash-tech)
+- [Phone and gadget shops](https://relynked.com/industries/phones-and-gadgets)
+- [Restaurants](https://relynked.com/industries/restaurant)
+- [Shoes and bags businesses](https://relynked.com/industries/shoes-and-bags)
+- [Spa or massage businesses](https://relynked.com/industries/spa)
+- [Supermarkets and provision stores](https://relynked.com/industries/supermarket)
+
+## Policies
+
+- [Terms of service](https://relynked.com/terms)
+- [Privacy policy](https://relynked.com/privacy)
+- [Refund policy](https://relynked.com/refund-policy)
+- [Data deletion](https://relynked.com/data-deletion)
+
+## Optional
+
+- [Relynked in full](https://relynked.com/llms-full.txt): the same facts with every plan detail and every question answered, in one file
+- [Press](https://relynked.com/press): approved descriptions, brand assets and press contact
+- [Careers](https://relynked.com/careers)
+- [Sitemap](https://relynked.com/sitemap.xml)

@@ -1,0 +1,173 @@
+# Relynked
+
+> Relynked is a business app for small businesses in Nigeria: shops, salons, food vendors and one-venue lounges. It keeps what you sell, your stock, your staff, your orders and your payments in one place, and Remy, the assistant inside it, answers customers on WhatsApp in English or Pidgin. It is made by Relynked Ltd (RC 9837720) in Benin City, Edo State.
+
+Every fact below is also on the pages linked from https://relynked.com/llms.txt. Prices are in Nigerian naira. Quarterly plans save 5%. Yearly plans pay for 10 months and get 12.
+
+## Plans
+
+Free for 7 days with no card. Staff are unlimited on every plan.
+
+### Basic: ₦20,000 a month, ₦57,000 a quarter, ₦200,000 a year
+
+- Unlimited staff. 2 can answer on your WhatsApp number and use Remy
+- Remy answering your customers on WhatsApp
+- Up to 500 customer chats a month, each answered in full
+- Your products or services, prices and stock
+- Orders and payments in one place
+
+### Standard: ₦40,000 a month, ₦114,000 a quarter, ₦400,000 a year
+
+- Everything in Basic
+- Unlimited staff. 5 can answer on your WhatsApp number and use Remy
+- 1 screen at your place
+- Up to 1,000 customer chats a month, each answered in full
+
+### Enterprise: from ₦150,000 a month, agreed after a call
+
+- Everything in Standard
+- Unlimited staff. 10 can answer on your WhatsApp number and use Remy
+- More screens and chats
+- Till, kitchen, bar and store screens on the devices you have
+- Blind stock counts
+- Several branches under one owner
+
+A customer chat is one customer's conversation with the business on WhatsApp. If they go quiet for 8 hours and then write again, that is a new chat. Chats start again every month, even on a quarterly or yearly plan.
+
+## How paying works
+
+### Pay in the app
+
+Open the Plan screen in the app and pay on Paystack checkout, by card, bank transfer, USSD or bank. When the payment lands, your plan is paid automatically. If a payment goes through twice or is the wrong amount, we send it back to the account it came from within 7 working days.
+
+### Your sales stay yours
+
+Money your customers pay goes straight to your business through a licensed payment company. Relynked never holds it and never takes a cut of it.
+
+### If a payment is missed
+
+We remind you 3 days before renewal. After that you get 7 days' grace with everything working, then 7 more days with warnings. On day 15 Remy pauses until you pay. Nothing is deleted.
+
+## Questions and answers about pricing
+
+### Is there a free trial?
+
+Yes. You get 7 days on us, and we do not ask for a card. When the trial ends, pick a plan and pay in the app to carry on.
+
+### How many staff can I add?
+
+As many as you like. Your plan only counts the people who answer customers on your WhatsApp number or use Remy: you plus 2 on Basic, you plus 5 on Standard, and you plus 10 on Enterprise. Staff who never touch the WhatsApp number or Remy are free.
+
+### Are WhatsApp message charges included?
+
+No. Meta, the company behind WhatsApp, charges for some messages. That charge is separate from your plan.
+
+### Do you take a percentage of my sales?
+
+No. Relynked charges one flat fee, paid monthly, quarterly or yearly. We take no percentage of your sales and no charge per transaction. When a customer pays you by card or transfer, the payment company that processes it charges its own fee. That fee is charged by that company, not by Relynked.
+
+### Does Relynked hold my customers' money?
+
+No. When a customer pays for an order, the money goes directly to your business through a licensed payment company. Relynked does not hold it, move it or refund it. Refunds of those payments are between you and your customer.
+
+### How do I pay for my plan?
+
+You pay from the Plan screen in the app. It opens Paystack checkout, where you pay the exact amount by card, bank transfer, USSD or bank. When the payment lands, your plan is paid automatically. If a payment goes through twice or is the wrong amount, we send it back to the account it came from within 7 working days.
+
+### What happens if I pay late?
+
+We send a reminder 3 days before your renewal date. If the payment does not arrive, you have 7 days' grace with everything still working, then 7 more days with warnings. On day 15 Remy pauses until you pay. Your data, orders and settings are kept, and everything starts again as soon as the payment lands.
+
+### Can I cancel?
+
+Yes, at any time. Your plan stays active until the end of the period you have paid for, then stops. If you cancel within 7 days of your very first payment, we refund it in full. The full rules are in our refund policy.
+
+### Can prices change?
+
+We will always give you at least 30 days' notice before a price change applies to your account. A yearly plan keeps its price until the year you have paid for ends.
+
+## Facts about Relynked
+
+### What is Relynked?
+
+Relynked is a business app for small businesses in Nigeria. It keeps what you sell, your stock, your staff, your orders and your payments in one place, and it answers your customers on WhatsApp through Remy, the assistant inside it. Relynked is made by Relynked Ltd, a company registered in Nigeria (RC 9837720) and based in Benin City, Edo State.
+
+### What problem does it solve?
+
+A small business usually runs on one phone. Customers message at 11pm and go elsewhere if nobody answers. A payment screenshot says successful, the goods leave, and the money is not in the account. Stock lives in someone's head. Staff share the owner's phone or one password, so when a price changes or an order goes missing, nobody did it. Relynked answers those customers, holds each order until the money has really landed, keeps a count for every item, and gives every staff member their own sign-in, so each change has a name and a time.
+
+### Who is it for?
+
+Small businesses in Nigeria that sell products or book services: shops, supermarkets, clothing and shoe sellers, phone and gadget shops, bakeries, grills, fast food spots, bukas, restaurants, bars and lounges, hair salons, barbers, makeup artists, nail and lash technicians, spas and car washes. The full list is on the products page. If your kind of business is not listed, you can choose “Something else” when you sign up.
+
+### What is Remy?
+
+Remy is the assistant inside Relynked. It is not a separate app. Remy answers your customers on your business WhatsApp number, day and night, in English or Pidgin. It gives only the prices and stock you have entered, reads each order back, and waits for the customer to say yes. When a customer needs a person, Remy hands the chat to you and alerts you.
+
+### How much does Relynked cost?
+
+Basic is ₦20,000 a month. Standard is ₦40,000 a month. Enterprise starts from ₦150,000 a month and the price is agreed after a call. Paying quarterly costs ₦57,000 for Basic and ₦114,000 for Standard. Paying yearly costs ₦200,000 for Basic and ₦400,000 for Standard. Prices are in Nigerian naira. See the pricing page for the full list. Relynked charges no percentage of your sales and no fee per transaction.
+
+### Is there a free trial?
+
+Yes. Relynked is free for 7 days with no card. When the trial ends you pick a plan and pay in the app.
+
+### What does each plan include?
+
+Staff are unlimited on every plan. The plan only counts the people who answer customers on your WhatsApp number or use Remy: the owner plus 2 on Basic, the owner plus 5 on Standard, and the owner plus 10 on Enterprise. Basic includes up to 500 customer chats a month. Standard includes up to 1,000 customer chats a month and 1 screen at your place. Enterprise adds more screens and chats, till, kitchen, bar and store screens on the devices you have, blind stock counts, and several branches under one owner.
+
+### How do I start?
+
+Go to app.relynked.com and sign up. No card is needed. Add what you sell, and Remy can answer your next customer on WhatsApp.
+
+### How is Relynked different?
+
+A payment screenshot is not treated as money. Remy sends your locked payment details, and the order waits until someone you trust sees the money in your bank. Every change has a name and a time, because each staff member signs in as themselves and sees only what their job needs. Stock is kept per item. When something finishes, Remy stops offering it to customers. It is built around how business runs in Nigeria: prices in naira, customers who write in English or Pidgin, and transfers that may not have landed yet.
+
+### What does Relynked not do?
+
+Relynked does not hold your customers' money. Customers pay your business through a licensed payment company, and Relynked never takes a cut of it. Relynked does not pay Meta's charges for WhatsApp messages. Meta charges for some messages, and that charge is separate from your plan. Relynked is not made by WhatsApp or Meta, and is not a bank. Only the till and waiter screens keep taking orders when the network drops. The rest of the app needs an internet connection.
+
+### How do I contact Relynked?
+
+Email hello@relynked.com or call 0911 567 1307. The office is at 7B Edegbe Street, off Giwa-Amu Street, GRA, Benin City, Edo State, Nigeria.
+
+## Who it is for
+
+- [Bakeries and cafes](https://relynked.com/industries/bakery)
+- [Bars and lounges](https://relynked.com/industries/bar)
+- [Barber shops](https://relynked.com/industries/barber-shop)
+- [Buka or mama put businesses](https://relynked.com/industries/buka)
+- [Car wash businesses](https://relynked.com/industries/car-wash)
+- [Clothing stores](https://relynked.com/industries/clothing-store)
+- [Cosmetics and beauty shops](https://relynked.com/industries/cosmetics-and-beauty)
+- [Fabrics and aso ebi businesses](https://relynked.com/industries/fabrics-and-aso-ebi)
+- [Fast food restaurants](https://relynked.com/industries/fast-food)
+- [Foodstuff and grains businesses](https://relynked.com/industries/foodstuff-and-grains)
+- [Frozen foods businesses](https://relynked.com/industries/frozen-foods)
+- [Grills and suya spots](https://relynked.com/industries/grill)
+- [Hair salons](https://relynked.com/industries/hair-salon)
+- [Makeup artists](https://relynked.com/industries/makeup-artist)
+- [Nail and lash technicians](https://relynked.com/industries/nail-and-lash-tech)
+- [Phone and gadget shops](https://relynked.com/industries/phones-and-gadgets)
+- [Restaurants](https://relynked.com/industries/restaurant)
+- [Shoes and bags businesses](https://relynked.com/industries/shoes-and-bags)
+- [Spa or massage businesses](https://relynked.com/industries/spa)
+- [Supermarkets and provision stores](https://relynked.com/industries/supermarket)
+
+## Contact
+
+- Email: hello@relynked.com
+- Phone: 0911 567 1307 (+2349115671307)
+- Address: 7B Edegbe Street, off Giwa-Amu Street, GRA, Benin City, Edo State, Nigeria
+- Company: Relynked Ltd, RC 9837720
+- Instagram: https://www.instagram.com/relynkedltd/
+- Sign up: https://app.relynked.com/
+
+## Pages
+
+- [Facts about Relynked](https://relynked.com/about-relynked): Short, quotable answers: what it is, who it is for, price, how it differs, what it does not do.
+- [Pricing](https://relynked.com/pricing): Basic, Standard and Enterprise in naira, how paying works, and the questions people ask first.
+- [Products](https://relynked.com/product): Relynked Business and Remy, each everyday problem and what Relynked does about it, and every kind of business it is set up for.
+- [How it works](https://relynked.com/how-it-works): How goods, services and money are recorded step by step, with a name and a time on each.
+- [Contact](https://relynked.com/contact): Phone, email, address and how to book a call about Enterprise.

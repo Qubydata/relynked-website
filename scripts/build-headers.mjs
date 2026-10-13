@@ -98,5 +98,16 @@ const headers = `# Written by scripts/build-headers.mjs. Do not edit by hand: ch
   Permissions-Policy: ${permissions}
 `;
 
-writeFileSync(join(decodeURIComponent(ROOT), "_headers"), headers, "utf8");
+// Plain-text files for crawlers and AI agents are served as text, never as the
+// home page. Cloudflare Pages falls back to index.html for a path with no file,
+// so these files must exist (build-llms.mjs and build-industries.mjs write them)
+// and carry an explicit type. The IndexNow key file is the one 32-character hex
+// .txt in this folder (see scripts/indexnow.mjs).
+const plain = ["/llms.txt", "/llms-full.txt", "/robots.txt"];
+for (const f of readdirSync(decodeURIComponent(ROOT))) if (/^[0-9a-f]{32}\.txt$/.test(f)) plain.push("/" + f);
+const textRules = plain
+  .map((p) => `${p}\n  Content-Type: text/plain; charset=utf-8\n  Cache-Control: public, max-age=3600\n`)
+  .join("\n");
+
+writeFileSync(join(decodeURIComponent(ROOT), "_headers"), headers + "\n" + textRules, "utf8");
 console.log(`_headers: ${hashes.size} inline script hash(es)`);

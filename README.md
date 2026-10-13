@@ -66,6 +66,31 @@ type in the app changes its URL unless a slug hint pins it.
 
 Also run the script after adding a new page to the site, so the sitemap lists it.
 
+## Findable by AI agents and answer engines (2026-10-13)
+
+Customers now ask Google's AI summary, ChatGPT, Claude and Perplexity before they search. These
+files make Relynked easy for them to find, read and quote. All of it is generated or checked
+from the pages themselves, so nothing is typed twice.
+
+    about-relynked.html     plain facts page, answer-first, linked from every footer ("About")
+    llms.txt, llms-full.txt plain-text summaries in the llmstxt.org format (scripts/build-llms.mjs)
+    robots.txt              every AI search and AI training crawler is allowed (build-industries.mjs)
+    JSON-LD in every head   Organization, WebSite, WebPage, SoftwareApplication with the plans in NGN,
+                            FAQPage where a page has Q&A, BreadcrumbList on industries pages
+                            (scripts/build-jsonld.mjs, between the "ai:jsonld" comments)
+    <32 hex>.txt            the IndexNow key file; scripts/indexnow.mjs pings Bing and Yandex after a deploy
+    scripts/lib-site.mjs    reads prices from pricing.html and the trial length from the stylesheet
+
+After changing a price, a plan line, a question on the pricing page or the facts page, run
+`node scripts/build-industries.mjs` (it runs build-jsonld and build-llms at the end), then
+`node scripts/build-headers.mjs`, then deploy. build-llms stops with an error if
+about-relynked.html no longer states the prices on pricing.html.
+After merging another branch that changed a page head, run `node scripts/build-jsonld.mjs`.
+After a deploy, tell Bing and Yandex: `node scripts/indexnow.mjs` (`--dry` to preview, `--all` for every page).
+llms.txt and robots.txt are served as text/plain by `_headers`. The founder must also switch off
+Cloudflare's AI bot blocking, or GPTBot and ClaudeBot get 403 whatever robots.txt says
+(remy-hq/research/ai-findable/founder-steps.md).
+
 ## House rules
 
 - The header and footer are identical on all the main pages. Change one, change all five.
