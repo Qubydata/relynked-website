@@ -132,9 +132,10 @@ Basic ₦20,000 a month (up to 500 chats a month), Standard ₦40,000 (1 screen,
 chats), Enterprise from ₦150,000 after a call. Staff are unlimited on every plan. The plan
 only counts the people who answer customers on the business's WhatsApp number or use Remy:
 the owner plus 2 on Basic, the owner plus 5 on Standard, more on Enterprise by agreement. Meta's WhatsApp
-message charges are not part of the plan. The wallet is not switched on, so the site never
-mentions it: money sent to a business's account number pays its plan automatically, and any
-extra stays as credit towards the next month. The plan cards on industry pages come
+message charges are not part of the plan. The wallet and dedicated account numbers are not live
+(they wait for a lawyer), so the site never mentions them: owners pay for their plan on Paystack
+checkout by card, bank transfer or USSD, and wrong or double payments go back to the sender
+within 7 working days. The plan cards on industry pages come
 from `pricingBlock` in `scripts/build-industries.mjs`.
 
 The free trial length is written once, as `--trial-days` at the top of
