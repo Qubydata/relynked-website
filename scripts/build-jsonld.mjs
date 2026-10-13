@@ -123,7 +123,7 @@ function graphFor(file, html) {
   const url = file === 'index.html' ? `${SITE}/` : `${SITE}/${slug}`;
   const graph = [organization, website];
   // Industries pages carry their own, more specific SoftwareApplication.
-  if (!/"@type":"SoftwareApplication"/.test(html.replace(new RegExp(`${START}[\s\S]*?${END}`), ''))) graph.push(software());
+  if (!/"@type":"SoftwareApplication"/.test(html.replace(new RegExp(`${START}[^]*?${END}`, "g"), ""))) graph.push(software());
   const page = {
     '@type': KINDS[slug] || 'WebPage',
     '@id': `${url}#webpage`,
@@ -162,8 +162,9 @@ for (const file of files()) {
   const before = html;
   // The home page used to carry a bare Organization; the graph replaces it.
   html = html.replace(/<script type="application\/ld\+json">\{"@context":"https:\/\/schema\.org","@type":"Organization"[^\n]*?<\/script>\n/, '');
-  html = html.replace(new RegExp(`${START}[\s\S]*?${END}\n`), '');
-  const json = JSON.stringify(graphFor(file, html)).replace(/</g, '\u003c');
+  html = html.replace(new RegExp(START + "[^]*?" + END + String.fromCharCode(10), "g"), "");
+  // "<" becomes the six characters backslash-u003c, so no text in the data can close the script tag.
+  const json = JSON.stringify(graphFor(file, html)).replace(/</g, String.fromCharCode(92) + "u003c");
   JSON.parse(json); // the block must stay valid JSON
   if (/[\u2013\u2014]/.test(json)) throw new Error(`${file}: JSON-LD contains an em dash or en dash`);
   html = html.replace('</head>', `${START}\n<script type="application/ld+json">${json}</script>\n${END}\n</head>`);
