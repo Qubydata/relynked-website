@@ -428,10 +428,10 @@ function pricingBlock(t) {
   const cards = [
     plan('', 'Basic', '<span class="bm">₦20,000 <small>/ month</small></span><span class="bq">₦57,000 <small>/ quarter</small></span><span class="by">₦200,000 <small>/ year</small></span>', '', 'For an owner with a small team.',
       ['Unlimited staff. 2 can answer on your WhatsApp number and use Remy', 'Remy answering your customers on WhatsApp', 'Up to 500 customer chats a month, each answered in full', t.family === 'service' ? 'Your services and prices' : t.family === 'food' ? 'Your menu, prices and stock' : 'Your products, prices and stock'],
-      `<a class="btn ghost" href="${APP_SIGNUP}">Start free</a>`),
+      `<a class="btn ghost" href="${APP_SIGNUP}">Request access</a>`),
     plan('hot d1', 'Standard', '<span class="bm">₦40,000 <small>/ month</small></span><span class="bq">₦114,000 <small>/ quarter</small></span><span class="by">₦400,000 <small>/ year</small></span>', '', 'For a busier business with a bigger team.',
       ['Everything in Basic', 'Unlimited staff. 5 can answer on your WhatsApp number and use Remy', '1 screen at your place', 'Up to 1,000 customer chats a month, each answered in full'],
-      '<a class="btn lime" href="https://app.relynked.com/?plan=standard">Start free</a>'),
+      '<a class="btn lime" href="/contact">Request access</a>'),
     plan('d2', 'Enterprise', 'From ₦150,000', '/ month', 'For bigger venues and businesses with several branches, agreed with you after a call.',
       ['Everything in Standard', 'Unlimited staff. 10 can answer on your WhatsApp number and use Remy', 'More screens and chats', 'Several branches under one owner'],
       '<a class="btn ghost" href="/contact">Book a call</a>'),
@@ -507,7 +507,7 @@ ${tabs.map(([id, label], i) => `  <button type="button" role="tab" aria-controls
     <div class="reveal" style="max-width:860px">
       <h1 style="font-size:clamp(2.4rem,4.8vw,4.2rem)">Business management software for ${esc(t.plural)} <span class="hl">in Nigeria.</span></h1>
       <p class="lead" style="margin-top:22px">${esc(LEAD[t.family](t))}</p>
-      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:34px"><a class="btn lime magnet" href="${APP_SIGNUP}">Start free, no card needed ${ARROW}</a><a class="btn ghost" href="#pricing">See pricing</a></div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:34px"><a class="btn lime magnet" href="${APP_SIGNUP}">Request access ${ARROW}</a><a class="btn ghost" href="#pricing">See pricing</a></div>
     </div>
     ${aka}
   </div>
@@ -540,7 +540,7 @@ ${more}
 <div class="cta-band reveal" id="cta">
   <h2>Run your ${esc(t.singular)} on Relynked.</h2>
   <p>Try it free for <span class="trial-days"></span>, with no card needed, and set up your ${esc(t.catalogue)} today.</p>
-  <div class="row"><a class="btn lime magnet" href="${APP_SIGNUP}">Start free, no card needed ${ARROW}</a><a class="btn ghost" style="color:var(--paper);border-color:rgba(253,253,253,.3)" href="/pricing">See pricing</a></div>
+  <div class="row"><a class="btn lime magnet" href="${APP_SIGNUP}">Request access ${ARROW}</a><a class="btn ghost" style="color:var(--paper);border-color:rgba(253,253,253,.3)" href="/pricing">See pricing</a></div>
 </div>`;
 
   return page({
@@ -651,7 +651,7 @@ ${sections}
     <div class="reveal" style="max-width:760px">
       <h2>Not on the list?</h2>
       <p class="lead" style="margin-top:22px">Choose "Something else" when you sign up, or tell us how your business works and we will show you how Relynked fits.</p>
-      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:34px"><a class="btn lime magnet" href="${APP_SIGNUP}">Start free, no card needed ${ARROW}</a><a class="btn ghost" href="/contact">Talk to us</a></div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:34px"><a class="btn lime magnet" href="${APP_SIGNUP}">Request access ${ARROW}</a><a class="btn ghost" href="/contact">Talk to us</a></div>
     </div>
   </div>
 </section>
@@ -660,7 +660,7 @@ ${sections}
 <div class="cta-band reveal" id="cta">
   <h2>One system for the whole business.</h2>
   <p>From ₦20,000 a month, with no percentage of your sales. <a href="/pricing" style="color:var(--lime);text-decoration:underline">See pricing</a>.</p>
-  <div class="row"><a class="btn lime magnet" href="${APP_SIGNUP}">Start free, no card needed ${ARROW}</a><a class="btn ghost" style="color:var(--paper);border-color:rgba(253,253,253,.3)" href="/pricing">See pricing</a></div>
+  <div class="row"><a class="btn lime magnet" href="${APP_SIGNUP}">Request access ${ARROW}</a><a class="btn ghost" style="color:var(--paper);border-color:rgba(253,253,253,.3)" href="/pricing">See pricing</a></div>
 </div>`;
 
   return page({
