@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "include": [
+    "/*"
+  ],
+  "exclude": [
+    "/",
+    "/assets/*",
+    "/careers.html",
+    "/careers",
+    "/contact.html",
+    "/contact",
+    "/dashboard.html",
+    "/dashboard",
+    "/data-deletion.html",
+    "/data-deletion",
+    "/favicon.ico",
+    "/furjejkwnfuh737-x3-shift26/*",
+    "/how-it-works.html",
+    "/how-it-works",
+    "/index.html",
+    "/index",
+    "/industries/*",
+    "/press.html",
+    "/press",
+    "/pricing.html",
+    "/pricing",
+    "/privacy.html",
+    "/privacy",
+    "/product.html",
+    "/product",
+    "/refund-policy.html",
+    "/refund-policy",
+    "/robots.txt",
+    "/site.webmanifest",
+    "/sitemap.xml",
+    "/terms.html",
+    "/terms",
+    "/o/*"
+  ]
+}
