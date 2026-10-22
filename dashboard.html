@@ -16,7 +16,9 @@
   :root{
     --bg:#F5F7F9; --card:#FFFFFF; --line:#E4E8EC; --line-soft:#EEF1F4;
     --t1:#0E1620; --t2:#57646F; --t3:#8B96A1;
-    --ok:#13915A; --ok-bg:#E6F5EE;
+    /* Working is green on the WORD and the dot only; its ground is the plain
+       grey (founder, 2026-10-10: every pale green fill goes). */
+    --ok:#13915A; --ok-bg:#EEF1F4;
     --bad:#CE2A1C; --bad-bg:#FCEBE9;
     --warn:#B26A00; --warn-bg:#FDF2E2;
     --grid:#EDF0F3;
@@ -29,7 +31,7 @@
     :root:not([data-theme="light"]){
       --bg:#0B0F14; --card:#151B22; --line:#252E38; --line-soft:#1D242C;
       --t1:#E9EEF3; --t2:#98A5B2; --t3:#6A7784;
-      --ok:#38D08A; --ok-bg:#122B20;
+      --ok:#38D08A; --ok-bg:#1D242C;
       --bad:#FF6B5A; --bad-bg:#2E1714;
       --warn:#F2B23A; --warn-bg:#2C2212;
       --grid:#1F272F;
@@ -39,7 +41,7 @@
   :root[data-theme="dark"]{
     --bg:#0B0F14; --card:#151B22; --line:#252E38; --line-soft:#1D242C;
     --t1:#E9EEF3; --t2:#98A5B2; --t3:#6A7784;
-    --ok:#38D08A; --ok-bg:#122B20;
+    --ok:#38D08A; --ok-bg:#1D242C;
     --bad:#FF6B5A; --bad-bg:#2E1714;
     --warn:#F2B23A; --warn-bg:#2C2212;
     --grid:#1F272F;
@@ -266,7 +268,7 @@
     <a href="https://business.facebook.com/" target="_blank" rel="noopener">Meta Business<span>WhatsApp number</span></a>
     <a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener">Meta App<span>Permissions, review</span></a>
     <a href="https://dash.cloudflare.com/" target="_blank" rel="noopener">Cloudflare<span>Site, app, storage</span></a>
-    <a href="https://app.relynked.com/" target="_blank" rel="noopener">The app<span>What a business sees</span></a>
+    <a href="/contact" target="_blank" rel="noopener">The app<span>What a business sees</span></a>
   </div>
 
   <p class="note">
@@ -461,11 +463,11 @@
       "commit " + d.commit + " · checked just now";
 
     document.getElementById("tiles").innerHTML =
-      tile("Model", ai.ms == null ? "—" : String(ai.ms), "ms",
+      tile("Model", ai.ms == null ? "n/a" : String(ai.ms), "ms",
            ai.ok ? (ai.provider + " · " + ai.model + " · " + ago(Date.now() - Date.parse(ai.at))) : "not answering",
            ai.ok ? "" : "down",
            history.map(function (p) { return p.ai; }).filter(function (v) { return v != null; })) +
-      tile("Database", db.ms == null ? "—" : String(db.ms), "ms",
+      tile("Database", db.ms == null ? "n/a" : String(db.ms), "ms",
            db.ok ? "responding" : "not answering",
            db.ok ? "" : "down",
            history.map(function (p) { return p.db; }).filter(function (v) { return v != null; })) +
