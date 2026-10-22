@@ -3,9 +3,28 @@
 Static site, no build step. Live at https://relynked.com.
 
 Hosted on Cloudflare Pages, project `relynked`, in the Qubydata Cloudflare account.
-Deploying is one command, run from this folder:
+Deploys run from GitHub Actions (`.github/workflows/site-deploy.yml`), never from a
+laptop folder:
 
-    CLOUDFLARE_API_TOKEN=$(cat ~/cf-token.txt)     CLOUDFLARE_ACCOUNT_ID=d98789131749b5406fb336071454a0d4     npx wrangler pages deploy . --project-name relynked --branch main
+- Push to a `feat/` or `fix/` branch: a preview is built from a clean copy and its
+  address is commented on the pull request.
+- Production: Actions, Site deploy, Run workflow, name the branch. Only the founder
+  runs it. It checks relynked.com afterwards (CSP, /privacy, /data-deletion, no links
+  to the closed apps, every internal link).
+
+The clean copy is `scripts/build-deploy-copy.sh`: git archive of the commit, then
+reference/, docs/, README.md, .git, .github and .wrangler removed, then
+build-shop-routes, build-og and build-headers, then scripts/ removed. `docs/` holds
+plans and is never published. Every pull request also runs
+`node scripts/check-site.mjs` (the house rules); run it yourself before pushing.
+
+`scripts/build-headers.mjs` writes `_headers`: the content security policy and
+the other security headers (security review 2026-09-30). Pages allow scripts only
+from this site, and a script inside a page (careers, press, dashboard, the Shift
+mock-up) only by the hash of its exact text, so the script must run after any
+change to such a script, or that page's script stops working on the live site.
+A new outside source (a font, an embed, an API) must be added to the policy in
+that script first.
 
 Links and assets are root absolute, so this no longer previews over file://.
 To view it locally, run `python -m http.server` in this folder and open
@@ -13,15 +32,18 @@ http://localhost:8000.
 
 ## Files
 
-    index.html          Home      hero, ticker, why it exists, quote, CTA
-    product.html        Product   the two products, bottle verification, CTA
-    how-it-works.html   How it works   custody chain, blind counts, built for Nigeria, CTA
-    pricing.html        Pricing   plans, FAQ, CTA
+    index.html          Home      hero, who it is for, ticker, why it exists, what it does, CTA
+    product.html        Product   the two products, the write-ups (Remy, payments, stock, staff, floor), who it is for, CTA
+    how-it-works.html   How it works   every step, blind counts, built for Nigeria, CTA
+    pricing.html        Pricing   Basic, Standard, Enterprise, how paying works, FAQ, CTA
     contact.html        Contact   phone, address, Google map, what a walkthrough covers
 
     assets/css/styles.css   the whole stylesheet, lifted unchanged from the original page
     assets/js/main.js       sticky nav, scroll reveal, count-up, FAQ, magnetic buttons, hero board
+    assets/js/tabs.js       the section tabs on phones (see "Tabs on phones" below)
     assets/img/             drop photographs here as they arrive
+    assets/img/og/          the link preview pictures (1200x630), one per page, made by scripts/build-og.mjs
+    scripts/build-og.mjs    makes those pictures (a tool, not part of the site; its header says how to run it)
     reference/              the original single-page file, kept untouched as the reference
     industries/             "Who Relynked is for" pages, GENERATED, do not edit by hand
     scripts/build-industries.mjs      builds industries/, sitemap.xml and robots.txt
@@ -57,7 +79,7 @@ Also run the script after adding a new page to the site, so the sitemap lists it
 
 ## House rules
 
-- The header and footer are identical on all five pages. Change one, change all five.
+- The header and footer are identical on all the main pages. Change one, change all five.
 - There is no Home link in the nav. The Relynked logo in the header and in the footer is
   the way back to `index.html`.
 - Inner pages carry `class="nav solid always-solid"` so the nav is legible before you scroll.
@@ -67,7 +89,7 @@ Also run the script after adding a new page to the site, so the sitemap lists it
 
 ## Photo placeholders
 
-Three `.ph` blocks are waiting for photographs, on home, product and contact.
+Two `.ph` blocks are waiting for photographs, on home and contact.
 Each carries a `.tag` describing the shot. Replace the block with an `<img>` when
 the photo exists.
 
@@ -98,13 +120,48 @@ not, it is too narrow.
 The hero device still shows a kitchen pass board, deliberately, because concrete beats
 abstract. The caption beneath it does the broadening work by naming it as one deployment.
 
-The sector strip on the home page carries honest status chips: Live, In build, Planned.
-**Do not mark anything Live that is not.** Change a chip by swapping the class on the
-`.flag` span: `live`, `build` or `soon`.
+**Only what is live goes on the site** (founder, 2026-10-06). No "Coming soon", no status
+chips, no sectors that are not on the sign-up list, and nothing that tells a competitor what
+is being built. The sector strip on the home page links only to kinds of business people can
+sign up as today. Before a claim goes up, check it in the live code: the phone app does not
+work offline (only the floor till and waiter screens queue orders), and the database is in
+Frankfurt, Germany, so never say the data stays in Nigeria.
 
-The anti-counterfeit section deliberately does not describe the mechanism. No serials, no
-scanning flow, no outcome list, no screenshots of the verification screen. That belongs
-in a sales conversation, not on a public page.
+No small eyebrow labels above headings and no tiny explanation lines under them: what such
+a label would say goes into the headline or the first sentence.
+
+## Calls to action
+
+The main button everywhere is "Start free" (or "Start free, no card needed"), opening the app
+sign-up at https://app.relynked.com, with "See pricing" beside it. Only Enterprise offers a
+call: "Book a call" on its plan card, and the contact page. The app still calls the Basic plan
+`starter`, so Basic buttons open `?plan=starter`.
+
+## Plans and the free trial
+
+Basic ₦20,000 a month (up to 500 chats a month), Standard ₦40,000 (1 screen, up to 1,000
+chats), Enterprise from ₦150,000 after a call. Staff are unlimited on every plan. The plan
+only counts the people who answer customers on the business's WhatsApp number or use Remy:
+the owner plus 2 on Basic, the owner plus 5 on Standard, more on Enterprise by agreement. Meta's WhatsApp
+message charges are not part of the plan. The wallet is not switched on, so the site never
+mentions it: money sent to a business's account number pays its plan automatically, and any
+extra stays as credit towards the next month. The plan cards on industry pages come
+from `pricingBlock` in `scripts/build-industries.mjs`.
+
+The free trial length is written once, as `--trial-days` at the top of
+`assets/css/styles.css`. Every `<span class="trial-days"></span>` shows it. Change that one
+line (for example to "14 days") and every page follows.
+
+## Tabs on phones
+
+Below 900px, long pages (home, products, how it works, pricing, every industry page) show a
+bar of tabs that sticks under the header, and only one section shows at a time. At 900px and
+up the bar is hidden and the page flows as before. Markup: a `.ptabs` bar of
+`<button role="tab" aria-controls="ID">`, and each section carries `id="ID" data-panel`,
+the first one also `class="is-on"`. `assets/js/tabs.js` loads in the head so nothing jumps.
+A link to `#anything` opens the tab that holds it, choosing a tab writes its id into the
+address, and arrow keys, Home and End move between tabs. The bar must sit outside the
+sections (straight in the body, or in `.mlay` on home), or it stops sticking.
 
 ## Company details
 
@@ -141,9 +198,27 @@ regardless, because `.lead` is capped at 56 characters.
 
 One responsive site, no separate mobile version. Breakpoints are 1080, 900 and 600 px.
 
-Below 900px the nav links become a dropdown card opened by the burger button, and the
-header's own booking button is hidden because the menu carries its own lime one. The
-menu closes on a link click, on Escape, and on a click outside it.
+Below 900px the nav links become a dropdown card opened by the burger button. The
+header keeps a compact Start free pill beside the burger on every page, home included, so
+the one call to action never leaves the screen. There is no bottom bar and no back-to-top
+button on phones: they took screen space and covered content. The menu closes on a link
+click, on Escape, and on a click outside it.
+
+Phone rules (2026-10-10, see `remy-hq/research/competitors/mobile-view-and-sites.md`):
+
+- A 20px side gutter below 600px; the page column no longer shrinks to 92 percent first.
+- One type scale on phones, the same at 360, 390 and 430 wide: 40 (hero), 28 to 32
+  (section heads), 22 (card titles), 17 (leads, plan names, questions), 15 (body),
+  13 (small print). The tokens are `--t-*` at the top of `mobile.css`.
+- Every tap target is at least 44px tall, footer links included. Inline links inside a
+  sentence are the only exception.
+- Cards: 24px corners and 24px padding; the whole card is the link.
+- The four "what changes" cards on the phone home stack like a deck as you scroll
+  (`position:sticky`, no script). Keep them the same height (`min-height` in `mobile.css`)
+  or the card underneath shows below the one on top.
+- Motion: reveals rise 20px over 0.6s, a tab opens with a short rise, cards and buttons
+  give a little under the thumb, and pages cross-fade (`@view-transition`). All of it is
+  off when the device asks for reduced motion.
 
 ## Photos
 
@@ -183,3 +258,14 @@ The stylesheet switches animations off for anyone who asks their device for redu
 motion. The hero used to open from a hidden state that only the animation undid, so it
 came up blank for those users. The reduced-motion block at the foot of the stylesheet
 now sets those elements visible, and the lime sweep on show.
+
+## Shop pages (relynked.com/<handle>, relynked.com/s/<code>)
+
+Pages Functions in `functions/` (`[handle].js`, `[handle]/[[rest]].js`, `s/[code].js`, helper `_shop.js`) pass a
+business's shop page, its photos and its report page to the Relynked API, which draws them. They are OFF unless
+the Pages project has `SHOP_PAGES_ENABLED=true`, `SHOP_PAGES_API` (the API's https origin) and
+`SHOP_PAGES_PROXY_SECRET` (32 characters or more, the same value as the API's `SHOP_PAGES_PROXY_SECRET`);
+off, every path is served as before. Pages answers any path it has no file for with the home page, so the site's
+own files are kept out of the function by `_routes.json`: run `node scripts/build-shop-routes.mjs` before every
+deploy (the deploy line above does) and add any new reserved word to `NOT_A_PAGE` in `functions/_shop.js`.
+Test it on the preview first (`--branch shop-staging`, preview environment variables) with `node scripts/shop-e2e.mjs`.

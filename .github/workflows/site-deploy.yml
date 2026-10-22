@@ -1,0 +1,157 @@
+# Deploys relynked.com to Cloudflare Pages (project "relynked").
+#
+# PREVIEW: every push to a feat/ or fix/ branch. The site is built from a
+#   clean copy and published as a preview (--branch <name>), never as
+#   production. The preview address is commented on the branch's pull request.
+#
+# PRODUCTION: only when the founder runs this workflow by hand (Actions,
+#   Site deploy, Run workflow) and names the branch. After publishing it checks
+#   relynked.com from the outside: CSP header, /privacy and /data-deletion,
+#   no links to the closed apps, every internal link resolves.
+#
+# Needs one repository secret: CLOUDFLARE_API_TOKEN (Cloudflare Pages: Edit,
+# this account only). Nothing else is secret.
+name: Site deploy
+
+on:
+  push:
+    branches: ["feat/**", "fix/**"]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to publish to relynked.com"
+        required: true
+        type: string
+
+# bash -eo pipefail, so a failed wrangler inside "| tee" fails the step.
+defaults:
+  run:
+    shell: bash
+
+env:
+  CLOUDFLARE_ACCOUNT_ID: d98789131749b5406fb336071454a0d4
+  PAGES_PROJECT: relynked
+  WRANGLER: wrangler@4.147.0
+  PLAYWRIGHT_CORE_VERSION: 1.63.0
+
+jobs:
+  preview:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: preview-${{ github.ref_name }}
+      cancel-in-progress: true
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Tools for build-og (playwright-core, Chrome)
+        run: |
+          mkdir -p "$RUNNER_TEMP/tools"
+          npm install --prefix "$RUNNER_TEMP/tools" --no-save "playwright-core@$PLAYWRIGHT_CORE_VERSION"
+          echo "PLAYWRIGHT_CORE=$RUNNER_TEMP/tools/node_modules/playwright-core" >> "$GITHUB_ENV"
+          echo "CHROME=$(command -v google-chrome)" >> "$GITHUB_ENV"
+
+      - name: Build clean copy
+        run: bash scripts/build-deploy-copy.sh "$RUNNER_TEMP/site"
+
+      - name: Deploy preview
+        id: deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          case "$BRANCH" in feat/*|fix/*) ;; *) echo "not a feat/ or fix/ branch: $BRANCH" >&2; exit 1 ;; esac
+          npx --yes "$WRANGLER" pages deploy "$RUNNER_TEMP/site" \
+            --project-name "$PAGES_PROJECT" --branch "$BRANCH" \
+            --commit-hash "$GITHUB_SHA" --commit-dirty=true 2>&1 | tee "$RUNNER_TEMP/deploy.log"
+          url=$(grep -oE 'https://[a-z0-9.-]+\.pages\.dev' "$RUNNER_TEMP/deploy.log" | tail -1)
+          [ -n "$url" ] || { echo "wrangler printed no preview address" >&2; exit 1; }
+          # Cloudflare's branch alias: lower case, anything else becomes "-", 28 characters at most.
+          alias=$(printf '%s' "$BRANCH" | tr 'A-Z' 'a-z' | sed -E 's/[^a-z0-9]+/-/g' | cut -c1-28 | sed -E 's/^-+|-+$//g')
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "alias=https://$alias.$PAGES_PROJECT.pages.dev" >> "$GITHUB_OUTPUT"
+          echo "Preview: $url (branch address https://$alias.$PAGES_PROJECT.pages.dev)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Comment the preview on the pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ github.ref_name }}
+          URL: ${{ steps.deploy.outputs.url }}
+          ALIAS: ${{ steps.deploy.outputs.alias }}
+        run: |
+          pr=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$BRANCH" --state open --json number --jq '.[0].number')
+          if [ -z "$pr" ]; then echo "No open pull request for $BRANCH yet, so no comment."; exit 0; fi
+          body=$(printf '<!-- site-preview -->\n**Preview** of %s\n\n| | |\n|---|---|\n| This commit | %s |\n| Branch address (always the latest push) | %s |\n\nThis is a preview, not relynked.com. Production only goes out when the founder runs Site deploy by hand.' "${GITHUB_SHA:0:7}" "$URL" "$ALIAS")
+          id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$pr/comments" --paginate --jq '.[] | select(.body | startswith("<!-- site-preview -->")) | .id' | tail -1)
+          if [ -n "$id" ]; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -f body="$body" > /dev/null
+          else
+            gh pr comment "$pr" --repo "$GITHUB_REPOSITORY" --body "$body"
+          fi
+
+  production:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: production
+      cancel-in-progress: false
+    permissions:
+      contents: read
+    steps:
+      - name: Only the founder publishes production
+        if: github.actor != 'captmusky'
+        run: |
+          echo "Production deploys are run by captmusky only (this run: $GITHUB_ACTOR)." >&2
+          exit 1
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: House rules (scripts/check-site.mjs)
+        run: node scripts/check-site.mjs
+
+      - name: Tools for build-og (playwright-core, Chrome)
+        run: |
+          mkdir -p "$RUNNER_TEMP/tools"
+          npm install --prefix "$RUNNER_TEMP/tools" --no-save "playwright-core@$PLAYWRIGHT_CORE_VERSION"
+          echo "PLAYWRIGHT_CORE=$RUNNER_TEMP/tools/node_modules/playwright-core" >> "$GITHUB_ENV"
+          echo "CHROME=$(command -v google-chrome)" >> "$GITHUB_ENV"
+
+      - name: Build clean copy
+        run: bash scripts/build-deploy-copy.sh "$RUNNER_TEMP/site"
+
+      - name: Deploy production
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          SOURCE: ${{ inputs.branch }}
+        run: |
+          # The Pages project's production branch is "main"; --branch main is what makes this production.
+          npx --yes "$WRANGLER" pages deploy "$RUNNER_TEMP/site" \
+            --project-name "$PAGES_PROJECT" --branch main \
+            --commit-hash "$(git rev-parse HEAD)" --commit-message "Production from $SOURCE" --commit-dirty=true
+          echo "Published $SOURCE at $(git rev-parse --short HEAD) to relynked.com" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Confirm Cloudflare counts it as production
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          npx --yes "$WRANGLER" pages deployment list --project-name "$PAGES_PROJECT" --environment production | tee "$RUNNER_TEMP/prod.log"
+          sha=$(git rev-parse --short=7 HEAD)
+          head -8 "$RUNNER_TEMP/prod.log" | grep -q "$sha" || { echo "The newest production deployments do not show $sha. Check the Pages project's production branch is main." >&2; exit 1; }
+
+      - name: Check relynked.com from the outside
+        run: |
+          sleep 20
+          node scripts/verify-live.mjs https://relynked.com || { sleep 40; node scripts/verify-live.mjs https://relynked.com; }

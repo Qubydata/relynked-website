@@ -1,9 +1,22 @@
 :root{
   --forest:#013F32;--lime:#E7FE25;--paper:#FDFDFD;--ink:#161616;
-  --forest-2:#02594A;--forest-3:#0B2A24;--mist:#EEF3EF;--amber:#E0A000;--red:#C4331B;
+  --forest-2:#02594A;--forest-3:#0B2A24;--mist:#F0F2F2;--amber:#E0A000;--red:#C4331B;
   --d:"Archivo",system-ui,sans-serif;--b:"Manrope",system-ui,sans-serif;--m:"JetBrains Mono",ui-monospace,monospace;
   --ease:cubic-bezier(.16,1,.3,1);--w:min(1760px,92vw);
 }
+/* WHITE LIFT (founder, 2026-10-10: white lift replaces the pale green). The
+   pale green fills read as "irritating" and "nauseous", so --mist above is the
+   plain grey now (it was #EEF3EF, a pale green), and a chosen thing LIFTS: the
+   others stay grey, the chosen one turns white with this soft shadow and a
+   bolder label. Never a tint, never a coloured border, never a side edge. The
+   lime on dark sections and the lime sweep behind key words are accents, not
+   fills, and stay. */
+:root{--sel:#FFFFFF;--sel-sh:0 1px 2px rgba(15,20,18,.06),0 8px 22px rgba(15,20,18,.08)}
+/* THE FREE TRIAL LENGTH, in one place (founder, 2026-10-06). Every
+   <span class="trial-days"></span> on the site shows this text. To change the
+   trial, change only this line, for example to "14 days". */
+:root{--trial-days:"7 days"}
+.trial-days::after{content:var(--trial-days)}
 *{box-sizing:border-box;margin:0}
 html{scroll-behavior:smooth}
 body{font-family:var(--b);background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.5}
@@ -24,7 +37,7 @@ h3{font-size:1.35rem;letter-spacing:-.03em}
 .legal .meta{font-family:var(--m);font-size:.8rem;letter-spacing:.04em;color:rgba(22,22,22,.5);margin-bottom:26px}
 .legal .jump{display:flex;flex-wrap:wrap;gap:9px;margin:0 0 60px}
 .legal .jump a{font-family:var(--m);font-size:.72rem;letter-spacing:.01em;color:var(--forest);background:var(--mist);padding:8px 13px;border-radius:20px;white-space:nowrap;line-height:1}
-.legal .jump a:hover{background:var(--lime)}
+.legal .jump a:hover{background:var(--sel);box-shadow:var(--sel-sh)}
 .legal h3{margin:70px 0 20px;font-size:1.5rem}
 .legal h3:first-of-type{margin-top:0}
 .legal h4{font-family:var(--m);font-weight:700;font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;color:var(--forest);opacity:.85;margin:38px 0 14px}
@@ -63,6 +76,8 @@ h3{font-size:1.35rem;letter-spacing:-.03em}
 .nav.solid{background:rgba(253,253,253,.86);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);
  padding:12px 0;border-bottom:1px solid rgba(1,63,50,.1)}
 .logo{display:flex;align-items:center;gap:11px;font-family:var(--d);font-weight:800;font-size:1.25rem;letter-spacing:-.04em}
+.logo .wm{white-space:nowrap}
+.logo .tm{font-size:.45em;font-weight:700;letter-spacing:0;margin-left:2px;vertical-align:super;line-height:0}
 .logo .mk{width:34px;height:34px;border-radius:10px;background:var(--forest);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
 .logo .mk i{display:block;width:14px;height:4px;border-radius:3px;background:var(--paper)}
 .logo .mk i:last-child{width:21px;background:var(--lime)}
@@ -78,7 +93,7 @@ h3{font-size:1.35rem;letter-spacing:-.03em}
 .btn.forest{background:var(--forest);color:var(--paper)}
 .btn.forest:hover{background:var(--forest-2)}
 .btn.ghost{background:transparent;color:var(--forest);border:1.5px solid rgba(1,63,50,.25)}
-.btn.ghost:hover{border-color:var(--forest);background:rgba(1,63,50,.04)}
+.btn.ghost:hover{border-color:var(--forest);background:rgba(22,22,22,.04)}
 
 .logo svg.mk{background:none;border-radius:0;display:block;flex:none}
 /* ---------- hero ---------- */
@@ -300,13 +315,36 @@ section{padding:120px 0}
 .plan.hot{background:var(--forest);color:var(--paper);border-color:var(--forest)}
 .plan .pn{font-family:var(--m);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;opacity:.6}
 .plan .pp{font-family:var(--d);font-size:2.6rem;font-weight:800;letter-spacing:-.05em;margin:14px 0 4px}
-.plan .pp small{font-family:var(--b);font-size:.9rem;font-weight:600;opacity:.6;letter-spacing:0}
+.plan .pp small{font-family:var(--b);font-size:.9rem;font-weight:600;opacity:.6;letter-spacing:0;white-space:nowrap}
 .plan .pd{font-size:.9rem;opacity:.7;margin-bottom:24px;line-height:1.5}
 .plan ul{list-style:none;padding:0;margin:0 0 28px;display:flex;flex-direction:column;gap:11px;flex:1}
 .plan li{display:flex;gap:10px;font-size:.9rem;font-weight:600}
 .plan li svg{width:17px;height:17px;stroke:var(--forest);fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;flex:none;margin-top:2px}
 .plan.hot li svg{stroke:var(--lime)}
 .plan .btn{justify-content:center}
+/* BILLING SWITCH (founder, 2026-10-11): Monthly / Quarterly / Yearly. Pure CSS,
+   so it works with no JavaScript: three radio buttons inside .bill, and the
+   chosen one decides which price span shows (.bm monthly, .bq quarterly,
+   .by yearly). Monthly is the checked one in the HTML, so it is the default.
+   The chosen label LIFTS (white lift): grey track, white chosen pill. Browsers
+   without :has() hide the switch and keep showing Monthly. */
+.bsw{display:flex;gap:4px;width:max-content;max-width:100%;margin:0 auto;padding:4px;border:0;border-radius:100px;background:var(--mist)}
+.bsw label{position:relative;display:flex;align-items:center;justify-content:center;min-height:44px;padding:0 22px;border-radius:100px;
+ font-family:var(--b);font-weight:700;font-size:.92rem;letter-spacing:-.01em;color:rgba(22,22,22,.6);cursor:pointer;white-space:nowrap;
+ -webkit-tap-highlight-color:transparent;transition:background .2s var(--ease),box-shadow .2s var(--ease),color .2s}
+.bsw input{position:absolute;opacity:0;width:100%;height:100%;inset:0;margin:0;cursor:pointer}
+.bsw label:has(input:checked){color:var(--ink);font-weight:800;background:var(--sel);box-shadow:var(--sel-sh)}
+.bsw label:has(input:checked)::before{content:"";width:5px;height:10px;margin:-3px 9px 0 0;border:solid var(--forest);border-width:0 2.4px 2.4px 0;transform:rotate(45deg);flex:none}
+.bsw label:has(input:focus-visible){outline:2px solid var(--forest);outline-offset:1px}
+.bill .bq,.bill .by{display:none}
+.bill:has(input[value="q"]:checked) .bm,.bill:has(input[value="y"]:checked) .bm{display:none}
+.bill:has(input[value="q"]:checked) .bq,.bill:has(input[value="y"]:checked) .by{display:inline}
+.psave{font-size:.88rem;font-weight:800;color:var(--forest);margin:0 0 14px;min-height:1.4em}
+.plan.hot .psave,.mpt.mhot .psave{color:var(--lime)}
+.pnote{margin-top:18px;max-width:760px;font-size:.92rem;line-height:1.65;color:rgba(22,22,22,.7)}
+@supports not selector(:has(a)){.bsw{display:none}}
+@media(prefers-reduced-motion:reduce){.bsw label{transition:none}}
+@media(max-width:900px){.bsw label{padding:0 16px;font-size:.88rem}}
 
 /* faq */
 .faq{max-width:820px;margin:48px auto 0}
@@ -315,6 +353,14 @@ section{padding:120px 0}
 .q button{width:100%;background:none;border:0;text-align:left;padding:24px 0;display:flex;justify-content:space-between;align-items:center;gap:20px;font-family:var(--d);font-weight:700;font-size:1.15rem;letter-spacing:-.025em;color:var(--ink)}
 .q button svg{width:22px;height:22px;stroke:var(--forest);fill:none;stroke-width:2.4;stroke-linecap:round;flex:none;transition:.35s var(--ease)}
 .q.open button svg{transform:rotate(45deg)}
+/* The open question lifts into a white card (founder, 2026-10-10: white lift):
+   the soft shadow, its rules hidden, the text kept on the same line as the
+   closed ones by padding out as far as the card grows. */
+.q{transition:background .3s var(--ease),box-shadow .3s var(--ease),border-color .3s var(--ease)}
+.q.open{background:var(--sel);box-shadow:var(--sel-sh);border-radius:20px;border-top-color:transparent;
+ margin:0 -14px;padding:0 14px;position:relative;z-index:1}
+.q.open+.q{border-top-color:transparent}
+.q.open:last-child{border-bottom-color:transparent}
 .q .a{max-height:0;overflow:hidden;transition:max-height .5s var(--ease)}
 .q .a p{padding:0 0 26px;color:rgba(22,22,22,.65);line-height:1.65;max-width:64ch}
 
@@ -334,6 +380,11 @@ footer{padding:80px 0 40px;margin-top:100px;border-top:1.5px solid rgba(1,63,50,
 /* .fg a is more specific than .logo, so without this the footer logo stacks the
    mark above a small light wordmark instead of matching the one in the nav */
 .fg a.logo{display:flex;font-size:1.25rem;font-weight:800;color:var(--ink);margin-bottom:0}
+/* Instagram, the one social account (founder, 2026-10-06). 44px tap target, the
+   glyph lines up with the tagline above it. */
+.fg a.soc{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin:14px 0 0 -12px;border-radius:12px;color:rgba(22,22,22,.75);transition:color .25s,background .25s}
+.fg a.soc:hover{color:var(--forest);background:var(--mist)}
+.fg a.soc svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .fg p{font-size:.9rem;color:rgba(22,22,22,.6);max-width:36ch;line-height:1.6;margin-top:16px}
 .fb{display:flex;justify-content:space-between;margin-top:60px;padding-top:26px;border-top:1px solid rgba(1,63,50,.1);font-size:.8rem;color:rgba(22,22,22,.45);font-weight:600}
 
@@ -402,7 +453,7 @@ footer{padding:80px 0 40px;margin-top:100px;border-top:1.5px solid rgba(1,63,50,
 .sectnote{margin-top:34px;font-size:.92rem;color:rgba(22,22,22,.62);font-weight:500;line-height:1.6;max-width:70ch}
 .sectnote a{font-weight:800;color:var(--forest);border-bottom:2px solid var(--lime)}
 .egs{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px;padding-top:24px;border-top:1.5px solid rgba(1,63,50,.12)}
-.egs b{font-family:var(--m);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--forest);font-weight:700;display:block;margin-bottom:7px}
+.egs b{font-family:var(--d);font-size:1rem;letter-spacing:-.02em;color:var(--forest);font-weight:800;display:block;margin-bottom:6px}
 .egs p{font-size:.84rem;color:rgba(22,22,22,.6);line-height:1.55}
 .step .eg{font-family:var(--m);font-size:.58rem;letter-spacing:.05em;line-height:1.6;color:rgba(253,253,253,.42);display:block;margin-top:14px;padding-top:12px;border-top:1px solid rgba(253,253,253,.14);text-transform:uppercase}
 .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:56px}
@@ -467,3 +518,262 @@ footer{padding:80px 0 40px;margin-top:100px;border-top:1.5px solid rgba(1,63,50,
 /* legal links in the footer bar need to look clickable */
 .fb a{text-decoration:underline;text-decoration-color:rgba(1,63,50,.35);text-underline-offset:3px}
 .fb a:hover{color:var(--forest);text-decoration-color:var(--forest)}
+
+/* ---------- write-ups: the problem first, a drawing of the old way, then what Relynked does ----------
+   Founder, 2026-10-05: every product section opens with the owner's own problem in
+   plain words, shows the old way as a simple drawing (HTML and CSS, never a stock
+   photo), then the Relynked way and a few plain specifics. Status chips use the
+   .flag classes: live or soon. Never colour a card's side edge. */
+.wu-intro{max-width:780px}
+.wu{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);grid-template-areas:"head ill" "body ill";
+ column-gap:72px;row-gap:0;align-items:start;padding:80px 0;border-top:1.5px solid rgba(1,63,50,.12)}
+.wu-intro + .wu,.wu.first{border-top:0}
+.wu.flip{grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);grid-template-areas:"ill head" "ill body"}
+.wu-head{grid-area:head;align-self:end}
+.wu-body{grid-area:body}
+.wu-ill{grid-area:ill;align-self:center;background:var(--mist);border-radius:22px;padding:44px 32px;display:grid;place-items:center;min-height:380px}
+.surfaces .wu-ill{background:var(--paper)}
+.wu-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.wu-top .eyebrow{margin-bottom:0}
+.wu-h{font-size:clamp(1.9rem,3vw,2.7rem);letter-spacing:-.045em;line-height:1.04}
+.wu-h em{font-style:normal;background:linear-gradient(transparent 60%,var(--lime) 60%,var(--lime) 90%,transparent 90%);
+ -webkit-box-decoration-break:clone;box-decoration-break:clone;padding:0 .04em}
+.wu-story{margin-top:22px;font-size:1.08rem;line-height:1.65;color:rgba(22,22,22,.72);font-weight:500;max-width:58ch}
+.wu-fix{margin-top:16px;font-size:1.08rem;line-height:1.65;color:var(--ink);font-weight:600;max-width:58ch}
+.wu-fix b{font-family:var(--d);font-weight:800;color:var(--forest)}
+.wu-list{list-style:none;padding:0;margin:24px 0 0;display:grid;gap:11px;max-width:58ch}
+.wu-list li{position:relative;padding-left:22px;font-size:.95rem;line-height:1.55;color:rgba(22,22,22,.72);font-weight:500}
+.wu-list li::before{content:"";position:absolute;left:2px;top:.5em;width:8px;height:8px;border-radius:50%;background:var(--forest);box-shadow:0 0 0 3px var(--lime)}
+.wu-list li.later::before{background:rgba(22,22,22,.3);box-shadow:0 0 0 3px var(--mist)}
+.wu-list li .flag{margin-left:4px;vertical-align:2px;white-space:nowrap;display:inline-block}
+.wu-more{display:inline-flex;align-items:center;gap:6px;margin-top:24px;font-weight:800;font-size:.9rem;color:var(--forest);border-bottom:2px solid var(--lime)}
+
+/* the Ask Remy mark: a forest circle with a lime dot (founder, 2026-10-05) */
+.rdot{display:inline-grid;place-items:center;width:1.2em;height:1.2em;border-radius:50%;background:var(--forest);vertical-align:-.25em;flex:none}
+.rdot::after{content:"";width:.44em;height:.44em;border-radius:50%;background:var(--lime)}
+
+/* compact write-ups: three across, a small drawing on top */
+.wu-soon{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:40px}
+.wu-card{background:var(--paper);border:1.5px solid rgba(1,63,50,.1);border-radius:22px;padding:22px 22px 26px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.wu-card .wu-ill{min-height:300px;padding:28px 16px;border-radius:16px;align-self:stretch}
+.surfaces .wu-card .wu-ill{background:var(--mist)}
+.wu-card h3{font-size:1.35rem;line-height:1.1;margin-top:6px}
+.wu-card h3 em{font-style:normal;background:linear-gradient(transparent 62%,var(--lime) 62%,var(--lime) 92%,transparent 92%);-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.wu-card p{font-size:.92rem;line-height:1.6;color:rgba(22,22,22,.68);font-weight:500}
+.wu-card p b{color:var(--ink)}
+.wu-card .wu-top{margin-bottom:0}
+
+/* home summary: four problems, four answers */
+.wu-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:48px}
+.wu-tile{background:var(--paper);border:1.5px solid rgba(1,63,50,.1);border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:12px;transition:.35s var(--ease);min-width:0}
+.wu-tile:hover{transform:translateY(-4px);box-shadow:0 22px 44px rgba(1,63,50,.12)}
+.wu-tile .old{font-family:var(--m);font-size:.74rem;line-height:1.5;color:rgba(22,22,22,.62);background:var(--mist);border-radius:12px;padding:12px 14px;font-weight:600}
+.wu-tile .old s{text-decoration-color:var(--red)}
+.wu-tile h3{font-size:1.2rem;line-height:1.12}
+.wu-tile p{font-size:.88rem;line-height:1.55;color:rgba(22,22,22,.64);font-weight:500;flex:1}
+.wu-tile .go{font-weight:800;font-size:.82rem;color:var(--forest);display:flex;align-items:center;gap:6px}
+.wu-tile .flag{align-self:flex-start}
+
+/* ----- the drawings ----- */
+.ill{width:100%;max-width:400px;font-family:var(--b);color:var(--ink);text-align:left}
+.hand{font-family:"Segoe Print","Bradley Hand","Comic Sans MS",cursive;font-weight:700}
+/* a phone lock screen full of notifications */
+.ill-lock{background:linear-gradient(180deg,#123b31,#0b2420);border-radius:34px;padding:22px 14px 22px;box-shadow:0 26px 50px rgba(1,63,50,.28);max-width:330px;color:#fff}
+.ill-lock .clock{text-align:center;font-family:var(--d);font-weight:700;font-size:3rem;letter-spacing:-.04em;line-height:1}
+.ill-lock .date{text-align:center;font-size:.78rem;opacity:.75;margin:4px 0 14px}
+.ill-lock .nt{background:rgba(253,253,253,.92);color:var(--ink);border-radius:16px;padding:8px 12px;margin-top:7px;font-size:.78rem;line-height:1.35}
+.ill-lock .nt .h{display:flex;justify-content:space-between;font-size:.6rem;font-weight:700;color:rgba(22,22,22,.5);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.ill-lock .nt b{display:block;font-size:.8rem}
+.ill-lock .more{text-align:center;font-size:.72rem;font-weight:700;margin-top:10px;opacity:.8}
+/* a transfer screenshot in a chat */
+.ill-chat{background:#E9E2D6;border-radius:24px;padding:16px 14px 18px;box-shadow:0 22px 44px rgba(1,63,50,.16);max-width:330px;position:relative}
+.ill-chat .bub{background:#fff;border-radius:14px;border-top-left-radius:4px;padding:8px;max-width:88%;font-size:.78rem;box-shadow:0 1px 1px rgba(0,0,0,.08)}
+.ill-chat .bub.me{background:#DCF7C5;margin-left:auto;border-top-left-radius:14px;border-top-right-radius:4px;margin-top:8px;padding:8px 10px;max-width:70%}
+.ill-chat .bub small{display:block;text-align:right;font-size:.6rem;color:rgba(22,22,22,.45);margin-top:3px}
+.ill-chat .rcpt{background:#fff;border:1px solid #eee;border-radius:10px;padding:12px;text-align:center}
+.ill-chat .rcpt .ok{width:34px;height:34px;border-radius:50%;background:#1F9D55;margin:0 auto 6px;display:grid;place-items:center}
+.ill-chat .rcpt .ok::after{content:"";width:12px;height:7px;border-left:3px solid #fff;border-bottom:3px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+.ill-chat .rcpt .t{font-weight:800;font-size:.8rem}
+.ill-chat .rcpt .amt{font-family:var(--d);font-weight:800;font-size:1.6rem;letter-spacing:-.03em;margin:2px 0 6px}
+.ill-chat .rcpt .rw{display:flex;justify-content:space-between;font-size:.64rem;color:rgba(22,22,22,.55);padding:2px 0;gap:8px}
+.ill-chat .rcpt .rw span:last-child{color:var(--ink);font-weight:600;text-align:right}
+.stick{background:#FFF27A;color:#5a3d00;padding:10px 12px;font-size:.82rem;line-height:1.25;box-shadow:0 10px 20px rgba(0,0,0,.14)}
+.stick.pink{background:#FFD5CF;color:#7a1d10}
+.ill-chat .stick{position:absolute;right:-18px;bottom:-22px;transform:rotate(4deg);max-width:150px}
+/* a stock sheet taped behind the door */
+.ill-sheet{background:#FFFDF6;border-radius:4px;padding:20px 20px 24px;box-shadow:0 1px 0 rgba(1,63,50,.1),0 20px 40px rgba(1,63,50,.14);transform:rotate(1.4deg);position:relative;max-width:350px;
+ background-image:repeating-linear-gradient(to bottom,transparent 0 29px,#d5e0ec 29px 30px);background-position:0 52px}
+.ill-sheet::before{content:"";position:absolute;top:-10px;left:50%;width:90px;height:22px;margin-left:-45px;background:rgba(231,254,37,.6);transform:rotate(-3deg)}
+.ill-sheet .ttl{font-family:var(--m);font-weight:700;font-size:.8rem;letter-spacing:.12em;height:32px}
+.ill-sheet .ln{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;height:30px;font-family:var(--m);font-size:.76rem;color:rgba(22,22,22,.75);white-space:nowrap}
+.ill-sheet .ln .tal{letter-spacing:.1em;color:var(--ink)}
+.ill-sheet .ln s{text-decoration-color:var(--red);text-decoration-thickness:2px}
+.ill-sheet .q{color:var(--red)}
+/* one phone, everybody's phone */
+.ill-shared{position:relative;max-width:270px;margin:0 auto}
+.ill-shared .ph2{background:#111;border-radius:30px;padding:9px;box-shadow:0 24px 46px rgba(1,63,50,.25)}
+.ill-shared .scr2{background:#fff;border-radius:22px;padding:12px 12px 16px;min-height:280px}
+.ill-shared .bar2{display:flex;align-items:center;gap:8px;padding-bottom:10px;border-bottom:1px solid #eee;margin-bottom:8px}
+.ill-shared .av{width:28px;height:28px;border-radius:50%;background:var(--mist);display:grid;place-items:center;font-size:.62rem;font-weight:800;color:var(--forest);flex:none}
+.ill-shared .bar2 b{font-size:.8rem;display:block}.ill-shared .bar2 span{font-size:.64rem;color:rgba(22,22,22,.5)}
+.ill-shared .m{font-size:.74rem;background:var(--mist);border-radius:12px;padding:7px 10px;margin:6px 0;max-width:85%}
+.ill-shared .m.me{background:#DCF7C5;margin-left:auto}
+.ill-shared .m small{display:block;font-size:.58rem;color:rgba(22,22,22,.45);text-align:right}
+.ill-shared .stick{position:absolute}
+.ill-shared .s1{left:-44px;top:44px;transform:rotate(-6deg);max-width:128px}
+.ill-shared .s2{right:-40px;bottom:26px;transform:rotate(5deg);max-width:128px}
+/* a chat list of staff updates */
+.ill-list{background:#fff;border-radius:22px;box-shadow:0 22px 44px rgba(1,63,50,.16);overflow:hidden;max-width:340px}
+.ill-list .hd{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--forest);color:#fff;font-family:var(--d);font-weight:800;font-size:.95rem}
+.ill-list .hd span{font-family:var(--b);font-size:.66rem;font-weight:700;background:var(--lime);color:var(--forest);border-radius:20px;padding:3px 8px}
+.ill-list .row{display:flex;align-items:center;gap:10px;padding:8px 14px;border-top:1px solid #f0f0f0}
+.ill-list .hd + .row{border-top:0}
+.ill-list .av{width:30px;height:30px;border-radius:50%;background:var(--mist);display:grid;place-items:center;font-size:.6rem;font-weight:800;color:var(--forest);flex:none}
+.ill-list .tx{flex:1;min-width:0}
+.ill-list .tx b{display:block;font-size:.76rem}
+.ill-list .tx span{display:block;font-size:.7rem;color:rgba(22,22,22,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ill-list .n{min-width:18px;height:18px;border-radius:9px;background:#25D366;color:#fff;font-size:.6rem;font-weight:800;display:grid;place-items:center;padding:0 5px}
+/* a "new number" status post */
+.ill-status{background:#1F6F5C;color:#fff;border-radius:22px;padding:30px 20px 22px;max-width:300px;text-align:center;box-shadow:0 22px 44px rgba(1,63,50,.22);position:relative}
+.ill-status .bars{display:flex;gap:4px;position:absolute;top:10px;left:14px;right:14px}
+.ill-status .bars i{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.4)}
+.ill-status .bars i:first-child{background:#fff}
+.ill-status .big{font-family:var(--d);font-weight:900;font-size:1.45rem;letter-spacing:-.02em;line-height:1.1;margin:6px 0 10px}
+.ill-status p{font-size:.82rem;line-height:1.45;opacity:.92}
+.ill-status .num{display:inline-block;margin:8px 0;background:#fff;color:#1F6F5C;font-family:var(--m);font-weight:700;border-radius:10px;padding:6px 10px;font-size:.88rem}
+.ill-status .old{text-decoration:line-through;opacity:.75}
+.ill-status .seen{margin-top:12px;font-size:.66rem;opacity:.7}
+/* the shop exercise book (the same drawing as the walk-in design) */
+.ill-book{background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(1,63,50,.1),0 18px 40px rgba(0,0,0,.1);padding:18px 18px 22px;transform:rotate(-1.2deg);max-width:350px;
+ background-image:repeating-linear-gradient(to bottom,transparent 0 27px,#c9d8ea 27px 28px);background-position:0 46px;font-family:var(--m);font-size:.78rem}
+.ill-book .dt{font-weight:700;height:28px}
+.ill-book .ln{display:flex;justify-content:space-between;gap:10px;height:28px;align-items:flex-end;color:rgba(22,22,22,.72);white-space:nowrap;overflow:hidden}
+.ill-book .ln span:first-child{overflow:hidden;text-overflow:ellipsis}
+.ill-book .ln.x span:first-child{text-decoration:line-through;text-decoration-color:var(--red)}
+.ill-book .ln.cr{color:#9a6400}
+.ill-book .ln.tot{color:var(--ink);font-weight:700}
+.ill-book .q{color:var(--red)}
+/* kitchen dockets on a spike */
+.ill-dockets{position:relative;height:310px;max-width:360px}
+.ill-dockets .spike{position:absolute;left:50%;bottom:8px;width:6px;height:240px;margin-left:-3px;background:linear-gradient(90deg,#8a8f8c,#d8dcda,#8a8f8c);border-radius:3px}
+.ill-dockets .spike::after{content:"";position:absolute;left:-44px;width:94px;bottom:-8px;height:12px;border-radius:6px;background:#3c403e}
+.ill-dockets .dk{position:absolute;width:148px;background:#FFFDF2;padding:12px 12px 14px;font-family:var(--m);font-size:.72rem;line-height:1.55;box-shadow:0 10px 22px rgba(0,0,0,.12);color:rgba(22,22,22,.8)}
+.ill-dockets .dk b{display:block;font-size:.85rem;border-bottom:1px dashed rgba(22,22,22,.25);margin-bottom:4px;padding-bottom:2px}
+.ill-dockets .d1{left:50%;margin-left:-74px;top:0;transform:rotate(-3deg)}
+.ill-dockets .d2{left:0;top:110px;transform:rotate(-12deg)}
+.ill-dockets .d3{right:0;top:132px;transform:rotate(9deg)}
+.ill-dockets s{text-decoration-color:var(--red);text-decoration-thickness:2px}
+.ill-dockets .q{color:var(--red)}
+/* the bookings diary */
+.ill-diary{background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(1,63,50,.1),0 18px 40px rgba(0,0,0,.1);padding:18px 18px 22px;transform:rotate(1deg);max-width:350px;font-family:var(--m);font-size:.78rem}
+.ill-diary .dt{font-weight:700;padding-bottom:8px;border-bottom:2px solid var(--ink);margin-bottom:4px}
+.ill-diary .sl{display:grid;grid-template-columns:3.4rem minmax(0,1fr);gap:8px;padding:7px 0;border-bottom:1px solid #dfe5e0;color:rgba(22,22,22,.75)}
+.ill-diary .sl span:first-child{color:rgba(22,22,22,.45)}
+.ill-diary .clash{border:2px solid var(--red);border-radius:14px;padding:2px 6px;margin:2px -8px;transform:rotate(-1deg)}
+.ill-diary .q{color:var(--red)}
+.ill-diary s{text-decoration-color:var(--red)}
+
+@media(max-width:1080px){.wu-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.wu{column-gap:48px}.wu-soon{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+@media(max-width:900px){
+ .wu,.wu.flip{grid-template-columns:minmax(0,1fr);grid-template-areas:"head" "ill" "body";padding:56px 0}
+ .wu-ill{margin:28px 0 4px;min-height:0;padding:36px 22px}
+}
+@media(max-width:700px){.wu-soon{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){
+ .wu-tiles{grid-template-columns:minmax(0,1fr)}
+ .wu-ill{padding:32px 16px;border-radius:18px}
+ .ill-shared{max-width:240px}
+ .ill-shared .stick{font-size:.7rem;padding:7px 9px;max-width:104px}
+ .ill-shared .s1{left:-22px;top:70px}.ill-shared .s2{right:-20px;bottom:14px}
+ .ill-chat .stick{right:-6px}
+ .ill-book,.ill-sheet,.ill-diary{transform:none}
+ .ill-dockets{transform:scale(.9);transform-origin:top center;height:290px}
+}
+.wu-tile .go svg,.wu-more svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.wu-card .ill-status p{color:#fff;font-size:.82rem;line-height:1.45}
+.wu-card .ill p{font-weight:500}
+@media(max-width:600px){.ill-chat{padding-bottom:64px}}
+
+/* ---------- section tabs on phones (founder, 2026-10-06) ----------
+   The phone site was one long scroll. Long pages now carry a bar of tabs that
+   sticks under the header, and only one section shows at a time. At 900px and
+   up the bar is hidden and every section shows, so desktop keeps the flowing
+   page. The script is assets/js/tabs.js. Without it nothing is hidden. */
+.ptabs{display:none}
+@media(max-width:900px){
+ html.tabs-js .ptabs{display:block;position:sticky;top:var(--tabtop,66px);z-index:45;
+  background:rgba(253,253,253,.95);-webkit-backdrop-filter:blur(14px) saturate(160%);backdrop-filter:blur(14px) saturate(160%);
+  border-bottom:1px solid rgba(1,63,50,.12)}
+ /* WHITE LIFT (founder, 2026-10-10): the tabs sit in one grey track and the
+    open one lifts out of it, white with a soft shadow, in place of the
+    coloured underline. */
+ .ptabs-in{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin:8px 14px;padding:4px;border-radius:100px;
+  background:var(--mist);-webkit-overflow-scrolling:touch}
+ .ptabs-in::-webkit-scrollbar{display:none}
+ .ptabs [role="tab"]{flex:1 0 auto;position:relative;border:0;background:none;margin:0;padding:10px 14px;min-height:44px;
+  border-radius:100px;font-family:var(--b);font-weight:700;font-size:.86rem;letter-spacing:-.01em;color:rgba(22,22,22,.6);
+  white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .2s var(--ease),box-shadow .2s var(--ease),color .2s}
+ .ptabs [role="tab"][aria-selected="true"]{color:var(--ink);font-weight:800;background:var(--sel);box-shadow:var(--sel-sh)}
+ .ptabs [role="tab"]:focus-visible{outline:2px solid var(--forest);outline-offset:-2px}
+ html.tabs-js [data-panel]:not(.is-on){display:none!important}
+ html.tabs-js [data-panel]{scroll-margin-top:calc(var(--tabtop,66px) + var(--tabbar,50px))}
+ html.tabs-js [data-panel]:focus{outline:none}
+ html.tabs-js .tabs-flat{padding-top:0;padding-bottom:0}
+ html.tabs-js .wu[data-panel]{border-top:0;padding-top:36px}
+ html.tabs-js section[data-panel] .wu.first{padding-top:8px}
+}
+@media(prefers-reduced-motion:reduce){.ptabs [role="tab"],.q{transition:none}}
+
+/* ---------- phone polish (2026-10-10) ----------
+   What makes a page feel sized for the hand: a 20px gutter, one short type
+   scale (the same six steps as the phone home in mobile.css), 44px tap
+   targets, one call to action that never leaves the screen (Start free in
+   the header), and cards that read as objects. Desktop is untouched. */
+@media(max-width:900px){
+ .nav,.nav.solid{padding:10px 0}
+ .nav .wrap{gap:10px}
+ .nav .wrap>.btn{display:inline-flex;margin-left:auto;min-height:44px;padding:0 18px;font-size:.9375rem}
+ .nav .wrap>.btn svg{display:none}
+ .burger{width:44px;height:44px;flex:none}
+ .logo{min-height:44px}
+ .totop{display:none}
+ .btn{min-height:52px}
+ .links a{min-height:52px;display:flex;align-items:center}
+}
+@media(max-width:600px){
+ .wrap{max-width:none;padding-left:20px;padding-right:20px}
+ section{padding:64px 0}
+ /* the first section clears the fixed header with room to breathe */
+ .nav~section:first-of-type{padding-top:100px}
+ h2{font-size:clamp(1.75rem,7.6vw,2rem);line-height:1.06}
+ .lead{font-size:1.0625rem}
+ .cta-band{margin:0 20px;border-radius:28px;padding:48px 24px}
+ .cta-band h2{font-size:clamp(1.75rem,7.6vw,2rem)}
+ .cta-band p{font-size:.9375rem}
+ .btn{font-size:1rem;min-height:56px}
+ .wu-card,.wu-tile,.sc,.plan{border-radius:24px}
+ .wu-card{padding:24px}
+ .wu-card h3,.wu-tile h3{font-size:1.375rem}
+ .wu-card p,.wu-tile p,.sc p,.plan li,.plan .pd,.q .a p{font-size:.9375rem}
+ .wu-tile .go,.sc .more{font-size:.9375rem;min-height:44px;margin-top:6px}
+ .plan{padding:28px 24px}
+ .plan .pn{font-family:var(--d);font-size:1.0625rem;letter-spacing:-.02em;text-transform:none;opacity:1}
+ .q button{font-size:1.0625rem;min-height:64px;padding:18px 0}
+ /* footer: column titles in words, not tiny capitals, and every link a 44px row */
+ footer{padding:48px 0 32px;margin-top:56px}
+ .fg{gap:28px}
+ .fg h4{font-family:var(--b);font-size:.9375rem;letter-spacing:0;text-transform:none;color:var(--ink);font-weight:800;margin-bottom:4px}
+ .fg a{display:flex;align-items:center;min-height:44px;margin-bottom:0;font-size:.9375rem}
+ .fg a.soc{margin-left:-10px}
+ .fb{font-size:.8125rem;color:rgba(22,22,22,.55)}
+ .fb a{display:inline-flex;align-items:center;min-height:44px}
+}
+@media(max-width:900px) and (prefers-reduced-motion:no-preference){
+ .wu-tile:hover,.plan:hover{transform:none}
+ .btn:active,.wu-tile:active,.sc:active,.plan:active{transform:scale(.97)}
+ html.tabs-js [data-panel].is-on{animation:panelin .38s var(--ease)}
+ @keyframes panelin{from{opacity:0;transform:translateY(10px)}}
+}
+/* a soft cross-fade between pages instead of a white flash, where the
+   browser supports it (Chrome on Android, Safari); no script */
+@media(prefers-reduced-motion:no-preference){@view-transition{navigation:auto}}
