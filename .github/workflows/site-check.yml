@@ -1,0 +1,20 @@
+# House rules on every pull request: no em or en dashes, no links to the closed
+# apps, no "Coming soon", only the allowed phone numbers and email, and
+# _headers rebuilt after any inline script change. See scripts/check-site.mjs.
+name: Site check
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/check-site.mjs

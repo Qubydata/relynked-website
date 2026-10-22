@@ -3,9 +3,19 @@
 Static site, no build step. Live at https://relynked.com.
 
 Hosted on Cloudflare Pages, project `relynked`, in the Qubydata Cloudflare account.
-Deploying is one command, run from this folder:
+Deploys run from GitHub Actions (`.github/workflows/site-deploy.yml`), never from a
+laptop folder:
 
-    node scripts/build-shop-routes.mjs && node scripts/build-headers.mjs && CLOUDFLARE_API_TOKEN=$(cat ~/cf-token.txt)     CLOUDFLARE_ACCOUNT_ID=d98789131749b5406fb336071454a0d4     npx wrangler pages deploy . --project-name relynked --branch main
+- Push to a `feat/` or `fix/` branch: a preview is built from a clean copy and its
+  address is commented on the pull request.
+- Production: Actions, Site deploy, Run workflow, name the branch. Only the founder
+  runs it. It checks relynked.com afterwards (CSP, /privacy, /data-deletion, no links
+  to the closed apps, every internal link).
+
+The clean copy is `scripts/build-deploy-copy.sh`: git archive of the commit, then
+build-shop-routes, build-og and build-headers, then reference/, scripts/, README.md,
+.git, .github and .wrangler are removed. Every pull request also runs
+`node scripts/check-site.mjs` (the house rules); run it yourself before pushing.
 
 `scripts/build-headers.mjs` writes `_headers`: the content security policy and
 the other security headers (security review 2026-09-30). Pages allow scripts only

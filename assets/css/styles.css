@@ -552,7 +552,7 @@ footer{padding:80px 0 40px;margin-top:100px;border-top:1.5px solid rgba(1,63,50,
 .rdot{display:inline-grid;place-items:center;width:1.2em;height:1.2em;border-radius:50%;background:var(--forest);vertical-align:-.25em;flex:none}
 .rdot::after{content:"";width:.44em;height:.44em;border-radius:50%;background:var(--lime)}
 
-/* compact write-ups for what is coming soon: three across, a small drawing on top */
+/* compact write-ups: three across, a small drawing on top */
 .wu-soon{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:40px}
 .wu-card{background:var(--paper);border:1.5px solid rgba(1,63,50,.1);border-radius:22px;padding:22px 22px 26px;display:flex;flex-direction:column;gap:12px;min-width:0}
 .wu-card .wu-ill{min-height:300px;padding:28px 16px;border-radius:16px;align-self:stretch}
