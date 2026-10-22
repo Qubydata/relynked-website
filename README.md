@@ -13,8 +13,9 @@ laptop folder:
   to the closed apps, every internal link).
 
 The clean copy is `scripts/build-deploy-copy.sh`: git archive of the commit, then
-build-shop-routes, build-og and build-headers, then reference/, scripts/, README.md,
-.git, .github and .wrangler are removed. Every pull request also runs
+reference/, docs/, README.md, .git, .github and .wrangler removed, then
+build-shop-routes, build-og and build-headers, then scripts/ removed. `docs/` holds
+plans and is never published. Every pull request also runs
 `node scripts/check-site.mjs` (the house rules); run it yourself before pushing.
 
 `scripts/build-headers.mjs` writes `_headers`: the content security policy and

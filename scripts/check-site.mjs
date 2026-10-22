@@ -4,8 +4,8 @@
  *
  *   node scripts/check-site.mjs
  *
- * It reads only what is deployed: everything except reference/, scripts/,
- * README.md, .git, .github and .wrangler. It fails on:
+ * It reads only what is deployed: everything except reference/, docs/,
+ * scripts/, README.md, .git, .github and .wrangler. It fails on:
  *   - an em dash or an en dash
  *   - app.relynked.com, relynked.app, remy.relynked.com or staff.relynked.com
  *     (the apps are closed behind a holding page)
@@ -25,7 +25,7 @@ import { extname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
-const SKIP = new Set(["reference", "scripts", "README.md", "node_modules", ".git", ".github", ".wrangler"]);
+const SKIP = new Set(["reference", "docs", "scripts", "README.md", "node_modules", ".git", ".github", ".wrangler"]);
 const TEXT = new Set([".html", ".js", ".css", ".txt", ".xml", ".json", ".webmanifest", ".svg", ""]);
 
 // The only contacts allowed on the site. Phones are compared as 0XXXXXXXXXX.
