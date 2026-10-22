@@ -7,6 +7,19 @@
 <title>Careers · Relynked</title>
 <meta name="description" content="We do not post roles. We read what you send us. Tell us what you would build.">
 <link rel="canonical" href="https://relynked.com/careers">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Relynked">
+<meta property="og:title" content="Careers · Relynked">
+<meta property="og:description" content="We do not post roles. We read what you send us. Tell us what you would build.">
+<meta property="og:url" content="https://relynked.com/careers">
+<meta property="og:image" content="https://relynked.com/assets/img/og/careers.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Careers · Relynked">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Careers · Relynked">
+<meta name="twitter:description" content="We do not post roles. We read what you send us. Tell us what you would build.">
+<meta name="twitter:image" content="https://relynked.com/assets/img/og/careers.png">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" href="/assets/img/logo.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
@@ -16,7 +29,7 @@
 <style>
 :root{
   --forest:#0A3F32;--forest-2:#0D5344;--forest-3:#06291F;--lime:#E7FE25;--paper:#FDFDFD;--ink:#161616;
-  --mist:#EEF3EF;--amber:#E0A000;--red:#C4331B;
+  --mist:#F0F2F2;--amber:#E0A000;--red:#C4331B;
   --d:"Archivo",system-ui,sans-serif;--b:"Manrope",system-ui,sans-serif;--m:"JetBrains Mono",ui-monospace,monospace;
   --ease:cubic-bezier(.16,1,.3,1);--w:1180px;
 }
@@ -219,6 +232,9 @@ footer{padding:60px 0 44px;border-top:1px solid rgba(253,253,253,.12)}
 footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
 footer p{font-size:.85rem;color:rgba(253,253,253,.42);font-weight:600}
 footer .fl{display:flex;gap:22px;font-size:.88rem;font-weight:700;flex-wrap:wrap}
+footer .fl{align-items:center}
+footer .fl a.soc{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin:-12px;border-radius:12px}
+footer .fl a.soc svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 footer .fl a{opacity:.65;transition:.25s}
 footer .fl a:hover{opacity:1;color:var(--lime)}
 
@@ -287,13 +303,15 @@ footer .fl a:hover{opacity:1;color:var(--lime)}
    .tick .ring,.tick .mark{stroke-dashoffset:0}
   .mqt{animation-name:run!important;animation-duration:30s!important;animation-timing-function:linear!important;animation-iteration-count:infinite!important}
 }
+/* the hero orb and the ribbon run past the edge by design; never let them make the page scroll sideways */
+html{overflow-x:hidden}
 </style>
 </head>
 <body>
 <div class="orb a"></div><div class="orb b"></div>
 
 <nav class="nav" id="nav"><div class="wrap">
-  <a class="logo" href="/"><svg class="mk" viewBox="0 0 336 338" aria-hidden="true"><rect width="336" height="338" rx="84" fill="#E7FE25"/><rect x="54" y="85" width="176" height="65" rx="32.5" fill="#0A3F32"/><rect x="54" y="186" width="227" height="67" rx="33.5" fill="#0A3F32" opacity=".55"/></svg>Relynked</a>
+  <a class="logo" href="/"><svg class="mk" viewBox="0 0 336 338" aria-hidden="true"><rect width="336" height="338" rx="84" fill="#E7FE25"/><rect x="54" y="85" width="176" height="65" rx="32.5" fill="#0A3F32"/><rect x="54" y="186" width="227" height="67" rx="33.5" fill="#0A3F32" opacity=".55"/></svg><span class="wm">Relynked<sup class="tm">™</sup></span></a>
   <a class="back" href="/"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 18l-6-6 6-6"/></svg> Back to site</a>
 </div></nav>
 
@@ -331,15 +349,14 @@ footer .fl a:hover{opacity:1;color:var(--lime)}
 
 <section><div class="wrap">
   <div class="rv">
-    <div class="eyebrow">What you would be working on</div>
-    <h2>Software that tells a<br>business the truth<br>about itself.</h2>
-    <p class="p">Relynked measures what actually happens inside a business: what came in, what moved, who signed for it, what was sold, and where the two stop agreeing. We started with bars and restaurants in Nigeria and we are building outward from there, into retail, pharmacy, hotels and anything else that moves goods and money.</p>
+    <h2>What you would work on:<br>software that tells a<br>business the truth about itself.</h2>
+    <p class="p">Relynked measures what actually happens inside a business: what came in, what moved, who signed for it, what was sold, and where the two stop agreeing. We started with bars and restaurants in Nigeria, and today shops, salons and more run on it too.</p>
     <p class="p">The work is unusually concrete. You will not be optimising a funnel. You will be standing in a kitchen at nine at night watching someone use the thing you built, finding out it is wrong, and fixing it before Friday.</p>
   </div>
 </div></section>
 
 <section id="truths"><div class="wrap">
-  <div class="rv"><div class="eyebrow">Honest version</div><h2>Five things that are<br>true about working here.</h2></div>
+  <div class="rv"><h2>The honest version: five things<br>that are true about working here.</h2></div>
   <div class="grid">
     <div class="card rv"><span class="n">01</span><h3>We are early</h3><p>Small team, real customers, not much money. If you need a large organisation around you to do your best work, this will frustrate you and we would rather say so now.</p></div>
     <div class="card rv d1"><span class="n">02</span><h3>You will meet the users</h3><p>Everyone goes to site. Engineers, designers, everyone. You cannot build for a storekeeper you have never watched work, and we do not let people try.</p></div>
@@ -350,7 +367,7 @@ footer .fl a:hover{opacity:1;color:var(--lime)}
 </div></section>
 
 <section><div class="wrap">
-  <div class="rv"><div class="eyebrow">The bar</div><h2>What actually gets<br>our attention.</h2>
+  <div class="rv"><h2>The bar: what actually<br>gets our attention.</h2>
     <p class="p">We have no degree requirement and no minimum years. We do have a bar, and this is it, stated plainly so you can judge yourself against it before spending your time.</p></div>
   <div class="bars">
     <div class="bar rv"><span class="k">01</span><div class="t"><h3>You have made something</h3><p>Anything. A product, a business, a tool for your own use, a piece of writing that changed someone's mind. Finished beats impressive. We would rather see a small thing that works than a large thing that was nearly done.</p></div></div>
@@ -362,8 +379,7 @@ footer .fl a:hover{opacity:1;color:var(--lime)}
 
 <section class="apply" id="apply"><div class="wrap">
   <div class="rv" style="text-align:center;max-width:640px;margin:0 auto">
-    <div class="eyebrow" style="justify-content:center">Apply</div>
-    <h2>Six questions.<br>Ten minutes.</h2>
+    <h2>Apply: six questions.<br>Ten minutes.</h2>
     <p class="p" style="margin-left:auto;margin-right:auto">This form is the way in, and it is deliberately not a one-click apply. We read every single one, and we reply to every one either way.</p>
   </div>
 
@@ -461,7 +477,7 @@ footer .fl a:hover{opacity:1;color:var(--lime)}
 
 <footer><div class="wrap">
   <p>© 2026 Relynked Ltd · RC 9837720 · Benin City, Nigeria</p>
-  <div class="fl"><a href="/">Home</a><a href="/product">Products</a><a href="/pricing">Pricing</a><a href="/product#who-its-for">Who it is for</a><a href="/contact">Contact</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/refund-policy">Refund policy</a><a href="/data-deletion">Data deletion</a></div>
+  <div class="fl"><a href="/">Home</a><a href="/product">Products</a><a href="/pricing">Pricing</a><a href="/product#who-its-for">Who it is for</a><a href="/contact">Contact</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/refund-policy">Refund policy</a><a href="/data-deletion">Data deletion</a><a class="soc" href="https://www.instagram.com/relynkedltd/" target="_blank" rel="noopener" aria-label="Relynked on Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></svg></a></div>
 </div></footer>
 </div>
 
