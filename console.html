@@ -85,6 +85,7 @@
   .banner b{font-family:var(--d); display:block; font-size:.9375rem; margin-bottom:2px}
   .banner.demo{background:var(--warn-bg); border-color:color-mix(in srgb, var(--warn) 28%, transparent); color:var(--t1)}
   .banner.demo b{color:var(--warn)}
+  .banner.good{background:var(--ok-bg); border-color:color-mix(in srgb, var(--ok) 28%, transparent)}
   .banner.err{background:var(--bad-bg); border-color:color-mix(in srgb, var(--bad) 30%, transparent)}
   .banner.err b{color:var(--bad)}
   .banner .code{font-family:var(--m); font-size:.75rem; color:var(--t3); margin-top:4px}
@@ -130,11 +131,11 @@
   @media (max-width:520px){ .controls .grow{grid-column:1 / -1} }
   .field{display:flex; flex-direction:column; gap:3px; min-width:0}
   .field span{font-family:var(--m); font-size:.625rem; text-transform:uppercase; letter-spacing:.07em; color:var(--t3)}
-  input[type=search], select{
+  input[type=search], input[type=email], input[type=text], select{
     font-family:var(--b); font-size:.875rem; color:var(--t1); background:var(--bg);
     border:1px solid var(--line); border-radius:9px; padding:.5rem .6rem; min-height:38px; width:100%; min-width:0;
   }
-  @media (max-width:700px){ input[type=search], select{font-size:16px} }
+  @media (max-width:700px){ input[type=search], input[type=email], input[type=text], select{font-size:16px} }
   .check{display:flex; align-items:center; gap:8px; font-size:.8125rem; min-height:38px}
   .check input{width:18px; height:18px; margin:0}
   .bar{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:12px 0 8px}
@@ -194,6 +195,14 @@
   .msg .who{font-size:.75rem; color:var(--t3); margin-bottom:4px}
   .msg p{margin:0; white-space:pre-wrap; font-size:.875rem}
 
+  .btn.primary{background:var(--t1); color:var(--bg); border-color:var(--t1)}
+  .btn.danger{color:var(--bad)}
+  .addform{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; align-items:end}
+  .confirm{background:var(--warn-bg); border:1px solid color-mix(in srgb, var(--warn) 28%, transparent); border-radius:12px; padding:12px 14px; margin:12px 0}
+  .confirm p{margin:0 0 10px; font-size:.875rem}
+  .confirm .btn + .btn{margin-left:6px}
+  .gone td{opacity:.55}
+  td select{min-width:170px}
   .foot{margin-top:26px; font-size:.75rem; color:var(--t3)}
 
   @media (max-width:560px){
@@ -209,6 +218,7 @@
     <span>
       <h1>Relynked Console</h1>
       <div class="sub" id="stamp">loading</div>
+      <div class="sub" id="who"></div>
     </span>
     <span class="sp"></span>
     <button class="btn iconbtn" id="theme" type="button" aria-label="Switch between light and dark" title="Switch theme"></button>
@@ -241,7 +251,8 @@
   "use strict";
 
   /* ── setup ─────────────────────────────────────────────── */
-  var DEMO = /(?:^|[?&])demo=1(?:&|$)/.test(location.search);
+  var DEMO = /(?:^|[?&])demo=(?:1|viewer)(?:&|$)/.test(location.search);
+  var DEMO_VIEWER = /(?:^|[?&])demo=viewer(?:&|$)/.test(location.search);
   var API = "/api/console/";
 
   var ICON = {
@@ -263,8 +274,18 @@
 
   var state = {
     data: null, view: "overview", id: null, detail: null, log: null,
-    f: freshFilters(), sort: { key: "created", dir: -1 }, uq: "", loading: 0
+    f: freshFilters(), sort: { key: "created", dir: -1 }, uq: "", loading: 0,
+    team: null, pending: null, tmsg: null
   };
+  var NO_EXPORT = "Your access can view lists but not download them.";
+  var ROLE_NAME = { viewer: "Can view", exporter: "Can view and export" };
+  function me() { return (state.data && state.data.me) || null; }
+  function isOwner() { var m = me(); return !!m && m.role === "owner"; }
+  function canExport() { var m = me(); return !m || m.role !== "viewer"; }
+  function exportBtn(list, id) {
+    return canExport() ? '<button class="btn go" type="button"' + (id ? ' id="' + id + '"' : "") + ' data-act="export" data-list="' + list + '">' + svg("down") + "<span>Export CSV</span></button>" : "";
+  }
+  function noExportNote() { return canExport() ? "" : '<span class="note">' + esc(NO_EXPORT) + "</span>"; }
   function freshFilters() { return { q: "", fu: "", ver: "", plan: "", kind: "", hideTest: true }; }
 
   /* ── small helpers ─────────────────────────────────────── */
@@ -377,8 +398,10 @@
   function ConsoleError(status, code, message, network) {
     this.status = status; this.code = code; this.serverMessage = message; this.network = !!network;
   }
-  function request(path) {
-    return fetch(API + path, { credentials: "same-origin", cache: "no-store", headers: { accept: "application/json, text/csv" } })
+  function request(path, body) {
+    var o = { credentials: "same-origin", cache: "no-store", headers: { accept: "application/json, text/csv" } };
+    if (body !== undefined) { o.method = "POST"; o.body = JSON.stringify(body); o.headers["content-type"] = "application/json"; }
+    return fetch(API + path, o)
       .catch(function () { throw new ConsoleError(0, "", "", true); })
       .then(function (r) {
         if (r.ok) return r;
@@ -394,6 +417,11 @@
       return r.json().catch(function () { throw new ConsoleError(0, "bad_answer", "", true); });
     });
   }
+  function postJson(path, body) {
+    return request(path, body).then(function (r) {
+      return r.json().catch(function () { throw new ConsoleError(0, "bad_answer", "", true); });
+    });
+  }
   function explain(e) {
     if (!(e instanceof ConsoleError)) return { t: "Something went wrong", m: "Press Refresh to try again.", c: "" };
     var code = e.code ? "Code: " + e.code : "";
@@ -404,6 +432,9 @@
       if (e.code === "not_behind_access") m = "This request did not come through Cloudflare Access. relynked.com/api/console needs to be added to the Access application.";
       return { t: "Not signed in", m: m, c: code };
     }
+    if (e.status === 403 && e.code === "no_export") return { t: "Downloads are off for you", m: NO_EXPORT, c: "" };
+    if (e.status === 403 && e.code === "owner_only") return { t: "Only the founder can do that", m: e.serverMessage || "Only the founder can change the console team.", c: "" };
+    if (e.status === 403 && e.code === "bad_origin") return { t: "Request refused", m: "Reload the console page and try again.", c: code };
     if (e.status === 403) return { t: "This email is not allowed", m: "You are signed in, but this email is not on the console list. Sign in with the founder Google account.", c: code };
     if (e.status === 429) return { t: "Too many requests", m: "Wait a minute, then press Refresh.", c: code };
     if (e.status === 503) return { t: "Not set up yet", m: (e.serverMessage || "A setting the console needs is missing.") + " Finish the setup, then press Refresh.", c: code };
@@ -463,10 +494,22 @@
     if (!state.data) return;
     if (state.view === "business" && state.id) loadDetail(state.id);
     else if (state.view === "log") loadLog();
+    else if (state.view === "team") {
+      if (!isOwner()) { go("#overview"); return; }
+      loadTeam(false);
+    }
+  }
+  function loadTeam(keep) {
+    if (!keep) state.team = null;
+    busy(true);
+    var p = DEMO ? new Promise(function (res) { res(Demo.teamGet()); }) : getJson("team");
+    return p.then(function (d) { state.team = d; clearAlert(); })
+      .catch(function (e) { state.team = null; showAlert(e, false); })
+      .then(function () { busy(false); if (state.view === "team") render(); });
   }
 
   /* ── routing ───────────────────────────────────────────── */
-  var VIEWS = { overview: 1, businesses: 1, unattached: 1, access: 1, log: 1 };
+  var VIEWS = { overview: 1, businesses: 1, unattached: 1, access: 1, log: 1, team: 1 };
   function parseHash() {
     var parts = location.hash.replace(/^#/, "").split("/");
     var v = parts[0] || "overview";
@@ -494,6 +537,8 @@
     var d = state.data;
     $("stamp").textContent = d ? "Data from " + fmtDateTime(d.generatedAt) + " (Lagos time)" : (state.loading ? "loading" : "no data");
     $("demoBanner").hidden = !DEMO;
+    var m = me();
+    $("who").textContent = m ? "Signed in as " + m.email + ", " + (m.role === "owner" ? "full access" : m.role === "exporter" ? "can view and export" : "can view") : "";
     renderNav();
     var main = $("main");
     if (!d) {
@@ -506,6 +551,7 @@
     else if (state.view === "unattached") { main.innerHTML = unattachedHtml(d); paintUnattached(); }
     else if (state.view === "access") main.innerHTML = accessHtml(d);
     else if (state.view === "log") main.innerHTML = logHtml();
+    else if (state.view === "team") main.innerHTML = isOwner() ? teamHtml() : "";
   }
   function renderNav() {
     var d = state.data;
@@ -515,7 +561,7 @@
       ["unattached", "Signed up, no business", d ? d.unattached.length : ""],
       ["access", "Asked for access", d ? d.accessRequests.filter(function (a) { return a.status === "pending"; }).length : ""],
       ["log", "Log", ""]
-    ];
+    ].concat(isOwner() ? [["team", "Team", ""]] : []);
     var cur = state.view === "business" ? "businesses" : state.view;
     $("nav").innerHTML = items.map(function (it) {
       return '<a href="#' + it[0] + '"' + (it[0] === cur ? ' aria-current="page"' : "") + ">" + esc(it[1]) +
@@ -585,7 +631,7 @@
       '<label class="check"><input type="checkbox" id="fhide"' + (f.hideTest ? " checked" : "") + '> Hide test businesses</label>' +
       "</div>" +
       '<div class="bar"><span class="count" id="count" aria-live="polite"></span><span class="sp"></span>' +
-      '<button class="btn go" type="button" id="exportB" data-act="export" data-list="businesses">' + svg("down") + "<span>Export CSV</span></button>" +
+      exportBtn("businesses", "exportB") +
       '<span class="note" id="exnote"></span></div>' +
       '<div class="tablewrap" id="btable"></div>';
   }
@@ -652,7 +698,7 @@
     var q = f.q.trim().toLowerCase(), qd = digits(q);
     var rows = sortRows(d.businesses.filter(function (b) { return bizMatches(b, f, q, qd); }));
     $("count").textContent = "Showing " + rows.length + " of " + d.businesses.length + " businesses";
-    $("exnote").textContent = "Export covers: " + (f.fu ? fuLabel(f.fu) : "all businesses") + ". The search and the other filters are not applied to the file.";
+    $("exnote").textContent = !canExport() ? NO_EXPORT : "Export covers: " + (f.fu ? fuLabel(f.fu) : "all businesses") + ". The search and the other filters are not applied to the file.";
     var head = "<thead><tr>" + COLS.map(function (c) {
       var on = state.sort.key === c.k;
       return '<th scope="col"' + (c.sticky ? ' class="sticky' + (c.num ? " num" : "") + '"' : c.num ? ' class="num"' : "") +
@@ -728,7 +774,7 @@
     return '<h2 class="title">Signed up, no business</h2><p class="hint">People who made an account but have not set up a business.</p>' +
       '<div class="panel controls"><label class="field grow"><span>Search</span><input type="search" id="uq" value="' + esc(state.uq) + '" placeholder="Name, title, email or phone" autocomplete="off"></label></div>' +
       '<div class="bar"><span class="count" id="ucount" aria-live="polite"></span><span class="sp"></span>' +
-      '<button class="btn go" type="button" data-act="export" data-list="unattached">' + svg("down") + "<span>Export CSV</span></button></div>" +
+      exportBtn("unattached") + noExportNote() + "</div>" +
       '<div class="tablewrap" id="utable"></div>';
   }
   function paintUnattached() {
@@ -757,7 +803,7 @@
     var waiting = rows.filter(function (a) { return a.status === "pending"; }).length;
     var h = '<h2 class="title">Asked for access</h2><p class="hint">Owners who asked to be let in.</p>' +
       '<div class="bar"><span class="count">' + rows.length + " requests, " + waiting + ' waiting</span><span class="sp"></span>' +
-      '<button class="btn go" type="button" data-act="export" data-list="access_requests">' + svg("down") + "<span>Export CSV</span></button></div>";
+      exportBtn("access_requests") + noExportNote() + "</div>";
     if (!rows.length) return h + '<div class="tablewrap"><div class="empty">No requests.</div></div>';
     return h + '<div class="tablewrap"><table><thead><tr>' +
       ["Name", "Email", "WhatsApp", "Business", "Status", "Asked on", "Decided on"].map(function (t) { return '<th scope="col"><span>' + t + "</span></th>"; }).join("") +
@@ -781,6 +827,113 @@
           (e.businessId ? '<a class="mono" href="#business/' + esc(e.businessId) + '">' + esc(e.businessId.slice(-6).toUpperCase()) + "</a>" : mute) + "</td><td>" +
           (e.segment ? esc(e.segment) : mute) + '</td><td class="num">' + e.rows + "</td><td>" + (e.exported ? "Yes" : "No") + "</td></tr>";
       }).join("") + "</tbody></table></div>";
+  }
+
+  /* Team (the founder only) */
+  function tmsgHtml() {
+    return state.tmsg ? '<div class="banner ' + (state.tmsg.ok ? "good" : "err") + '" role="status">' + esc(state.tmsg.text) + "</div>" : "";
+  }
+  function setTmsg(ok, text) {
+    state.tmsg = text ? { ok: ok, text: text } : null;
+    var el = $("tmsg");
+    if (el) el.innerHTML = tmsgHtml();
+  }
+  function roleOptions(cur) {
+    return ["viewer", "exporter"].map(function (r) {
+      return '<option value="' + r + '"' + (r === cur ? " selected" : "") + ">" + ROLE_NAME[r] + "</option>";
+    }).join("");
+  }
+  function eventText(e) {
+    if (e.action === "added") return "Added" + (e.role ? ": " + (ROLE_NAME[e.role] || e.role) : "");
+    if (e.action === "role_changed") return "Changed to " + (ROLE_NAME[e.role] || e.role || "");
+    if (e.action === "removed") return "Removed";
+    return e.action;
+  }
+  function thead(list) {
+    return "<thead><tr>" + list.map(function (t) { return '<th scope="col"><span>' + t + "</span></th>"; }).join("") + "</tr></thead>";
+  }
+  function teamHtml() {
+    var t = state.team;
+    var h = '<h2 class="title">Team</h2><p class="hint">Who may open the console besides you. You are the only one who can change this.</p><div id="tmsg">' + tmsgHtml() + "</div>";
+    if (!t) return h + (state.loading ? '<div class="empty">Loading.</div>' : "");
+    h += '<h2 class="sec">Full access</h2><div class="panel">' + (t.owners.length ? t.owners.map(function (o) { return '<div class="mono">' + esc(o) + "</div>"; }).join("") : mute) +
+      '<p class="hint" style="margin:8px 0 0">Set on the server, not removable here.</p></div>';
+    h += '<h2 class="sec">Add someone</h2><form class="panel" id="addForm" novalidate><div class="addform">' +
+      '<label class="field"><span>Google email</span><input type="email" id="tEmail" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="name@gmail.com"></label>' +
+      '<label class="field"><span>Name (optional)</span><input type="text" id="tName" maxlength="80" autocomplete="off"></label>' +
+      '<label class="field"><span>Access</span><select id="tRole">' + roleOptions("viewer") + "</select></label>" +
+      '<div><button class="btn primary" type="submit">Add</button></div></div>' +
+      '<div id="confirmAdd"></div>' +
+      '<p class="hint" style="margin:12px 0 0">They sign in with that Google email at relynked.com/console. Every look and export is logged under their email.</p></form>';
+    var active = t.members.filter(function (m) { return !m.removedAt; });
+    var gone = t.members.filter(function (m) { return m.removedAt; });
+    h += '<h2 class="sec">Can open the console</h2><div id="confirmRemove"></div>';
+    if (!active.length) h += '<div class="tablewrap"><div class="empty">Nobody has been added yet.</div></div>';
+    else h += '<div class="tablewrap"><table>' + thead(["Name", "Email", "Access", "Added by", "Added", ""]) + "<tbody>" + active.map(function (m) {
+      return "<tr><td>" + (m.name ? esc(m.name) : mute) + "</td><td>" + emailHtml(m.email) + '</td><td><select class="rolesel" data-email="' + esc(m.email) + '" aria-label="Access for ' + esc(m.email) + '">' + roleOptions(m.role) + "</select></td><td>" +
+        esc(m.addedBy) + "</td><td>" + esc(fmtDate(m.addedAt)) + '</td><td><button type="button" class="btn danger" data-act="team-remove" data-email="' + esc(m.email) + '">Remove</button></td></tr>';
+    }).join("") + "</tbody></table></div>";
+    if (gone.length) {
+      h += '<h2 class="sec">Removed</h2><div class="tablewrap gone"><table>' + thead(["Name", "Email", "Had", "Removed by", "Removed"]) + "<tbody>" + gone.map(function (m) {
+        return "<tr><td>" + (m.name ? esc(m.name) : mute) + "</td><td>" + esc(m.email) + "</td><td>" + esc(ROLE_NAME[m.role] || m.role) + "</td><td>" + (m.removedBy ? esc(m.removedBy) : mute) + "</td><td>" + esc(fmtDate(m.removedAt)) + "</td></tr>";
+      }).join("") + "</tbody></table></div>";
+    }
+    h += '<h2 class="sec">History</h2>';
+    if (!t.events.length) h += '<div class="tablewrap"><div class="empty">No changes yet.</div></div>';
+    else h += '<div class="tablewrap"><table>' + thead(["When", "By", "What", "Person"]) + "<tbody>" + t.events.map(function (e) {
+      return "<tr><td>" + esc(fmtDateTime(e.at)) + "</td><td>" + esc(e.by) + "</td><td>" + esc(eventText(e)) + "</td><td>" + esc(e.email) + "</td></tr>";
+    }).join("") + "</tbody></table></div>";
+    return h;
+  }
+  function paintConfirm() {
+    var p = state.pending, a = $("confirmAdd"), r = $("confirmRemove");
+    var btns = function (yes) {
+      return '<button type="button" class="btn primary" data-act="team-yes">' + yes + '</button><button type="button" class="btn" data-act="team-cancel">Cancel</button>';
+    };
+    if (a) a.innerHTML = p && p.kind === "add"
+      ? '<div class="confirm"><p>Add <b>' + esc(p.email) + "</b>" + (p.name ? " (" + esc(p.name) + ")" : "") + " with access <b>" + esc(ROLE_NAME[p.role]) + "</b>? They can open the console with that Google email.</p>" + btns("Yes, add") + "</div>" : "";
+    if (r) r.innerHTML = p && p.kind === "remove"
+      ? '<div class="confirm"><p>Remove ' + esc(p.email) + "? They lose access on their next page load.</p>" + btns("Yes, remove") + "</div>" : "";
+    var box = p && (p.kind === "add" ? a : r);
+    if (box && box.scrollIntoView) box.scrollIntoView({ block: "nearest" });
+  }
+  function teamErr(e) {
+    if (e instanceof ConsoleError && e.serverMessage && (e.status === 400 || e.status === 403 || e.status === 404)) return e.serverMessage;
+    var x = explain(e);
+    return x.t + ". " + x.m;
+  }
+  function teamSend(path, body) {
+    if (!DEMO) return postJson(path, body);
+    return new Promise(function (res) { res(path === "team" ? Demo.teamPost(body) : Demo.teamRemove(body)); });
+  }
+  function teamSubmit() {
+    var email = $("tEmail").value.trim().toLowerCase();
+    setTmsg(false, "");
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setTmsg(false, "Type the Google email they sign in with."); return; }
+    state.pending = { kind: "add", email: email, name: $("tName").value.trim(), role: $("tRole").value };
+    paintConfirm();
+  }
+  function teamApply(p) {
+    var work = p.kind === "add"
+      ? teamSend("team", p.name ? { email: p.email, name: p.name, role: p.role } : { email: p.email, role: p.role })
+      : teamSend("team/remove", { email: p.email });
+    busy(true);
+    work.then(function (r) {
+      state.pending = null;
+      var text = p.kind === "remove" ? "Removed " + p.email + "."
+        : r.action === "role_changed" ? "Changed " + p.email + " to " + ROLE_NAME[p.role] + "."
+        : r.action === "unchanged" ? p.email + " already has that access."
+        : "Added " + p.email + ": " + ROLE_NAME[p.role] + ".";
+      state.tmsg = { ok: true, text: text };
+      busy(false);
+      return loadTeam(true);
+    }).catch(function (e) {
+      busy(false);
+      state.pending = null;
+      paintConfirm();
+      setTmsg(false, teamErr(e));
+      if (p.fromSelect || (e instanceof ConsoleError && e.status === 404)) loadTeam(true);
+    });
   }
 
   /* ── export ────────────────────────────────────────────── */
@@ -851,12 +1004,22 @@
     if (act === "refresh") refresh();
     else if (act === "clear") { state.f = freshFilters(); render(); }
     else if (act === "export") doExport(t.getAttribute("data-list"), t);
+    else if (act === "team-remove") { setTmsg(false, ""); state.pending = { kind: "remove", email: t.getAttribute("data-email") }; paintConfirm(); }
+    else if (act === "team-cancel") { state.pending = null; paintConfirm(); }
+    else if (act === "team-yes") { if (state.pending) { t.disabled = true; teamApply(state.pending); } }
   });
   document.addEventListener("input", function (ev) {
     if (ev.target.id === "fq") { state.f.q = ev.target.value; paintBusinesses(); }
     else if (ev.target.id === "uq") { state.uq = ev.target.value; paintUnattached(); }
   });
   document.addEventListener("change", function (ev) {
+    if (ev.target.classList && ev.target.classList.contains("rolesel")) {
+      var sel = ev.target, email = sel.getAttribute("data-email");
+      sel.disabled = true;
+      setTmsg(false, "");
+      teamApply({ kind: "add", email: email, name: "", role: sel.value, fromSelect: true });
+      return;
+    }
     var id = ev.target.id, f = state.f;
     if (id === "ffu") f.fu = ev.target.value;
     else if (id === "fver") f.ver = ev.target.value;
@@ -865,6 +1028,9 @@
     else if (id === "fhide") f.hideTest = ev.target.checked;
     else return;
     paintBusinesses();
+  });
+  document.addEventListener("submit", function (ev) {
+    if (ev.target.id === "addForm") { ev.preventDefault(); teamSubmit(); }
   });
   $("refresh").addEventListener("click", refresh);
   window.addEventListener("hashchange", route);
@@ -983,6 +1149,7 @@
       var q = fu.filter(function (f) { return f.key === "quiet_7d"; })[0].count;
       return {
         generatedAt: new Date().toISOString(),
+        me: DEMO_VIEWER ? { email: "viewer@example.test", role: "viewer" } : { email: "founder@example.test", role: "owner" },
         overview: {
           businesses: { total: BIZ.length, verified: BIZ.filter(function (b) { return b.verified; }).length, unverified: BIZ.filter(function (b) { return !b.verified; }).length, test: BIZ.filter(function (b) { return b.isTest; }).length },
           plans: plans,
@@ -1046,7 +1213,50 @@
             fmtDate(b.lastSeenAt), fmtDate(b.lastRemyAt), b.plan.state, b.plan.daysLeft, b.plan.paidThrough ? fmtDate(b.plan.paidThrough) : "", b.followUps.join(" ")];
         }));
     }
-    return { summary: summary, detail: detail, log: log, csv: csv };
+    var TEAM = {
+      owners: ["founder@example.test"],
+      members: [
+        { email: "sola@example.test", name: "Sola Example", role: "exporter", addedBy: "founder@example.test", addedAt: ago(12), removedAt: null, removedBy: null },
+        { email: "tayo@example.test", name: "Tayo Sample", role: "viewer", addedBy: "founder@example.test", addedAt: ago(5), removedAt: null, removedBy: null },
+        { email: "uzo@example.test", name: "Uzo Demo", role: "viewer", addedBy: "founder@example.test", addedAt: ago(30), removedAt: ago(8), removedBy: "founder@example.test" }
+      ],
+      events: [
+        { at: ago(8), by: "founder@example.test", action: "removed", email: "uzo@example.test", role: null },
+        { at: ago(5), by: "founder@example.test", action: "added", email: "tayo@example.test", role: "viewer" },
+        { at: ago(12), by: "founder@example.test", action: "added", email: "sola@example.test", role: "viewer" },
+        { at: ago(30), by: "founder@example.test", action: "added", email: "uzo@example.test", role: "viewer" }
+      ]
+    };
+    TEAM.events.splice(2, 0, { at: ago(11), by: "founder@example.test", action: "role_changed", email: "sola@example.test", role: "exporter" });
+    function teamGet() { return JSON.parse(JSON.stringify(TEAM)); }
+    function bad(status, code, message) { return new ConsoleError(status, code, message, false); }
+    function teamPost(b) {
+      var email = typeof b.email === "string" ? b.email.trim().toLowerCase() : "";
+      var name = typeof b.name === "string" && b.name.trim() ? b.name.trim().slice(0, 80) : null;
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || email.length > 254) throw bad(400, "bad_email", "Type the Google email they sign in with.");
+      if (b.role !== "viewer" && b.role !== "exporter") throw bad(400, "bad_role", "Choose Can view, or Can view and export.");
+      if (TEAM.owners.indexOf(email) >= 0) throw bad(400, "already_owner", "That email already has full access.");
+      var was = TEAM.members.filter(function (m) { return m.email === email; })[0];
+      if (was && !was.removedAt && was.role === b.role) return { ok: true, email: email, role: b.role, action: "unchanged" };
+      var action = was && !was.removedAt ? "role_changed" : "added";
+      if (was) {
+        was.role = b.role; if (name) was.name = name;
+        if (was.removedAt) { was.addedBy = "founder@example.test"; was.addedAt = ago(0); was.removedAt = null; was.removedBy = null; }
+      } else {
+        TEAM.members.push({ email: email, name: name, role: b.role, addedBy: "founder@example.test", addedAt: ago(0), removedAt: null, removedBy: null });
+      }
+      TEAM.events.unshift({ at: ago(0), by: "founder@example.test", action: action, email: email, role: b.role });
+      return { ok: true, email: email, role: b.role, action: action };
+    }
+    function teamRemove(b) {
+      var email = typeof b.email === "string" ? b.email.trim().toLowerCase() : "";
+      var was = TEAM.members.filter(function (m) { return m.email === email && !m.removedAt; })[0];
+      if (!was) throw bad(404, "not_on_team", "That email is not on the console team.");
+      was.removedAt = ago(0); was.removedBy = "founder@example.test";
+      TEAM.events.unshift({ at: ago(0), by: "founder@example.test", action: "removed", email: email, role: null });
+      return { ok: true, email: email };
+    }
+    return { summary: summary, detail: detail, log: log, csv: csv, teamGet: teamGet, teamPost: teamPost, teamRemove: teamRemove };
   })();
 
   /* ── go ────────────────────────────────────────────────── */
