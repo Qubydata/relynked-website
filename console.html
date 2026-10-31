@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Relynked Console</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/assets/fonts/fonts.css">
+<style>
+  /* Same quiet palette as the status page. Colour carries meaning only:
+     green is healthy, amber needs a nudge, red is lapsed, blue is a trial or
+     pilot still running. Nothing is coloured for decoration. */
+  :root{
+    --bg:#F5F7F9; --card:#FFFFFF; --line:#E4E8EC; --line-soft:#EEF1F4; --hover:#F0F3F6;
+    --t1:#0E1620; --t2:#57646F; --t3:#8B96A1;
+    --ok:#13915A; --ok-bg:#E6F5EE;
+    --bad:#CE2A1C; --bad-bg:#FCEBE9;
+    --warn:#B26A00; --warn-bg:#FDF2E2;
+    --info:#1F5FBF; --info-bg:#E8F0FB;
+    --d:"Archivo",system-ui,sans-serif;
+    --b:"Manrope",system-ui,sans-serif;
+    --m:"JetBrains Mono",ui-monospace,monospace;
+    --shadow:0 1px 2px rgba(14,22,32,.04), 0 6px 20px -14px rgba(14,22,32,.25);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0B0F14; --card:#151B22; --line:#252E38; --line-soft:#1D242C; --hover:#1B232C;
+      --t1:#E9EEF3; --t2:#98A5B2; --t3:#6A7784;
+      --ok:#38D08A; --ok-bg:#122B20;
+      --bad:#FF6B5A; --bad-bg:#2E1714;
+      --warn:#F2B23A; --warn-bg:#2C2212;
+      --info:#7DB0FF; --info-bg:#13233C;
+      --shadow:none;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0B0F14; --card:#151B22; --line:#252E38; --line-soft:#1D242C; --hover:#1B232C;
+    --t1:#E9EEF3; --t2:#98A5B2; --t3:#6A7784;
+    --ok:#38D08A; --ok-bg:#122B20;
+    --bad:#FF6B5A; --bad-bg:#2E1714;
+    --warn:#F2B23A; --warn-bg:#2C2212;
+    --info:#7DB0FF; --info-bg:#13233C;
+    --shadow:none;
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--t1);
+    font-family:var(--b); font-size:15px; line-height:1.5;
+    padding:22px 18px 60px;
+    -webkit-font-smoothing:antialiased;
+    overflow-wrap:anywhere;
+  }
+  .wrap{max-width:1280px; margin:0 auto; min-width:0}
+  a{color:var(--info); text-underline-offset:2px}
+  button{font-family:inherit}
+  [hidden]{display:none !important}
+
+  /* header */
+  header{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px}
+  header h1{font-family:var(--d); font-weight:800; font-size:1.25rem; margin:0; letter-spacing:-.015em}
+  header .sub{font-family:var(--m); font-size:.75rem; color:var(--t3); margin-top:2px}
+  header .sp{flex:1 1 20px}
+  .readonly{font-size:.8125rem; color:var(--t2); margin:0 0 16px}
+  .btn{
+    font-family:var(--b); font-weight:600; font-size:.8125rem;
+    background:var(--card); color:var(--t1); border:1px solid var(--line);
+    border-radius:9px; padding:.5rem .8125rem; cursor:pointer; min-height:38px;
+  }
+  .btn:hover{border-color:var(--t3)}
+  .btn:disabled{opacity:.5; cursor:default}
+  .btn:focus-visible, .tile:focus-visible, .link:focus-visible, th button:focus-visible,
+  nav a:focus-visible, input:focus-visible, select:focus-visible{outline:2px solid var(--t2); outline-offset:2px}
+  .btn.go{display:inline-flex; align-items:center; gap:7px}
+  .iconbtn{width:38px; height:38px; padding:0; display:grid; place-items:center; border-radius:10px; flex:0 0 auto}
+  svg.i{width:17px; height:17px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; display:block; flex:0 0 auto}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .busy svg.i{animation:spin .9s linear infinite; transform-origin:50% 50%}
+  @media (prefers-reduced-motion: reduce){ .busy svg.i{animation:none; opacity:.5} }
+
+  /* banners */
+  .banner{border-radius:12px; padding:12px 16px; margin-bottom:14px; border:1px solid transparent; font-size:.875rem}
+  .banner b{font-family:var(--d); display:block; font-size:.9375rem; margin-bottom:2px}
+  .banner.demo{background:var(--warn-bg); border-color:color-mix(in srgb, var(--warn) 28%, transparent); color:var(--t1)}
+  .banner.demo b{color:var(--warn)}
+  .banner.good{background:var(--ok-bg); border-color:color-mix(in srgb, var(--ok) 28%, transparent)}
+  .banner.err{background:var(--bad-bg); border-color:color-mix(in srgb, var(--bad) 30%, transparent)}
+  .banner.err b{color:var(--bad)}
+  .banner .code{font-family:var(--m); font-size:.75rem; color:var(--t3); margin-top:4px}
+  .banner .btn{margin-top:8px}
+
+  /* nav */
+  nav{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px}
+  nav a{
+    text-decoration:none; color:var(--t2); font-weight:600; font-size:.8125rem;
+    background:var(--card); border:1px solid var(--line); border-radius:9px;
+    padding:.5rem .75rem; display:inline-flex; align-items:center; gap:6px; min-height:38px;
+  }
+  nav a:hover{border-color:var(--t3)}
+  nav a[aria-current="page"]{background:var(--t1); color:var(--bg); border-color:var(--t1)}
+  nav a .n{font-family:var(--m); font-size:.6875rem; background:var(--warn-bg); color:var(--warn); border-radius:6px; padding:0 .35rem}
+
+  /* headings */
+  h2.sec{
+    font-family:var(--m); font-size:.6875rem; text-transform:uppercase; letter-spacing:.09em;
+    color:var(--t3); margin:24px 0 10px; font-weight:700;
+  }
+  h2.sec:first-child{margin-top:4px}
+  h2.title{font-family:var(--d); font-weight:800; font-size:1.125rem; margin:0 0 4px; letter-spacing:-.01em}
+  .hint{font-size:.8125rem; color:var(--t3); margin:0 0 12px}
+
+  /* tiles and cards */
+  .tiles{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px}
+  .tile{
+    background:var(--card); border:1px solid var(--line); border-radius:13px; text-align:left;
+    padding:13px 14px 11px; box-shadow:var(--shadow); color:var(--t1); display:block; width:100%;
+  }
+  button.tile{cursor:pointer}
+  button.tile:hover{border-color:var(--t3)}
+  .tile .lab{font-family:var(--m); font-size:.6875rem; text-transform:uppercase; letter-spacing:.06em; color:var(--t3)}
+  .tile .val{font-family:var(--d); font-weight:800; font-size:1.625rem; letter-spacing:-.02em; margin-top:3px; font-variant-numeric:tabular-nums; line-height:1.15}
+  .tile.hot .val{color:var(--warn)}
+  .tile .sub{font-size:.75rem; color:var(--t2); min-height:1em}
+  .panel{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px 16px; box-shadow:var(--shadow); margin-bottom:12px; min-width:0}
+
+  /* controls */
+  .controls{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; align-items:end}
+  .controls .grow{grid-column:span 2}
+  @media (max-width:520px){ .controls .grow{grid-column:1 / -1} }
+  .field{display:flex; flex-direction:column; gap:3px; min-width:0}
+  .field span{font-family:var(--m); font-size:.625rem; text-transform:uppercase; letter-spacing:.07em; color:var(--t3)}
+  input[type=search], input[type=email], input[type=text], select{
+    font-family:var(--b); font-size:.875rem; color:var(--t1); background:var(--bg);
+    border:1px solid var(--line); border-radius:9px; padding:.5rem .6rem; min-height:38px; width:100%; min-width:0;
+  }
+  @media (max-width:700px){ input[type=search], input[type=email], input[type=text], select{font-size:16px} }
+  .check{display:flex; align-items:center; gap:8px; font-size:.8125rem; min-height:38px}
+  .check input{width:18px; height:18px; margin:0}
+  .bar{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:12px 0 8px}
+  .bar .sp{flex:1 1 10px}
+  .bar .count{font-size:.8125rem; color:var(--t2); font-weight:600}
+  .bar .note{font-size:.75rem; color:var(--t3); flex:1 1 100%}
+
+  /* tables */
+  .tablewrap{background:var(--card); border:1px solid var(--line); border-radius:14px; overflow-x:auto; box-shadow:var(--shadow); max-width:100%; margin-bottom:12px; -webkit-overflow-scrolling:touch}
+  table{border-collapse:separate; border-spacing:0; width:100%; font-size:.8125rem}
+  th{
+    font-family:var(--m); font-size:.625rem; text-transform:uppercase; letter-spacing:.06em;
+    color:var(--t3); text-align:left; padding:0; font-weight:700; white-space:nowrap;
+    border-bottom:1px solid var(--line); background:var(--card);
+  }
+  th button, th > span{
+    font:inherit; letter-spacing:inherit; text-transform:inherit; color:inherit; background:none; border:0;
+    padding:11px 12px; cursor:pointer; display:flex; align-items:center; gap:4px; width:100%; text-align:left;
+  }
+  th > span{cursor:default}
+  th button:hover{color:var(--t1)}
+  th[aria-sort="ascending"] button, th[aria-sort="descending"] button{color:var(--t1)}
+  td{padding:10px 12px; border-top:1px solid var(--line-soft); vertical-align:top; white-space:nowrap; background:var(--card)}
+  tbody tr:first-child td{border-top:0}
+  tbody tr:hover td{background:var(--hover)}
+  td.wrapok{white-space:normal; min-width:200px}
+  td.num, th.num{text-align:right; font-variant-numeric:tabular-nums}
+  th.num button{justify-content:flex-end}
+  th.sticky, td.sticky{position:sticky; left:0; z-index:1; border-right:1px solid var(--line-soft)}
+  td.sticky{min-width:150px; max-width:210px; white-space:normal}
+  .link{background:none; border:0; padding:0; color:var(--t1); font-weight:700; font-size:.875rem; cursor:pointer; text-align:left; text-decoration:underline; text-decoration-color:var(--line); text-underline-offset:3px}
+  .link:hover{text-decoration-color:var(--t2)}
+  .mute{color:var(--t3)}
+  .sm{font-size:.75rem; color:var(--t2)}
+  .mono{font-family:var(--m); font-size:.75rem}
+  .stack > div + div{margin-top:1px}
+  .stack a{word-break:break-all}
+  a.wa{font-family:var(--m); font-size:.625rem; font-weight:700; text-decoration:none; background:var(--ok-bg); color:var(--ok); border-radius:5px; padding:1px 5px; margin-left:4px; vertical-align:1px}
+  .tick{width:16px; height:16px; stroke:var(--ok); fill:none; stroke-width:3; stroke-linecap:round; stroke-linejoin:round; vertical-align:-3px}
+  .pill{font-family:var(--m); font-size:.6875rem; font-weight:700; padding:.2rem .5rem; border-radius:6px; display:inline-block; white-space:nowrap; background:var(--line-soft); color:var(--t2)}
+  .pill.ok{background:var(--ok-bg); color:var(--ok)}
+  .pill.warn{background:var(--warn-bg); color:var(--warn)}
+  .pill.bad{background:var(--bad-bg); color:var(--bad)}
+  .pill.info{background:var(--info-bg); color:var(--info)}
+  .tag{font-family:var(--m); font-size:.5625rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; padding:1px 5px; border-radius:5px; background:var(--line-soft); color:var(--t2); margin-left:4px; vertical-align:1px}
+  .empty{padding:26px 16px; text-align:center; color:var(--t2); font-size:.875rem}
+  .empty .btn{margin-top:10px}
+
+  /* one business */
+  .back{display:inline-block; margin-bottom:12px; font-weight:600; font-size:.875rem}
+  dl.facts{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px 18px; margin:0}
+  dl.facts dt{font-family:var(--m); font-size:.625rem; text-transform:uppercase; letter-spacing:.07em; color:var(--t3)}
+  dl.facts dd{margin:2px 0 0; font-size:.875rem}
+  .pills{display:flex; flex-wrap:wrap; gap:6px}
+  .msgs{display:grid; gap:10px}
+  .msg{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px}
+  .msg .who{font-size:.75rem; color:var(--t3); margin-bottom:4px}
+  .msg p{margin:0; white-space:pre-wrap; font-size:.875rem}
+
+  .btn.primary{background:var(--t1); color:var(--bg); border-color:var(--t1)}
+  .btn.danger{color:var(--bad)}
+  .addform{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; align-items:end}
+  .confirm{background:var(--warn-bg); border:1px solid color-mix(in srgb, var(--warn) 28%, transparent); border-radius:12px; padding:12px 14px; margin:12px 0}
+  .confirm p{margin:0 0 10px; font-size:.875rem}
+  .confirm .btn + .btn{margin-left:6px}
+  .gone td{opacity:.55}
+  td select{min-width:170px}
+  .foot{margin-top:26px; font-size:.75rem; color:var(--t3)}
+
+  @media (max-width:560px){
+    body{padding:16px 14px 50px}
+    .tile .val{font-size:1.5rem}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <span>
+      <h1>Relynked Console</h1>
+      <div class="sub" id="stamp">loading</div>
+      <div class="sub" id="who"></div>
+    </span>
+    <span class="sp"></span>
+    <button class="btn iconbtn" id="theme" type="button" aria-label="Switch between light and dark" title="Switch theme"></button>
+    <button class="btn go" id="refresh" type="button" aria-label="Refresh" title="Refresh">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true">
+        <polyline points="23 4 23 10 17 10"></polyline>
+        <polyline points="1 20 1 14 7 14"></polyline>
+        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+      </svg>
+      <span>Refresh</span>
+    </button>
+  </header>
+  <p class="readonly">Read only. Every view and export is logged.</p>
+
+  <div class="banner demo" id="demoBanner" hidden>
+    <b>Demo data</b>
+    Every name, phone and email on this page is made up. Nothing is loaded from the server and nothing is logged.
+  </div>
+  <div id="alert" role="alert"></div>
+
+  <nav id="nav" aria-label="Console sections"></nav>
+
+  <main id="main"><div class="empty">Loading.</div></main>
+
+  <noscript><p class="foot">This page needs JavaScript.</p></noscript>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ── setup ─────────────────────────────────────────────── */
+  var DEMO = /(?:^|[?&])demo=(?:1|viewer)(?:&|$)/.test(location.search);
+  var DEMO_VIEWER = /(?:^|[?&])demo=viewer(?:&|$)/.test(location.search);
+  var API = "/api/console/";
+
+  var ICON = {
+    sun: '<circle cx="12" cy="12" r="4.2"></circle><line x1="12" y1="1.5" x2="12" y2="3.5"></line><line x1="12" y1="20.5" x2="12" y2="22.5"></line>' +
+         '<line x1="4.2" y1="4.2" x2="5.6" y2="5.6"></line><line x1="18.4" y1="18.4" x2="19.8" y2="19.8"></line><line x1="1.5" y1="12" x2="3.5" y2="12"></line>' +
+         '<line x1="20.5" y1="12" x2="22.5" y2="12"></line><line x1="4.2" y1="19.8" x2="5.6" y2="18.4"></line><line x1="18.4" y1="5.6" x2="19.8" y2="4.2"></line>',
+    moon: '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>',
+    down: '<path d="M12 3v12"></path><polyline points="7 11 12 16 17 11"></polyline><path d="M4 20h16"></path>'
+  };
+  function svg(name) { return '<svg class="i" viewBox="0 0 24 24" aria-hidden="true">' + ICON[name] + "</svg>"; }
+
+  var PLAN_STATES = [
+    ["pilot", "Pilot"], ["trial", "Trial"], ["active", "Paid"],
+    ["renewal_due", "Renewal due"], ["grace", "Grace"], ["paused", "Paused"]
+  ];
+  var PLAN_NAME = {}; PLAN_STATES.forEach(function (p) { PLAN_NAME[p[0]] = p[1]; });
+  var PLAN_TONE = { pilot: "info", trial: "info", active: "ok", renewal_due: "warn", grace: "warn", paused: "bad" };
+  var PLAN_RANK = { trial: 0, pilot: 1, active: 2, renewal_due: 3, grace: 4, paused: 5 };
+
+  var state = {
+    data: null, view: "overview", id: null, detail: null, log: null,
+    f: freshFilters(), sort: { key: "created", dir: -1 }, uq: "", loading: 0,
+    team: null, pending: null, tmsg: null
+  };
+  var NO_EXPORT = "Your access can view lists but not download them.";
+  var ROLE_NAME = { viewer: "Can view", exporter: "Can view and export" };
+  function me() { return (state.data && state.data.me) || null; }
+  function isOwner() { var m = me(); return !!m && m.role === "owner"; }
+  function canExport() { var m = me(); return !m || m.role !== "viewer"; }
+  function exportBtn(list, id) {
+    return canExport() ? '<button class="btn go" type="button"' + (id ? ' id="' + id + '"' : "") + ' data-act="export" data-list="' + list + '">' + svg("down") + "<span>Export CSV</span></button>" : "";
+  }
+  function noExportNote() { return canExport() ? "" : '<span class="note">' + esc(NO_EXPORT) + "</span>"; }
+  function freshFilters() { return { q: "", fu: "", ver: "", plan: "", kind: "", hideTest: true }; }
+
+  /* ── small helpers ─────────────────────────────────────── */
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  var MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  var lagosFmt = null;
+  function lagos(d) {
+    if (!lagosFmt) {
+      lagosFmt = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Africa/Lagos", year: "numeric", month: "numeric", day: "numeric",
+        hour: "numeric", minute: "numeric", hourCycle: "h23"
+      });
+    }
+    var p = {};
+    lagosFmt.formatToParts(d).forEach(function (x) { p[x.type] = x.value; });
+    return p;
+  }
+  function toDate(iso) { var d = new Date(iso); return isNaN(d.getTime()) ? null : d; }
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  function fmtDate(iso) {
+    var d = iso ? toDate(iso) : null;
+    if (!d) return "";
+    var p = lagos(d);
+    return Number(p.day) + " " + MON[Number(p.month) - 1] + " " + p.year;
+  }
+  function fmtDateTime(iso) {
+    var d = iso ? toDate(iso) : null;
+    if (!d) return "";
+    var p = lagos(d);
+    return fmtDate(iso) + ", " + pad(Number(p.hour)) + ":" + pad(Number(p.minute));
+  }
+  function plural(n, w) { return n + " " + w + (n === 1 ? "" : "s"); }
+  function ago(iso) {
+    var d = iso ? toDate(iso) : null;
+    if (!d) return "never";
+    var mins = Math.max(0, (Date.now() - d.getTime()) / 60000);
+    if (mins < 2) return "just now";
+    if (mins < 60) return Math.floor(mins) + " minutes ago";
+    var hrs = mins / 60;
+    if (hrs < 24) return plural(Math.floor(hrs), "hour") + " ago";
+    var days = Math.floor(hrs / 24);
+    if (days === 1) return "yesterday";
+    if (days < 60) return days + " days ago";
+    return Math.floor(days / 30) + " months ago";
+  }
+  function naira(n) { return "₦" + Math.round(Number(n) || 0).toLocaleString("en-US"); }
+  var mute = '<span class="mute">-</span>';
+  function digits(s) { return String(s || "").replace(/\D/g, ""); }
+  function waDigits(p) {
+    var d = digits(p);
+    if (d.indexOf("00") === 0) d = d.slice(2);
+    else if (d.length === 11 && d.charAt(0) === "0") d = "234" + d.slice(1);
+    return d;
+  }
+  function phoneHtml(p) {
+    if (!p) return mute;
+    var tel = String(p).replace(/[^\d+]/g, "");
+    var wa = waDigits(p);
+    return '<a href="tel:' + esc(tel) + '">' + esc(p) + "</a>" +
+      (wa ? '<a class="wa" href="https://wa.me/' + wa + '" target="_blank" rel="noopener" aria-label="WhatsApp ' + esc(p) + '" title="Open WhatsApp">WA</a>' : "");
+  }
+  function emailHtml(e) {
+    return e ? '<a href="mailto:' + esc(encodeURI(e)) + '">' + esc(e) + "</a>" : mute;
+  }
+  function tickHtml(on, when, label) {
+    label = label || "Verified";
+    return on
+      ? '<svg class="tick" viewBox="0 0 24 24" role="img" aria-label="' + label + '"><title>' + label + (when ? " on " + esc(fmtDate(when)) : "") + '</title><polyline points="20 6 9 17 4 12"></polyline></svg>'
+      : '<span class="mute" title="Not verified">No</span>';
+  }
+  function dayz(n) { return plural(n, "day"); }
+  function planLabel(p) {
+    var d = p.daysLeft;
+    var has = d != null && !isNaN(d);
+    switch (p.state) {
+      case "pilot": return has && d >= 0 ? "Pilot, " + dayz(d) + " left" : "Pilot";
+      case "trial":
+        if (!has) return "Trial";
+        if (d > 0) return "Trial, " + dayz(d) + " left";
+        if (d === 0) return "Trial, ends today";
+        return "Trial ended " + dayz(-d) + " ago";
+      case "active": return has && d >= 0 ? "Paid, " + dayz(d) + " left" : "Paid";
+      case "renewal_due":
+        if (!has) return "Renewal due";
+        if (d > 0) return "Renewal due in " + dayz(d);
+        if (d === 0) return "Renewal due today";
+        return "Renewal overdue " + dayz(-d);
+      case "grace":
+        if (!has) return "Grace";
+        return d < 0 ? "Grace, " + dayz(-d) + " over" : "Grace, " + dayz(d) + " left";
+      case "paused": return has ? "Paused " + dayz(Math.abs(d)) : "Paused";
+    }
+    return PLAN_NAME[p.state] || String(p.state);
+  }
+  function planPill(p) {
+    return '<span class="pill ' + (PLAN_TONE[p.state] || "") + '">' + esc(planLabel(p)) + "</span>";
+  }
+  function fuLabel(key) {
+    var list = (state.data && state.data.followUps) || [];
+    for (var i = 0; i < list.length; i++) if (list[i].key === key) return list[i].label;
+    return key;
+  }
+
+  /* ── talking to the server ─────────────────────────────── */
+  function ConsoleError(status, code, message, network) {
+    this.status = status; this.code = code; this.serverMessage = message; this.network = !!network;
+  }
+  function request(path, body) {
+    var o = { credentials: "same-origin", cache: "no-store", headers: { accept: "application/json, text/csv" } };
+    if (body !== undefined) { o.method = "POST"; o.body = JSON.stringify(body); o.headers["content-type"] = "application/json"; }
+    return fetch(API + path, o)
+      .catch(function () { throw new ConsoleError(0, "", "", true); })
+      .then(function (r) {
+        if (r.ok) return r;
+        return r.text().then(function (t) {
+          var b = {};
+          try { b = JSON.parse(t); } catch (e) { /* not json */ }
+          throw new ConsoleError(r.status, b.error || "", b.message || "", false);
+        });
+      });
+  }
+  function getJson(path) {
+    return request(path).then(function (r) {
+      return r.json().catch(function () { throw new ConsoleError(0, "bad_answer", "", true); });
+    });
+  }
+  function postJson(path, body) {
+    return request(path, body).then(function (r) {
+      return r.json().catch(function () { throw new ConsoleError(0, "bad_answer", "", true); });
+    });
+  }
+  function explain(e) {
+    if (!(e instanceof ConsoleError)) return { t: "Something went wrong", m: "Press Refresh to try again.", c: "" };
+    var code = e.code ? "Code: " + e.code : "";
+    if (e.network) return { t: "Could not reach the server", m: "Check your connection and press Refresh. If it keeps happening, you may need to sign in again through Cloudflare Access: reload this page.", c: code };
+    if (e.status === 401) {
+      var m = "You are not signed in through Cloudflare Access. Reload the page and sign in with your Google account.";
+      if (e.code === "unauthorized") m = "The server did not accept the console key. The key on the website must be the same as the key on the server (ADMIN_CONSOLE_KEY).";
+      if (e.code === "not_behind_access") m = "This request did not come through Cloudflare Access. relynked.com/api/console needs to be added to the Access application.";
+      return { t: "Not signed in", m: m, c: code };
+    }
+    if (e.status === 403 && e.code === "no_export") return { t: "Downloads are off for you", m: NO_EXPORT, c: "" };
+    if (e.status === 403 && e.code === "owner_only") return { t: "Only the founder can do that", m: e.serverMessage || "Only the founder can change the console team.", c: "" };
+    if (e.status === 403 && e.code === "bad_origin") return { t: "Request refused", m: "Reload the console page and try again.", c: code };
+    if (e.status === 403) return { t: "This email is not allowed", m: "You are signed in, but this email is not on the console list. Sign in with the founder Google account.", c: code };
+    if (e.status === 429) return { t: "Too many requests", m: "Wait a minute, then press Refresh.", c: code };
+    if (e.status === 503) return { t: "Not set up yet", m: (e.serverMessage || "A setting the console needs is missing.") + " Finish the setup, then press Refresh.", c: code };
+    if (e.status === 404) return { t: "Not found", m: e.serverMessage || "That page does not exist.", c: code };
+    return { t: "Something went wrong", m: (e.serverMessage || "The server answered with an error.") + " (status " + e.status + ")", c: code };
+  }
+  function showAlert(e, retry) {
+    var x = explain(e);
+    $("alert").innerHTML = '<div class="banner err"><b>' + esc(x.t) + "</b>" + esc(x.m) +
+      (x.c ? '<div class="code">' + esc(x.c) + "</div>" : "") +
+      (retry ? '<div><button class="btn" type="button" data-act="refresh">Try again</button></div>' : "") + "</div>";
+  }
+  function clearAlert() { $("alert").innerHTML = ""; }
+
+  /* ── loading ───────────────────────────────────────────── */
+  function busy(on) {
+    state.loading += on ? 1 : -1;
+    $("refresh").classList.toggle("busy", state.loading > 0);
+    $("refresh").disabled = state.loading > 0;
+  }
+  function loadSummary() {
+    busy(true);
+    var p = DEMO ? Promise.resolve(Demo.summary()) : getJson("summary");
+    return p.then(function (d) {
+      state.data = d;
+      clearAlert();
+    }).catch(function (e) {
+      state.data = null;
+      showAlert(e, true);
+    }).then(function () { busy(false); });
+  }
+  function loadDetail(id) {
+    state.detail = null;
+    busy(true);
+    var p = DEMO ? new Promise(function (res) { res(Demo.detail(id)); }) : getJson("businesses/" + id);
+    return p.then(function (d) {
+      if (state.id === id) { state.detail = d; clearAlert(); }
+    }).catch(function (e) { state.detail = null; showAlert(e, false); })
+      .then(function () { busy(false); render(); });
+  }
+  function loadLog() {
+    state.log = null;
+    busy(true);
+    var p = DEMO ? Promise.resolve(Demo.log()) : getJson("log");
+    return p.then(function (d) { state.log = d.entries || []; clearAlert(); })
+      .catch(function (e) { state.log = null; showAlert(e, false); })
+      .then(function () { busy(false); render(); });
+  }
+  function refresh() {
+    clearAlert();
+    loadSummary().then(function () {
+      render();
+      loadForView();
+    });
+  }
+  function loadForView() {
+    if (!state.data) return;
+    if (state.view === "business" && state.id) loadDetail(state.id);
+    else if (state.view === "log") loadLog();
+    else if (state.view === "team") {
+      if (!isOwner()) { go("#overview"); return; }
+      loadTeam(false);
+    }
+  }
+  function loadTeam(keep) {
+    if (!keep) state.team = null;
+    busy(true);
+    var p = DEMO ? new Promise(function (res) { res(Demo.teamGet()); }) : getJson("team");
+    return p.then(function (d) { state.team = d; clearAlert(); })
+      .catch(function (e) { state.team = null; showAlert(e, false); })
+      .then(function () { busy(false); if (state.view === "team") render(); });
+  }
+
+  /* ── routing ───────────────────────────────────────────── */
+  var VIEWS = { overview: 1, businesses: 1, unattached: 1, access: 1, log: 1, team: 1 };
+  function parseHash() {
+    var parts = location.hash.replace(/^#/, "").split("/");
+    var v = parts[0] || "overview";
+    if (v === "business") {
+      if (/^[0-9a-f-]{36}$/i.test(parts[1] || "")) return { view: "business", id: parts[1] };
+      return { view: "businesses" };
+    }
+    return { view: VIEWS[v] ? v : "overview" };
+  }
+  function route() {
+    var r = parseHash();
+    var changed = r.view !== state.view || r.id !== state.id;
+    state.view = r.view; state.id = r.id || null;
+    if (changed) clearAlert();
+    render();
+    window.scrollTo(0, 0);
+    if (changed) loadForView();
+  }
+  function go(hash) {
+    if (location.hash === hash) route(); else location.hash = hash;
+  }
+
+  /* ── rendering ─────────────────────────────────────────── */
+  function render() {
+    var d = state.data;
+    $("stamp").textContent = d ? "Data from " + fmtDateTime(d.generatedAt) + " (Lagos time)" : (state.loading ? "loading" : "no data");
+    $("demoBanner").hidden = !DEMO;
+    var m = me();
+    $("who").textContent = m ? "Signed in as " + m.email + ", " + (m.role === "owner" ? "full access" : m.role === "exporter" ? "can view and export" : "can view") : "";
+    renderNav();
+    var main = $("main");
+    if (!d) {
+      main.innerHTML = state.loading ? '<div class="empty">Loading.</div>' : "";
+      return;
+    }
+    if (state.view === "overview") main.innerHTML = overviewHtml(d);
+    else if (state.view === "businesses") { main.innerHTML = businessesHtml(d); paintBusinesses(); }
+    else if (state.view === "business") main.innerHTML = detailHtml();
+    else if (state.view === "unattached") { main.innerHTML = unattachedHtml(d); paintUnattached(); }
+    else if (state.view === "access") main.innerHTML = accessHtml(d);
+    else if (state.view === "log") main.innerHTML = logHtml();
+    else if (state.view === "team") main.innerHTML = isOwner() ? teamHtml() : "";
+  }
+  function renderNav() {
+    var d = state.data;
+    var items = [
+      ["overview", "Overview", ""],
+      ["businesses", "Businesses", ""],
+      ["unattached", "Signed up, no business", d ? d.unattached.length : ""],
+      ["access", "Asked for access", d ? d.accessRequests.filter(function (a) { return a.status === "pending"; }).length : ""],
+      ["log", "Log", ""]
+    ].concat(isOwner() ? [["team", "Team", ""]] : []);
+    var cur = state.view === "business" ? "businesses" : state.view;
+    $("nav").innerHTML = items.map(function (it) {
+      return '<a href="#' + it[0] + '"' + (it[0] === cur ? ' aria-current="page"' : "") + ">" + esc(it[1]) +
+        (it[2] !== "" && it[2] > 0 ? ' <span class="n">' + it[2] + "</span>" : "") + "</a>";
+    }).join("");
+  }
+
+  /* Overview */
+  function tile(label, val, sub, opts) {
+    opts = opts || {};
+    var inner = '<div class="lab">' + esc(label) + '</div><div class="val">' + esc(val) + '</div><div class="sub">' + esc(sub || "") + "</div>";
+    if (opts.go) {
+      return '<button type="button" class="tile' + (opts.hot ? " hot" : "") + '" data-go="' + esc(opts.go) + '"' +
+        (opts.fu ? ' data-fu="' + esc(opts.fu) + '"' : "") + (opts.plan ? ' data-plan="' + esc(opts.plan) + '"' : "") +
+        (opts.ver ? ' data-ver="' + esc(opts.ver) + '"' : "") + (opts.all ? ' data-all="1"' : "") + ">" + inner + "</button>";
+    }
+    return '<div class="tile">' + inner + "</div>";
+  }
+  function overviewHtml(d) {
+    var o = d.overview, b = o.businesses, p = o.plans;
+    var h = '<h2 class="sec">Follow up</h2><p class="hint">Tap one to see the list. Test and closing businesses are left out of these.</p><div class="tiles">';
+    d.followUps.forEach(function (f) {
+      var dest = f.key === "unattached" ? { go: "unattached" } : f.key === "access_requests" ? { go: "access" } : { go: "businesses", fu: f.key };
+      h += tile(f.label, f.count, "", { go: dest.go, fu: dest.fu, hot: f.count > 0 });
+    });
+    h += "</div>";
+    h += '<h2 class="sec">Businesses</h2><div class="tiles">' +
+      tile("All businesses", b.total, "including test", { go: "businesses", all: true }) +
+      tile("Verified", b.verified, "", { go: "businesses", ver: "yes" }) +
+      tile("Not verified", b.unverified, "", { go: "businesses", ver: "no" }) +
+      tile("Test", b.test, "hidden by default") + "</div>";
+    h += '<h2 class="sec">Plan state</h2><div class="tiles">' + PLAN_STATES.map(function (s) {
+      return tile(s[1], p[s[0]] || 0, "", { go: "businesses", plan: s[0] });
+    }).join("") + "</div>";
+    h += '<h2 class="sec">People and activity</h2><div class="tiles">' +
+      tile("People active", o.people.active, "in businesses") +
+      tile("People invited", o.people.invited, "not joined yet") +
+      tile("Sign-ups, no business", o.unattached, "", { go: "unattached" }) +
+      tile("Waiting for access", o.accessRequestsPending, "", { go: "access" }) +
+      tile("Sign-ups, last 7 days", o.signupsLast7Days, "businesses and people") +
+      tile("Quiet 7 days", o.quiet7Days, "businesses", { go: "businesses", fu: "quiet_7d" }) + "</div>";
+    return h;
+  }
+
+  /* Businesses */
+  function bizFollowKeys(d) {
+    return d.followUps.filter(function (f) { return f.key !== "unattached" && f.key !== "access_requests"; });
+  }
+  function options(list, cur, first) {
+    return '<option value="">' + esc(first) + "</option>" + list.map(function (o) {
+      return '<option value="' + esc(o[0]) + '"' + (o[0] === cur ? " selected" : "") + ">" + esc(o[1]) + "</option>";
+    }).join("");
+  }
+  function businessesHtml(d) {
+    var f = state.f;
+    var kinds = {};
+    d.businesses.forEach(function (b) { if (b.kind) kinds[b.kind] = 1; });
+    var kindList = Object.keys(kinds).sort().map(function (k) { return [k, k]; });
+    return '<h2 class="title">Businesses</h2>' +
+      '<div class="panel controls">' +
+      '<label class="field grow"><span>Search</span><input type="search" id="fq" value="' + esc(f.q) + '" placeholder="Name, owner, phone, email or ref" autocomplete="off"></label>' +
+      '<label class="field"><span>Follow up</span><select id="ffu">' +
+        options(bizFollowKeys(d).map(function (x) { return [x.key, x.label + " (" + x.count + ")"]; }), f.fu, "Everyone") + "</select></label>" +
+      '<label class="field"><span>Verified</span><select id="fver">' + options([["yes", "Verified"], ["no", "Not verified"]], f.ver, "Any") + "</select></label>" +
+      '<label class="field"><span>Plan state</span><select id="fplan">' + options(PLAN_STATES, f.plan, "Any") + "</select></label>" +
+      '<label class="field"><span>Kind</span><select id="fkind">' + options(kindList, f.kind, "Any") + "</select></label>" +
+      '<label class="check"><input type="checkbox" id="fhide"' + (f.hideTest ? " checked" : "") + '> Hide test businesses</label>' +
+      "</div>" +
+      '<div class="bar"><span class="count" id="count" aria-live="polite"></span><span class="sp"></span>' +
+      exportBtn("businesses", "exportB") +
+      '<span class="note" id="exnote"></span></div>' +
+      '<div class="tablewrap" id="btable"></div>';
+  }
+  function bizMatches(b, f, q, qd) {
+    if (f.hideTest && b.isTest) return false;
+    if (f.fu && b.followUps.indexOf(f.fu) < 0) return false;
+    if (f.ver === "yes" && !b.verified) return false;
+    if (f.ver === "no" && b.verified) return false;
+    if (f.plan && b.plan.state !== f.plan) return false;
+    if (f.kind && (b.kind || "") !== f.kind) return false;
+    if (q) {
+      var o = b.owner || {};
+      var hay = [b.name, b.ref, o.name, o.phone, o.email].join("\n").toLowerCase();
+      if (hay.indexOf(q) < 0 && !(qd.length >= 3 && digits(o.phone).indexOf(qd) >= 0)) return false;
+    }
+    return true;
+  }
+  var COLS = [
+    { k: "name", t: "Name", sticky: true, v: function (b) { return (b.name || "").toLowerCase(); } },
+    { k: "ref", t: "Ref", v: function (b) { return b.ref; } },
+    { k: "kind", t: "Kind", v: function (b) { return (b.kind || "").toLowerCase() || null; } },
+    { k: "created", t: "Created", v: function (b) { return b.createdAt; } },
+    { k: "verified", t: "Verified", v: function (b) { return b.verified ? 1 : 0; } },
+    { k: "owner", t: "Owner", v: function (b) { return b.owner ? b.owner.name.toLowerCase() : null; } },
+    { k: "people", t: "People", num: true, v: function (b) { return b.people.active * 1000 + b.people.invited; } },
+    { k: "projects", t: "Projects", num: true, v: function (b) { return b.projects; } },
+    { k: "seen", t: "Last seen", v: function (b) { return b.lastSeenAt; } },
+    { k: "remy", t: "Last Remy message", v: function (b) { return b.lastRemyAt; } },
+    { k: "plan", t: "Plan", v: function (b) { return (PLAN_RANK[b.plan.state] != null ? PLAN_RANK[b.plan.state] : 9) * 100000 + (b.plan.daysLeft == null ? 99999 : b.plan.daysLeft + 5000); } },
+    { k: "paid", t: "Paid through", v: function (b) { return b.plan.paidThrough; } }
+  ];
+  function sortRows(rows) {
+    var col = COLS.filter(function (c) { return c.k === state.sort.key; })[0] || COLS[3];
+    var dir = state.sort.dir;
+    return rows.slice().sort(function (a, b) {
+      var x = col.v(a), y = col.v(b);
+      var nx = x == null || x === "", ny = y == null || y === "";
+      if (nx && ny) return 0;
+      if (nx) return 1;   /* empty values always last */
+      if (ny) return -1;
+      return (x < y ? -1 : x > y ? 1 : 0) * dir;
+    });
+  }
+  function bizRow(b) {
+    var o = b.owner;
+    return "<tr>" +
+      '<td class="sticky"><button type="button" class="link" data-open="' + esc(b.id) + '">' + esc(b.name) + "</button>" +
+        (b.isTest ? '<span class="tag">Test</span>' : "") + (b.closing ? '<span class="tag">Closing</span>' : "") + "</td>" +
+      '<td class="mono">' + esc(b.ref) + "</td>" +
+      "<td>" + (b.kind ? esc(b.kind) : mute) + "</td>" +
+      "<td>" + esc(fmtDate(b.createdAt)) + "</td>" +
+      "<td>" + tickHtml(b.verified, b.verifiedAt) + "</td>" +
+      '<td class="stack">' + (o ? "<div>" + esc(o.name) + "</div><div>" + phoneHtml(o.phone) + "</div><div>" + emailHtml(o.email) + "</div>" : mute) + "</td>" +
+      '<td class="num">' + b.people.active + (b.people.invited ? ' <span class="sm">+' + b.people.invited + " invited</span>" : "") + "</td>" +
+      '<td class="num">' + b.projects + (b.sitesOpen ? ' <span class="sm">' + b.sitesOpen + " open</span>" : "") + "</td>" +
+      "<td>" + esc(ago(b.lastSeenAt)) + "</td>" +
+      "<td>" + esc(ago(b.lastRemyAt)) + "</td>" +
+      "<td>" + planPill(b.plan) + "</td>" +
+      "<td>" + (b.plan.paidThrough ? esc(fmtDate(b.plan.paidThrough)) : mute) + "</td>" +
+      "</tr>";
+  }
+  function paintBusinesses() {
+    var d = state.data, f = state.f;
+    var q = f.q.trim().toLowerCase(), qd = digits(q);
+    var rows = sortRows(d.businesses.filter(function (b) { return bizMatches(b, f, q, qd); }));
+    $("count").textContent = "Showing " + rows.length + " of " + d.businesses.length + " businesses";
+    $("exnote").textContent = !canExport() ? NO_EXPORT : "Export covers: " + (f.fu ? fuLabel(f.fu) : "all businesses") + ". The search and the other filters are not applied to the file.";
+    var head = "<thead><tr>" + COLS.map(function (c) {
+      var on = state.sort.key === c.k;
+      return '<th scope="col"' + (c.sticky ? ' class="sticky' + (c.num ? " num" : "") + '"' : c.num ? ' class="num"' : "") +
+        (on ? ' aria-sort="' + (state.sort.dir > 0 ? "ascending" : "descending") + '"' : "") + '><button type="button" data-sort="' + c.k + '">' +
+        esc(c.t) + (on ? (state.sort.dir > 0 ? " ▲" : " ▼") : "") + "</button></th>";
+    }).join("") + "</tr></thead>";
+    if (!rows.length) {
+      $("btable").innerHTML = '<div class="empty">No businesses match these filters.<br><button type="button" class="btn" data-act="clear">Clear filters</button></div>';
+      return;
+    }
+    $("btable").innerHTML = "<table>" + head + "<tbody>" + rows.map(bizRow).join("") + "</tbody></table>";
+  }
+
+  /* One business */
+  function statusPill(s) {
+    var tone = { active: "ok", invited: "info", suspended: "warn", removed: "bad" }[s] || "";
+    return '<span class="pill ' + tone + '">' + esc(s.charAt(0).toUpperCase() + s.slice(1)) + "</span>";
+  }
+  function fact(label, html) { return "<div><dt>" + esc(label) + "</dt><dd>" + html + "</dd></div>"; }
+  function detailHtml() {
+    var back = '<a class="back" href="#businesses">← Back to businesses</a>';
+    var x = state.detail;
+    if (!x) return back + (state.loading ? '<div class="empty">Loading.</div>' : "");
+    var b = x.business, o = b.owner, pl = b.plan;
+    var h = back + '<h2 class="title">' + esc(b.name) + (b.isTest ? '<span class="tag">Test</span>' : "") + (b.closing ? '<span class="tag">Closing</span>' : "") + "</h2>" +
+      '<p class="hint">Ref <span class="mono">' + esc(b.ref) + "</span></p>";
+    h += '<div class="panel"><dl class="facts">' +
+      fact("Kind", b.kind ? esc(b.kind) : mute) +
+      fact("Created", esc(fmtDate(b.createdAt))) +
+      fact("Verified", b.verified ? tickHtml(true, b.verifiedAt) + " " + esc(fmtDate(b.verifiedAt)) : "Not verified") +
+      fact("Owner", o ? '<div class="stack"><div>' + esc(o.name) + "</div><div>" + phoneHtml(o.phone) + "</div><div>" + emailHtml(o.email) + "</div></div>" : mute) +
+      fact("Plan", planPill(pl)) +
+      fact("Paid through", pl.paidThrough ? esc(fmtDate(pl.paidThrough)) : mute) +
+      fact("Next date", pl.nextDate ? esc(fmtDate(pl.nextDate)) : mute) +
+      fact("Paid so far", esc(naira(pl.paidTotalNaira)) + (pl.lastPaidAt ? ' <span class="sm">last on ' + esc(fmtDate(pl.lastPaidAt)) + "</span>" : "")) +
+      fact("People", b.people.active + " active, " + b.people.invited + " invited") +
+      fact("Projects", b.projects + (b.sitesOpen ? ", " + b.sitesOpen + " sites open" : "")) +
+      fact("Last seen", esc(ago(b.lastSeenAt)) + (b.lastSeenAt ? ' <span class="sm">' + esc(fmtDate(b.lastSeenAt)) + "</span>" : "")) +
+      fact("Last Remy message", esc(ago(b.lastRemyAt))) +
+      fact("Problem reports, 30 days", String(b.supportRecent)) +
+      fact("Follow up", b.followUps.length ? '<div class="pills">' + b.followUps.map(function (k) { return '<span class="pill warn">' + esc(fuLabel(k)) + "</span>"; }).join("") + "</div>" : "Nothing to follow up") +
+      "</dl></div>";
+
+    h += '<h2 class="sec">People</h2>';
+    if (!x.people.length) h += '<div class="panel empty">No people.</div>';
+    else h += '<div class="tablewrap"><table><thead><tr>' +
+      ["Name", "Role or title", "Status", "Phone", "Email", "Joined", "Last seen", "Fingerprint set"].map(function (t) { return '<th scope="col"><span>' + t + "</span></th>"; }).join("") +
+      "</tr></thead><tbody>" + x.people.map(function (p) {
+        return "<tr><td>" + esc(p.name) + "</td><td>" + esc(p.role) + (p.title ? ' <span class="sm">' + esc(p.title) + "</span>" : "") + "</td><td>" + statusPill(p.status) + "</td><td>" +
+          phoneHtml(p.phone) + "</td><td>" + emailHtml(p.email) + "</td><td>" + esc(fmtDate(p.joinedAt)) + "</td><td>" + esc(ago(p.lastSeenAt)) + "</td><td>" +
+          (p.fingerprintSet ? tickHtml(true, null, "Fingerprint set") : '<span class="mute">No</span>') + "</td></tr>";
+      }).join("") + "</tbody></table></div>";
+
+    h += '<h2 class="sec">Pending invites</h2>';
+    if (!x.invites.length) h += '<div class="panel empty">No pending invites.</div>';
+    else h += '<div class="tablewrap"><table><thead><tr>' +
+      ["Name", "Role", "Phone", "Email", "Status", "Sent", "Expires"].map(function (t) { return '<th scope="col"><span>' + t + "</span></th>"; }).join("") +
+      "</tr></thead><tbody>" + x.invites.map(function (i) {
+        return "<tr><td>" + (i.name ? esc(i.name) : mute) + "</td><td>" + esc(i.role) + "</td><td>" + phoneHtml(i.phone) + "</td><td>" + emailHtml(i.email) + "</td><td>" +
+          esc(i.status) + "</td><td>" + esc(fmtDate(i.sentAt)) + "</td><td>" + (i.expiresAt ? esc(fmtDate(i.expiresAt)) : mute) + "</td></tr>";
+      }).join("") + "</tbody></table></div>";
+
+    h += '<h2 class="sec">Report a problem messages, last 90 days</h2>';
+    if (!x.support.length) h += '<div class="panel empty">None.</div>';
+    else h += '<div class="msgs">' + x.support.map(function (m) {
+      return '<div class="msg"><div class="who">' + esc(fmtDateTime(m.at)) + (m.from ? " from " + esc(m.from) : "") + "</div><p>" + esc(m.message) + "</p></div>";
+    }).join("") + "</div>";
+    return h;
+  }
+
+  /* Signed up, no business */
+  function unattachedHtml() {
+    return '<h2 class="title">Signed up, no business</h2><p class="hint">People who made an account but have not set up a business.</p>' +
+      '<div class="panel controls"><label class="field grow"><span>Search</span><input type="search" id="uq" value="' + esc(state.uq) + '" placeholder="Name, title, email or phone" autocomplete="off"></label></div>' +
+      '<div class="bar"><span class="count" id="ucount" aria-live="polite"></span><span class="sp"></span>' +
+      exportBtn("unattached") + noExportNote() + "</div>" +
+      '<div class="tablewrap" id="utable"></div>';
+  }
+  function paintUnattached() {
+    var all = state.data.unattached, q = state.uq.trim().toLowerCase(), qd = digits(q);
+    var rows = all.filter(function (u) {
+      if (!q) return true;
+      return [u.name, u.title, u.email, u.phone].join("\n").toLowerCase().indexOf(q) >= 0 || (qd.length >= 3 && digits(u.phone).indexOf(qd) >= 0);
+    }).sort(function (a, b) { return a.signedUpAt < b.signedUpAt ? 1 : -1; });
+    $("ucount").textContent = "Showing " + rows.length + " of " + all.length + " sign-ups";
+    if (!rows.length) { $("utable").innerHTML = '<div class="empty">Nobody matches.</div>'; return; }
+    $("utable").innerHTML = "<table><thead><tr>" +
+      ["Name", "Title", "Email", "Phone", "Signed up", "Last seen", "Setup stopped at"].map(function (t) { return '<th scope="col"><span>' + t + "</span></th>"; }).join("") +
+      "</tr></thead><tbody>" + rows.map(function (u) {
+        return "<tr><td>" + (u.name ? esc(u.name) : '<span class="mute">No name yet</span>') + "</td><td>" + (u.title ? esc(u.title) : mute) + "</td><td>" + emailHtml(u.email) + "</td><td>" +
+          (u.phone ? phoneHtml(u.phone) + ' <span class="sm">' + (u.phoneProved ? "proved" : "typed") + "</span>" : mute) + "</td><td>" + esc(fmtDate(u.signedUpAt)) + "</td><td>" +
+          esc(ago(u.lastSeenAt)) + "</td><td>" + (u.setupStep ? esc(u.setupStep) : mute) + "</td></tr>";
+      }).join("") + "</tbody></table>";
+  }
+
+  /* Asked for access */
+  function accessHtml(d) {
+    var rows = d.accessRequests.slice().sort(function (a, b) {
+      if ((a.status === "pending") !== (b.status === "pending")) return a.status === "pending" ? -1 : 1;
+      return a.requestedAt < b.requestedAt ? 1 : -1;
+    });
+    var waiting = rows.filter(function (a) { return a.status === "pending"; }).length;
+    var h = '<h2 class="title">Asked for access</h2><p class="hint">Owners who asked to be let in.</p>' +
+      '<div class="bar"><span class="count">' + rows.length + " requests, " + waiting + ' waiting</span><span class="sp"></span>' +
+      exportBtn("access_requests") + noExportNote() + "</div>";
+    if (!rows.length) return h + '<div class="tablewrap"><div class="empty">No requests.</div></div>';
+    return h + '<div class="tablewrap"><table><thead><tr>' +
+      ["Name", "Email", "WhatsApp", "Business", "Status", "Asked on", "Decided on"].map(function (t) { return '<th scope="col"><span>' + t + "</span></th>"; }).join("") +
+      "</tr></thead><tbody>" + rows.map(function (a) {
+        var tone = { pending: "warn", approved: "ok", declined: "bad" }[a.status] || "";
+        return "<tr><td>" + esc(a.name) + "</td><td>" + emailHtml(a.email) + "</td><td>" + phoneHtml(a.whatsapp) + "</td><td>" + (a.businessName ? esc(a.businessName) : mute) +
+          '</td><td><span class="pill ' + tone + '">' + esc(a.status.charAt(0).toUpperCase() + a.status.slice(1)) + "</span></td><td>" + esc(fmtDate(a.requestedAt)) + "</td><td>" +
+          (a.decidedAt ? esc(fmtDate(a.decidedAt)) : mute) + "</td></tr>";
+      }).join("") + "</tbody></table></div>";
+  }
+
+  /* Log */
+  function logHtml() {
+    var h = '<h2 class="title">Log</h2><p class="hint">Every time the console was opened or exported, newest first. Up to 200 entries.</p>';
+    if (!state.log) return h + (state.loading ? '<div class="empty">Loading.</div>' : "");
+    if (!state.log.length) return h + '<div class="tablewrap"><div class="empty">Nothing logged yet.</div></div>';
+    return h + '<div class="tablewrap"><table><thead><tr>' +
+      ["When", "Who", "What", "Business", "Filter", "Rows", "Exported"].map(function (t, i) { return '<th scope="col"' + (i === 5 ? ' class="num"' : "") + "><span>" + t + "</span></th>"; }).join("") +
+      "</tr></thead><tbody>" + state.log.map(function (e) {
+        return "<tr><td>" + esc(fmtDateTime(e.at)) + "</td><td>" + esc(e.email) + "</td><td>" + esc(e.what) + "</td><td>" +
+          (e.businessId ? '<a class="mono" href="#business/' + esc(e.businessId) + '">' + esc(e.businessId.slice(-6).toUpperCase()) + "</a>" : mute) + "</td><td>" +
+          (e.segment ? esc(e.segment) : mute) + '</td><td class="num">' + e.rows + "</td><td>" + (e.exported ? "Yes" : "No") + "</td></tr>";
+      }).join("") + "</tbody></table></div>";
+  }
+
+  /* Team (the founder only) */
+  function tmsgHtml() {
+    return state.tmsg ? '<div class="banner ' + (state.tmsg.ok ? "good" : "err") + '" role="status">' + esc(state.tmsg.text) + "</div>" : "";
+  }
+  function setTmsg(ok, text) {
+    state.tmsg = text ? { ok: ok, text: text } : null;
+    var el = $("tmsg");
+    if (el) el.innerHTML = tmsgHtml();
+  }
+  function roleOptions(cur) {
+    return ["viewer", "exporter"].map(function (r) {
+      return '<option value="' + r + '"' + (r === cur ? " selected" : "") + ">" + ROLE_NAME[r] + "</option>";
+    }).join("");
+  }
+  function eventText(e) {
+    if (e.action === "added") return "Added" + (e.role ? ": " + (ROLE_NAME[e.role] || e.role) : "");
+    if (e.action === "role_changed") return "Changed to " + (ROLE_NAME[e.role] || e.role || "");
+    if (e.action === "removed") return "Removed";
+    return e.action;
+  }
+  function thead(list) {
+    return "<thead><tr>" + list.map(function (t) { return '<th scope="col"><span>' + t + "</span></th>"; }).join("") + "</tr></thead>";
+  }
+  function teamHtml() {
+    var t = state.team;
+    var h = '<h2 class="title">Team</h2><p class="hint">Who may open the console besides you. You are the only one who can change this.</p><div id="tmsg">' + tmsgHtml() + "</div>";
+    if (!t) return h + (state.loading ? '<div class="empty">Loading.</div>' : "");
+    h += '<h2 class="sec">Full access</h2><div class="panel">' + (t.owners.length ? t.owners.map(function (o) { return '<div class="mono">' + esc(o) + "</div>"; }).join("") : mute) +
+      '<p class="hint" style="margin:8px 0 0">Set on the server, not removable here.</p></div>';
+    h += '<h2 class="sec">Add someone</h2><form class="panel" id="addForm" novalidate><div class="addform">' +
+      '<label class="field"><span>Google email</span><input type="email" id="tEmail" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="name@gmail.com"></label>' +
+      '<label class="field"><span>Name (optional)</span><input type="text" id="tName" maxlength="80" autocomplete="off"></label>' +
+      '<label class="field"><span>Access</span><select id="tRole">' + roleOptions("viewer") + "</select></label>" +
+      '<div><button class="btn primary" type="submit">Add</button></div></div>' +
+      '<div id="confirmAdd"></div>' +
+      '<p class="hint" style="margin:12px 0 0">They sign in with that Google email at relynked.com/console. Every look and export is logged under their email.</p></form>';
+    var active = t.members.filter(function (m) { return !m.removedAt; });
+    var gone = t.members.filter(function (m) { return m.removedAt; });
+    h += '<h2 class="sec">Can open the console</h2><div id="confirmRemove"></div>';
+    if (!active.length) h += '<div class="tablewrap"><div class="empty">Nobody has been added yet.</div></div>';
+    else h += '<div class="tablewrap"><table>' + thead(["Name", "Email", "Access", "Added by", "Added", ""]) + "<tbody>" + active.map(function (m) {
+      return "<tr><td>" + (m.name ? esc(m.name) : mute) + "</td><td>" + emailHtml(m.email) + '</td><td><select class="rolesel" data-email="' + esc(m.email) + '" aria-label="Access for ' + esc(m.email) + '">' + roleOptions(m.role) + "</select></td><td>" +
+        esc(m.addedBy) + "</td><td>" + esc(fmtDate(m.addedAt)) + '</td><td><button type="button" class="btn danger" data-act="team-remove" data-email="' + esc(m.email) + '">Remove</button></td></tr>';
+    }).join("") + "</tbody></table></div>";
+    if (gone.length) {
+      h += '<h2 class="sec">Removed</h2><div class="tablewrap gone"><table>' + thead(["Name", "Email", "Had", "Removed by", "Removed"]) + "<tbody>" + gone.map(function (m) {
+        return "<tr><td>" + (m.name ? esc(m.name) : mute) + "</td><td>" + esc(m.email) + "</td><td>" + esc(ROLE_NAME[m.role] || m.role) + "</td><td>" + (m.removedBy ? esc(m.removedBy) : mute) + "</td><td>" + esc(fmtDate(m.removedAt)) + "</td></tr>";
+      }).join("") + "</tbody></table></div>";
+    }
+    h += '<h2 class="sec">History</h2>';
+    if (!t.events.length) h += '<div class="tablewrap"><div class="empty">No changes yet.</div></div>';
+    else h += '<div class="tablewrap"><table>' + thead(["When", "By", "What", "Person"]) + "<tbody>" + t.events.map(function (e) {
+      return "<tr><td>" + esc(fmtDateTime(e.at)) + "</td><td>" + esc(e.by) + "</td><td>" + esc(eventText(e)) + "</td><td>" + esc(e.email) + "</td></tr>";
+    }).join("") + "</tbody></table></div>";
+    return h;
+  }
+  function paintConfirm() {
+    var p = state.pending, a = $("confirmAdd"), r = $("confirmRemove");
+    var btns = function (yes) {
+      return '<button type="button" class="btn primary" data-act="team-yes">' + yes + '</button><button type="button" class="btn" data-act="team-cancel">Cancel</button>';
+    };
+    if (a) a.innerHTML = p && p.kind === "add"
+      ? '<div class="confirm"><p>Add <b>' + esc(p.email) + "</b>" + (p.name ? " (" + esc(p.name) + ")" : "") + " with access <b>" + esc(ROLE_NAME[p.role]) + "</b>? They can open the console with that Google email.</p>" + btns("Yes, add") + "</div>" : "";
+    if (r) r.innerHTML = p && p.kind === "remove"
+      ? '<div class="confirm"><p>Remove ' + esc(p.email) + "? They lose access on their next page load.</p>" + btns("Yes, remove") + "</div>" : "";
+    var box = p && (p.kind === "add" ? a : r);
+    if (box && box.scrollIntoView) box.scrollIntoView({ block: "nearest" });
+  }
+  function teamErr(e) {
+    if (e instanceof ConsoleError && e.serverMessage && (e.status === 400 || e.status === 403 || e.status === 404)) return e.serverMessage;
+    var x = explain(e);
+    return x.t + ". " + x.m;
+  }
+  function teamSend(path, body) {
+    if (!DEMO) return postJson(path, body);
+    return new Promise(function (res) { res(path === "team" ? Demo.teamPost(body) : Demo.teamRemove(body)); });
+  }
+  function teamSubmit() {
+    var email = $("tEmail").value.trim().toLowerCase();
+    setTmsg(false, "");
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setTmsg(false, "Type the Google email they sign in with."); return; }
+    state.pending = { kind: "add", email: email, name: $("tName").value.trim(), role: $("tRole").value };
+    paintConfirm();
+  }
+  function teamApply(p) {
+    var work = p.kind === "add"
+      ? teamSend("team", p.name ? { email: p.email, name: p.name, role: p.role } : { email: p.email, role: p.role })
+      : teamSend("team/remove", { email: p.email });
+    busy(true);
+    work.then(function (r) {
+      state.pending = null;
+      var text = p.kind === "remove" ? "Removed " + p.email + "."
+        : r.action === "role_changed" ? "Changed " + p.email + " to " + ROLE_NAME[p.role] + "."
+        : r.action === "unchanged" ? p.email + " already has that access."
+        : "Added " + p.email + ": " + ROLE_NAME[p.role] + ".";
+      state.tmsg = { ok: true, text: text };
+      busy(false);
+      return loadTeam(true);
+    }).catch(function (e) {
+      busy(false);
+      state.pending = null;
+      paintConfirm();
+      setTmsg(false, teamErr(e));
+      if (p.fromSelect || (e instanceof ConsoleError && e.status === 404)) loadTeam(true);
+    });
+  }
+
+  /* ── export ────────────────────────────────────────────── */
+  function csvCell(v) {
+    var s = v == null ? "" : String(v);
+    return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  }
+  function toCsv(head, rows) {
+    return [head].concat(rows).map(function (r) { return r.map(csvCell).join(","); }).join("\r\n") + "\r\n";
+  }
+  function saveBlob(blob, name) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = name; a.rel = "noopener";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+  function stampDay() { var p = lagos(new Date()); return p.year + "-" + pad(Number(p.month)) + "-" + pad(Number(p.day)); }
+  function doExport(list, btn) {
+    var segment = list === "businesses" ? (state.f.fu || "all") : list;
+    var name = "relynked-console-" + list + "-" + segment + "-" + stampDay() + ".csv";
+    if (btn) btn.disabled = true;
+    clearAlert();
+    var done = function () { if (btn) btn.disabled = false; };
+    if (DEMO) {
+      saveBlob(new Blob(["﻿" + Demo.csv(list, segment)], { type: "text/csv;charset=utf-8" }), name);
+      done();
+      return;
+    }
+    request("export?list=" + encodeURIComponent(list) + "&segment=" + encodeURIComponent(segment))
+      .then(function (r) {
+        var cd = r.headers.get("content-disposition") || "";
+        var m = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(cd);
+        var fname = name;
+        if (m) { try { fname = decodeURIComponent(m[1]); } catch (e) { fname = m[1]; } }
+        return r.blob().then(function (blob) { saveBlob(blob, fname); });
+      })
+      .catch(function (e) { showAlert(e, false); window.scrollTo(0, 0); })
+      .then(done);
+  }
+
+  /* ── events ────────────────────────────────────────────── */
+  document.addEventListener("click", function (ev) {
+    var t = ev.target.closest ? ev.target.closest("[data-go],[data-open],[data-sort],[data-act]") : null;
+    if (!t) return;
+    if (t.hasAttribute("data-open")) { go("#business/" + t.getAttribute("data-open")); return; }
+    if (t.hasAttribute("data-sort")) {
+      var k = t.getAttribute("data-sort");
+      state.sort = state.sort.key === k ? { key: k, dir: -state.sort.dir } : { key: k, dir: 1 };
+      paintBusinesses();
+      var again = document.querySelector('[data-sort="' + k + '"]');
+      if (again) again.focus();
+      return;
+    }
+    if (t.hasAttribute("data-go")) {
+      var dest = t.getAttribute("data-go");
+      if (dest === "businesses") {
+        state.f = freshFilters();
+        if (t.hasAttribute("data-fu")) state.f.fu = t.getAttribute("data-fu");
+        if (t.hasAttribute("data-plan")) state.f.plan = t.getAttribute("data-plan");
+        if (t.hasAttribute("data-ver")) state.f.ver = t.getAttribute("data-ver");
+        if (t.hasAttribute("data-all")) state.f.hideTest = false;
+      } else if (dest === "unattached") state.uq = "";
+      go("#" + dest);
+      return;
+    }
+    var act = t.getAttribute("data-act");
+    if (act === "refresh") refresh();
+    else if (act === "clear") { state.f = freshFilters(); render(); }
+    else if (act === "export") doExport(t.getAttribute("data-list"), t);
+    else if (act === "team-remove") { setTmsg(false, ""); state.pending = { kind: "remove", email: t.getAttribute("data-email") }; paintConfirm(); }
+    else if (act === "team-cancel") { state.pending = null; paintConfirm(); }
+    else if (act === "team-yes") { if (state.pending) { t.disabled = true; teamApply(state.pending); } }
+  });
+  document.addEventListener("input", function (ev) {
+    if (ev.target.id === "fq") { state.f.q = ev.target.value; paintBusinesses(); }
+    else if (ev.target.id === "uq") { state.uq = ev.target.value; paintUnattached(); }
+  });
+  document.addEventListener("change", function (ev) {
+    if (ev.target.classList && ev.target.classList.contains("rolesel")) {
+      var sel = ev.target, email = sel.getAttribute("data-email");
+      sel.disabled = true;
+      setTmsg(false, "");
+      teamApply({ kind: "add", email: email, name: "", role: sel.value, fromSelect: true });
+      return;
+    }
+    var id = ev.target.id, f = state.f;
+    if (id === "ffu") f.fu = ev.target.value;
+    else if (id === "fver") f.ver = ev.target.value;
+    else if (id === "fplan") f.plan = ev.target.value;
+    else if (id === "fkind") f.kind = ev.target.value;
+    else if (id === "fhide") f.hideTest = ev.target.checked;
+    else return;
+    paintBusinesses();
+  });
+  document.addEventListener("submit", function (ev) {
+    if (ev.target.id === "addForm") { ev.preventDefault(); teamSubmit(); }
+  });
+  $("refresh").addEventListener("click", refresh);
+  window.addEventListener("hashchange", route);
+
+  /* theme, stored only as a per-device convenience */
+  var root = document.documentElement;
+  function stored(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function store(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* private window */ } }
+  var saved = stored("relynked.theme");
+  if (saved === "dark" || saved === "light") root.setAttribute("data-theme", saved);
+  function isDark() {
+    var set = root.getAttribute("data-theme");
+    if (set) return set === "dark";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  function paintTheme() {
+    var dark = isDark(), btn = $("theme");
+    btn.innerHTML = svg(dark ? "sun" : "moon");
+    btn.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
+    btn.setAttribute("title", dark ? "Light theme" : "Dark theme");
+  }
+  $("theme").addEventListener("click", function () {
+    var next = isDark() ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    store("relynked.theme", next);
+    paintTheme();
+  });
+  paintTheme();
+
+  /* ── demo data: made up, built from today so it never goes stale ── */
+  var Demo = (function () {
+    var DAY = 86400000;
+    function ago(days) { return new Date(Date.now() - days * DAY).toISOString(); }
+    function ahead(days) { return new Date(Date.now() + days * DAY).toISOString().slice(0, 10); }
+    function fakeId(tail) { return "7e57c0de-0000-4000-8000-" + tail; }
+    var FU = [
+      ["trial_ending", "Trial ends in 3 days"], ["grace", "In grace"], ["paused", "Paused, not renewed"],
+      ["renewal_due", "Renewal due"], ["set_up_not_paid", "Set up, not paid"], ["never_used", "Started, never used"],
+      ["quiet_7d", "Quiet 7 days"], ["unverified", "Not verified"], ["unattached", "Signed up, no business"], ["access_requests", "Asked for access"]
+    ];
+    function owner(n, i, kind) {
+      var d = String(i); while (d.length < 2) d = "0" + d;
+      return { name: n, phone: "+23480000000" + d, email: kind + d + "@example.test" };
+    }
+    function biz(i, tail, name, kind, created, o) {
+      var b = {
+        id: fakeId(tail), ref: tail.slice(-6).toUpperCase(), name: name, kind: kind, createdAt: ago(created),
+        isTest: false, verified: true, verifiedAt: ago(created - 1), closing: false, owner: o,
+        people: { active: 2, invited: 0 }, projects: 3, sitesOpen: 1, lastSeenAt: ago(0.2), lastRemyAt: ago(1),
+        plan: { state: "active", basis: "paid", nextDate: ahead(20), daysLeft: 20, paidThrough: ahead(20), paidTotalNaira: 1200000, lastPaidAt: ago(10) },
+        followUps: [], supportRecent: 0
+      };
+      for (var k in o2(i)) b[k] = o2(i)[k];
+      return b;
+    }
+    var OVER = {};
+    function o2(i) { return OVER[i] || {}; }
+    function over(i, x) { OVER[i] = x; }
+    function plan(state, basis, daysLeft, paid, total) {
+      return {
+        state: state, basis: basis, nextDate: daysLeft == null ? null : ahead(daysLeft), daysLeft: daysLeft,
+        paidThrough: paid == null ? null : ahead(paid), paidTotalNaira: total || 0, lastPaidAt: total ? ago(30) : null
+      };
+    }
+    over(1, { people: { active: 4, invited: 1 }, projects: 6, sitesOpen: 3, supportRecent: 2 });
+    over(2, { plan: plan("trial", "trial", 2, null), people: { active: 2, invited: 1 }, projects: 2, lastSeenAt: ago(1), followUps: ["trial_ending", "set_up_not_paid"], verified: true });
+    over(3, { plan: plan("grace", "trial", -2, null), verified: false, verifiedAt: null, lastSeenAt: ago(5), projects: 2, followUps: ["grace", "set_up_not_paid", "unverified"], supportRecent: 1 });
+    over(4, { plan: plan("paused", "paid", -5, -5, 600000), lastSeenAt: ago(20), lastRemyAt: ago(24), projects: 3, followUps: ["paused", "quiet_7d", "set_up_not_paid"] });
+    over(5, { plan: plan("renewal_due", "paid", 3, 3, 2400000), people: { active: 6, invited: 0 }, projects: 11, sitesOpen: 4, followUps: ["renewal_due"] });
+    over(6, { plan: plan("trial", "trial", 9, null), verified: false, verifiedAt: null, projects: 0, sitesOpen: 0, lastRemyAt: null, lastSeenAt: ago(4), people: { active: 1, invited: 0 }, followUps: ["never_used", "unverified"] });
+    over(7, { plan: plan("pilot", "pilot", null, null), projects: 8, sitesOpen: 2, lastSeenAt: ago(9), followUps: ["quiet_7d"] });
+    over(8, { plan: plan("active", "paid", 8, 8, 3600000), lastSeenAt: ago(15), people: { active: 3, invited: 0 }, followUps: ["quiet_7d"] });
+    over(9, { plan: plan("trial", "trial", 6, null), verified: false, verifiedAt: null, projects: 0, sitesOpen: 0, lastRemyAt: null, lastSeenAt: null, people: { active: 1, invited: 2 }, followUps: ["never_used", "quiet_7d", "unverified"] });
+    over(10, { isTest: true, plan: plan("trial", "trial", 12, null), verified: false, verifiedAt: null, projects: 1, followUps: [] });
+    over(11, { closing: true, plan: plan("paused", "paid", -30, -30, 300000), lastSeenAt: ago(40), lastRemyAt: ago(41), followUps: [] });
+    over(12, { plan: plan("trial", "trial", 0, null), projects: 4, lastSeenAt: ago(2), followUps: ["trial_ending", "set_up_not_paid"] });
+
+    var BIZ = [
+      biz(1, "00000000a001", "Example Builders Ltd", "Construction", 40, owner("Ada Example", 1, "ada")),
+      biz(2, "00000000a002", "Example Interiors Ltd", "Interior design", 12, owner("Bola Sample", 2, "bola")),
+      biz(3, "00000000a003", "Sample Roofing Co", "Roofing", 25, owner("Chidi Demo", 3, "chidi")),
+      biz(4, "00000000a004", "Demo Tiles and Floors", "Tiling", 60, owner("Dayo Fictional", 4, "dayo")),
+      biz(5, "00000000a005", "Mock Electrical Works", "Electrical", 90, owner("Emeka Placeholder", 5, "emeka")),
+      biz(6, "00000000a006", "Fictional Plumbing Services", "Plumbing", 5, owner("Funke Example", 6, "funke")),
+      biz(7, "00000000a007", "Placeholder Pilot Homes", "Real estate", 30, owner("Gbenga Sample", 7, "gbenga")),
+      biz(8, "00000000a008", "Sample Quiet Carpentry", "Carpentry", 70, owner("Hauwa Demo", 8, "hauwa")),
+      biz(9, "00000000a009", "Example Ghost Studio", "Photography", 8, owner("Ife Fictional", 9, "ife")),
+      biz(10, "00000000a010", "Demo Test Business", "Construction", 14, owner("Test Owner", 10, "test")),
+      biz(11, "00000000a011", "Closing Example Ltd", "Construction", 200, owner("Kunle Sample", 11, "kunle")),
+      biz(12, "00000000a012", "Mock Painters", "Painting", 18, owner("Lola Example", 12, "lola"))
+    ];
+    var UNATT = [
+      { id: fakeId("00000000b001"), name: "Musa Example", title: "Site manager", email: "musa@example.test", phone: "+2348000000101", phoneProved: true, signedUpAt: ago(1), lastSeenAt: ago(0.5), setupStep: "Asked for the business name" },
+      { id: fakeId("00000000b002"), name: null, title: null, email: null, phone: "+2348000000102", phoneProved: false, signedUpAt: ago(3), lastSeenAt: null, setupStep: "Not started" },
+      { id: fakeId("00000000b003"), name: "Ngozi Sample", title: "Owner", email: "ngozi@example.test", phone: null, phoneProved: false, signedUpAt: ago(9), lastSeenAt: ago(8), setupStep: "Picked the business type" },
+      { id: fakeId("00000000b004"), name: "Olu Demo", title: "Accountant", email: "olu@example.test", phone: "+2348000000104", phoneProved: true, signedUpAt: ago(20), lastSeenAt: ago(19), setupStep: "Asked for the first project" }
+    ];
+    var ACCESS = [
+      { id: fakeId("00000000c001"), name: "Peter Example", email: "peter@example.test", whatsapp: "+2348000000201", businessName: "Example Cement Supplies", status: "pending", requestedAt: ago(1), decidedAt: null },
+      { id: fakeId("00000000c002"), name: "Queen Sample", email: null, whatsapp: "08000000202", businessName: null, status: "pending", requestedAt: ago(4), decidedAt: null },
+      { id: fakeId("00000000c003"), name: "Rilwan Demo", email: "rilwan@example.test", whatsapp: "+2348000000203", businessName: "Demo Steel Works", status: "approved", requestedAt: ago(15), decidedAt: ago(14) },
+      { id: fakeId("00000000c004"), name: "Sade Fictional", email: "sade@example.test", whatsapp: null, businessName: "Fictional Glass Ltd", status: "declined", requestedAt: ago(30), decidedAt: ago(29) }
+    ];
+    function counts() {
+      var live = BIZ.filter(function (b) { return !b.isTest && !b.closing; });
+      var n = function (k) { return live.filter(function (b) { return b.followUps.indexOf(k) >= 0; }).length; };
+      return FU.map(function (f) {
+        return { key: f[0], label: f[1], count: f[0] === "unattached" ? UNATT.length : f[0] === "access_requests" ? ACCESS.filter(function (a) { return a.status === "pending"; }).length : n(f[0]) };
+      });
+    }
+    function summary() {
+      var plans = { pilot: 0, trial: 0, active: 0, renewal_due: 0, grace: 0, paused: 0 };
+      BIZ.forEach(function (b) { plans[b.plan.state]++; });
+      var week = Date.now() - 7 * DAY;
+      var fu = counts();
+      var q = fu.filter(function (f) { return f.key === "quiet_7d"; })[0].count;
+      return {
+        generatedAt: new Date().toISOString(),
+        me: DEMO_VIEWER ? { email: "viewer@example.test", role: "viewer" } : { email: "founder@example.test", role: "owner" },
+        overview: {
+          businesses: { total: BIZ.length, verified: BIZ.filter(function (b) { return b.verified; }).length, unverified: BIZ.filter(function (b) { return !b.verified; }).length, test: BIZ.filter(function (b) { return b.isTest; }).length },
+          plans: plans,
+          people: { active: BIZ.reduce(function (s, b) { return s + b.people.active; }, 0), invited: BIZ.reduce(function (s, b) { return s + b.people.invited; }, 0) },
+          unattached: UNATT.length,
+          accessRequestsPending: ACCESS.filter(function (a) { return a.status === "pending"; }).length,
+          signupsLast7Days: BIZ.filter(function (b) { return new Date(b.createdAt).getTime() > week; }).length + UNATT.filter(function (u) { return new Date(u.signedUpAt).getTime() > week; }).length,
+          quiet7Days: q
+        },
+        followUps: fu,
+        businesses: JSON.parse(JSON.stringify(BIZ)),
+        unattached: JSON.parse(JSON.stringify(UNATT)),
+        accessRequests: JSON.parse(JSON.stringify(ACCESS))
+      };
+    }
+    function detail(id) {
+      var b = BIZ.filter(function (x) { return x.id === id; })[0];
+      if (!b) throw new ConsoleError(404, "not_found", "No such business in the demo.", false);
+      var bi = parseInt(id.slice(-3), 10) || 0;
+      function pad5(n) { var t = String(n); while (t.length < 5) t = "0" + t; return t; }
+      var roles = [["Manager", "Site manager"], ["Accountant", "Accountant"], ["Staff", "Foreman"], ["Staff", "Store keeper"], ["Staff", "Driver"]];
+      var people = [{ id: "p0", name: b.owner.name, phone: b.owner.phone, email: b.owner.email, role: "Owner", title: "Managing director", status: "active", joinedAt: b.createdAt, lastSeenAt: b.lastSeenAt, fingerprintSet: true }];
+      for (var i = 1; i < b.people.active; i++) {
+        people.push({ id: "p" + i, name: ["Tunde", "Uche", "Vivian", "Wale", "Yemi"][i % 5] + " Example", phone: "+23480003" + pad5(bi * 10 + i), email: null, role: roles[i % 5][0], title: roles[i % 5][1], status: "active", joinedAt: ago(Math.max(1, 30 - i * 3)), lastSeenAt: ago(i * 2), fingerprintSet: i % 2 === 1 });
+      }
+      var invites = [];
+      for (var j = 0; j < b.people.invited; j++) {
+        invites.push({ name: "Invited Person " + (j + 1), phone: "+23480004" + pad5(bi * 10 + j), email: j ? "invited" + j + "@example.test" : null, role: "Staff", status: "sent", sentAt: ago(2 + j), expiresAt: ago(-5 - j) });
+      }
+      var support = [];
+      for (var s = 0; s < b.supportRecent; s++) {
+        support.push({ at: ago(3 + s * 9), from: b.owner.name, message: s ? "The site photo did not upload on the first try.\nIt worked on the second try." : "I cannot find where to change my business phone number." });
+      }
+      return { business: JSON.parse(JSON.stringify(b)), people: people, invites: invites, support: support };
+    }
+    function log() {
+      var me = "founder@example.test";
+      return { entries: [
+        { at: ago(0.01), email: me, what: "Opened the overview", businessId: null, segment: null, rows: 12, exported: false },
+        { at: ago(0.05), email: me, what: "Exported businesses", businessId: null, segment: "trial_ending", rows: 2, exported: true },
+        { at: ago(0.06), email: me, what: "Opened a business", businessId: BIZ[0].id, segment: null, rows: 1, exported: false },
+        { at: ago(1.2), email: me, what: "Opened the businesses list", businessId: null, segment: "all", rows: 12, exported: false },
+        { at: ago(2.4), email: me, what: "Exported signed up, no business", businessId: null, segment: "unattached", rows: 4, exported: true }
+      ] };
+    }
+    function csv(list, segment) {
+      var S = summary();
+      if (list === "unattached") {
+        return toCsv(["Name", "Title", "Email", "Phone", "Phone proved", "Signed up", "Last seen", "Setup stopped at"],
+          S.unattached.map(function (u) { return [u.name, u.title, u.email, u.phone, u.phoneProved ? "yes" : "no", fmtDate(u.signedUpAt), fmtDate(u.lastSeenAt), u.setupStep]; }));
+      }
+      if (list === "access_requests") {
+        return toCsv(["Name", "Email", "WhatsApp", "Business", "Status", "Asked on", "Decided on"],
+          S.accessRequests.map(function (a) { return [a.name, a.email, a.whatsapp, a.businessName, a.status, fmtDate(a.requestedAt), fmtDate(a.decidedAt)]; }));
+      }
+      var rows = S.businesses.filter(function (b) { return segment === "all" ? true : b.followUps.indexOf(segment) >= 0; });
+      return toCsv(["Ref", "Name", "Kind", "Created", "Verified", "Owner", "Owner phone", "Owner email", "Active people", "Invited people", "Projects", "Open sites", "Last seen", "Last Remy message", "Plan state", "Days left", "Paid through", "Follow up"],
+        rows.map(function (b) {
+          var o = b.owner || {};
+          return [b.ref, b.name, b.kind, fmtDate(b.createdAt), b.verified ? "yes" : "no", o.name, o.phone, o.email, b.people.active, b.people.invited, b.projects, b.sitesOpen,
+            fmtDate(b.lastSeenAt), fmtDate(b.lastRemyAt), b.plan.state, b.plan.daysLeft, b.plan.paidThrough ? fmtDate(b.plan.paidThrough) : "", b.followUps.join(" ")];
+        }));
+    }
+    var TEAM = {
+      owners: ["founder@example.test"],
+      members: [
+        { email: "sola@example.test", name: "Sola Example", role: "exporter", addedBy: "founder@example.test", addedAt: ago(12), removedAt: null, removedBy: null },
+        { email: "tayo@example.test", name: "Tayo Sample", role: "viewer", addedBy: "founder@example.test", addedAt: ago(5), removedAt: null, removedBy: null },
+        { email: "uzo@example.test", name: "Uzo Demo", role: "viewer", addedBy: "founder@example.test", addedAt: ago(30), removedAt: ago(8), removedBy: "founder@example.test" }
+      ],
+      events: [
+        { at: ago(8), by: "founder@example.test", action: "removed", email: "uzo@example.test", role: null },
+        { at: ago(5), by: "founder@example.test", action: "added", email: "tayo@example.test", role: "viewer" },
+        { at: ago(12), by: "founder@example.test", action: "added", email: "sola@example.test", role: "viewer" },
+        { at: ago(30), by: "founder@example.test", action: "added", email: "uzo@example.test", role: "viewer" }
+      ]
+    };
+    TEAM.events.splice(2, 0, { at: ago(11), by: "founder@example.test", action: "role_changed", email: "sola@example.test", role: "exporter" });
+    function teamGet() { return JSON.parse(JSON.stringify(TEAM)); }
+    function bad(status, code, message) { return new ConsoleError(status, code, message, false); }
+    function teamPost(b) {
+      var email = typeof b.email === "string" ? b.email.trim().toLowerCase() : "";
+      var name = typeof b.name === "string" && b.name.trim() ? b.name.trim().slice(0, 80) : null;
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || email.length > 254) throw bad(400, "bad_email", "Type the Google email they sign in with.");
+      if (b.role !== "viewer" && b.role !== "exporter") throw bad(400, "bad_role", "Choose Can view, or Can view and export.");
+      if (TEAM.owners.indexOf(email) >= 0) throw bad(400, "already_owner", "That email already has full access.");
+      var was = TEAM.members.filter(function (m) { return m.email === email; })[0];
+      if (was && !was.removedAt && was.role === b.role) return { ok: true, email: email, role: b.role, action: "unchanged" };
+      var action = was && !was.removedAt ? "role_changed" : "added";
+      if (was) {
+        was.role = b.role; if (name) was.name = name;
+        if (was.removedAt) { was.addedBy = "founder@example.test"; was.addedAt = ago(0); was.removedAt = null; was.removedBy = null; }
+      } else {
+        TEAM.members.push({ email: email, name: name, role: b.role, addedBy: "founder@example.test", addedAt: ago(0), removedAt: null, removedBy: null });
+      }
+      TEAM.events.unshift({ at: ago(0), by: "founder@example.test", action: action, email: email, role: b.role });
+      return { ok: true, email: email, role: b.role, action: action };
+    }
+    function teamRemove(b) {
+      var email = typeof b.email === "string" ? b.email.trim().toLowerCase() : "";
+      var was = TEAM.members.filter(function (m) { return m.email === email && !m.removedAt; })[0];
+      if (!was) throw bad(404, "not_on_team", "That email is not on the console team.");
+      was.removedAt = ago(0); was.removedBy = "founder@example.test";
+      TEAM.events.unshift({ at: ago(0), by: "founder@example.test", action: "removed", email: email, role: null });
+      return { ok: true, email: email };
+    }
+    return { summary: summary, detail: detail, log: log, csv: csv, teamGet: teamGet, teamPost: teamPost, teamRemove: teamRemove };
+  })();
+
+  /* ── go ────────────────────────────────────────────────── */
+  var first = parseHash();
+  state.view = first.view; state.id = first.id || null;
+  render();
+  loadSummary().then(function () {
+    render();
+    loadForView();
+  });
+})();
+</script>
+</body>
+</html>
