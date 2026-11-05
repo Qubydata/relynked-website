@@ -1,0 +1,31 @@
+# Shop pages on every pull request and every push to main: no network, no
+# secret, nothing deployed. _routes.json must list every page and folder of the
+# site (a page it misses would be asked of the shop pages once they are on),
+# every top level name must also be on the never-a-shop list, and the Pages
+# Functions' routing, safety rules and edge cache must hold. See
+# scripts/build-shop-routes.mjs, scripts/shop-functions-check.mjs and
+# scripts/shop-edge-check.mjs.
+name: Shop pages check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  shop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: _routes.json is up to date
+        run: node scripts/build-shop-routes.mjs --check
+      - name: The shop page functions
+        run: node scripts/shop-functions-check.mjs
+      - name: The edge cache
+        run: node scripts/shop-edge-check.mjs
