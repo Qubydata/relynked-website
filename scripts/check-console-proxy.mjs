@@ -88,5 +88,30 @@ const noKey = await ask("POST", `businesses/${UUID}/verify`, { body });
 env.ADMIN_CONSOLE_KEY = savedKey;
 ok(noKey.status === 503 && !noKey.called, "with no key on this project it is 503");
 
+
+// Remy review consent (0404): one more write, on exactly one path, with every guard of the verify write
+const rbody = JSON.stringify({ on: true, note: "Owner agreed on the call" });
+const rgood = await ask("POST", `businesses/${UUID}/review-consent`, { body: rbody });
+ok(rgood.status === 200 && rgood.called && rgood.call.method === "POST" && rgood.call.url === `https://api.example.test/admin/console/businesses/${UUID}/review-consent` && rgood.call.body === rbody && rgood.call.headers["x-admin-key"] === env.ADMIN_CONSOLE_KEY && rgood.call.headers["cf-access-jwt-assertion"] === "signed.assertion", "POST businesses/<uuid>/review-consent passes, to the API's route, with the key and the assertion", rgood);
+ok((await ask("POST", `businesses/${UUID.toUpperCase()}/review-consent`, { body: rbody })).status === 200, "POST review-consent with an upper case uuid passes");
+for (const p of [`businesses/${UUID}/review-consent/extra`, `businesses/${UUID}/review`, `businesses/${UUID}/review-consent/..`, "businesses/not-a-uuid/review-consent", "businesses/review-consent", "review-consent", "remy-review", "../remy-review", `businesses/${UUID}/consent`]) {
+  const r = await ask("POST", p, { body: rbody });
+  ok(!r.called && (r.status === 404 || r.status === 405), `POST ${p} is refused and never reaches the API`, r);
+}
+const rget = await ask("GET", `businesses/${UUID}/review-consent`);
+ok(rget.status === 405 && !rget.called, "GET on the review-consent path is refused");
+for (const m of ["PUT", "PATCH", "DELETE"]) {
+  const r = await ask(m, `businesses/${UUID}/review-consent`);
+  ok(r.status === 405 && !r.called, `${m} review-consent is refused (405) and never reaches the API`, r);
+}
+ok((await ask("POST", `businesses/${UUID}/review-consent`, { body: rbody, access: false })).status === 401, "review-consent without Access is 401");
+const rEvil = await ask("POST", `businesses/${UUID}/review-consent`, { body: rbody, origin: "https://evil.example" });
+const rNone = await ask("POST", `businesses/${UUID}/review-consent`, { body: rbody, origin: null });
+ok(rEvil.status === 403 && rNone.status === 403 && !rEvil.called && !rNone.called, "review-consent with no Origin, or another site's, is 403");
+const rForm = await ask("POST", `businesses/${UUID}/review-consent`, { body: "on=true", type: "application/x-www-form-urlencoded" });
+ok(rForm.status === 415 && !rForm.called, "review-consent that is not JSON is 415");
+const rBig = await ask("POST", `businesses/${UUID}/review-consent`, { body: JSON.stringify({ on: true, note: "n".repeat(2100) }) });
+ok(rBig.status === 413 && !rBig.called, "review-consent over 2 KB is 413");
+
 console.log(failures === 0 ? `\nALL PASS: ${passes} passed` : `\n${failures} FAILED, ${passes} passed`);
 process.exit(failures > 0 ? 1 : 0);

@@ -779,6 +779,7 @@
       fact("Last seen", esc(ago(b.lastSeenAt)) + (b.lastSeenAt ? ' <span class="sm">' + esc(fmtDate(b.lastSeenAt)) + "</span>" : "")) +
       fact("Last Remy message", esc(ago(b.lastRemyAt))) +
       fact("Problem reports, 30 days", String(b.supportRecent)) +
+      (isOwner() && !b.closing ? fact("Remy review", reviewHtml(x.reviewConsent, b)) : "") +
       fact("Follow up", b.followUps.length ? '<div class="pills">' + b.followUps.map(function (k) { return '<span class="pill warn">' + esc(fuLabel(k)) + "</span>"; }).join("") + "</div>" : "Nothing to follow up") +
       "</dl></div>";
 
@@ -818,6 +819,14 @@
     return '<button class="btn' + (b.verified ? "" : " primary") + '" type="button" data-act="verify-open" data-id="' + esc(b.id) + '" data-to="' + (b.verified ? "0" : "1") + '">' +
       (b.verified ? "Remove verified" : "Verify") + "</button>";
   }
+  /* Remy review (0404): the founder shares a business's Remy conversations for the nightly review */
+  function reviewHtml(rc, b) {
+    var on = !!(rc && rc.on);
+    return (on ? '<span class="pill ok">On</span> <span class="sm">set by ' + esc(rc.setBy || "") + (rc.setAt ? " on " + esc(fmtDate(rc.setAt)) : "") + "</span> "
+      : '<span class="pill">Off</span> ') +
+      '<button class="btn' + (on ? "" : " primary") + '" type="button" data-act="review-open" data-id="' + esc(b.id) + '" data-to="' + (on ? "0" : "1") + '">' +
+      (on ? "Turn off review" : "Share Remy conversations for review") + "</button>";
+  }
   function verifyHtml() {
     var h = '<h2 class="title">Verify</h2><p class="hint">Businesses waiting for the lime tick, newest first. Call the owner, then tap Verify. Test and closing businesses are left out.' +
       (isOwner() ? "" : " Only the founder can give the tick.") + "</p>" + vmsgHtml();
@@ -847,6 +856,17 @@
     var sh = state.sheet, box = $("sheet");
     if (!sh) { box.innerHTML = ""; return; }
     var on = sh.to;
+    if (sh.kind === "review") {
+      box.innerHTML = '<div class="sheetback" id="sheetBack"><form class="sheet" id="sheetForm" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" novalidate>' +
+        '<h3 id="sheetTitle">' + (on ? "Turn on review for " : "Turn off review for ") + esc(sh.name) + "?</h3>" +
+        "<p>" + (on ? "From the next message, what their people say to Remy, and what Remy does, is kept for 90 days and read each night to improve Remy. Only do this once they have agreed." : "Nothing new is kept from now on. What was kept stays until it is 90 days old.") + "</p>" +
+        '<div id="sheetErr">' + (sh.err ? '<div class="err" role="alert">' + esc(sh.err) + "</div>" : "") + "</div>" +
+        '<label class="field"><span>Note (optional)</span><textarea id="sheetNote" maxlength="' + SHEET_NOTE_MAX + '" placeholder="For example: owner agreed on the call, 6 Nov">' + esc(sh.note) + '</textarea><span class="cnt" id="sheetCnt"></span></label>' +
+        '<div class="row"><button class="btn" type="button" data-act="sheet-close">Cancel</button>' +
+        '<button class="btn primary" type="submit" id="sheetGo">' + (on ? "Turn on review" : "Turn off review") + "</button></div></form></div>";
+      syncSheet();
+      return;
+    }
     box.innerHTML = '<div class="sheetback" id="sheetBack"><form class="sheet" id="sheetForm" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" novalidate>' +
       '<h3 id="sheetTitle">' + (on ? "Verify " : "Remove verified from ") + esc(sh.name) + "</h3>" +
       "<p>" + (on ? "They get the lime tick in their app. Only do this once you are happy it is a real business." : "The lime tick goes from their app. You can give it back later.") + "</p>" +
@@ -861,7 +881,7 @@
   function syncSheet() {
     var sh = state.sheet, go = $("sheetGo");
     if (!sh || !go) return;
-    go.disabled = sh.busy || !nameMatches(sh.typed, sh.name);
+    go.disabled = sh.busy || (sh.kind !== "review" && !nameMatches(sh.typed, sh.name));
     var c = $("sheetCnt"); if (c) c.textContent = sh.note.length + " of " + SHEET_NOTE_MAX;
     var nm = $("sheetName"); if (nm) nm.disabled = !!sh.busy;
   }
@@ -870,6 +890,37 @@
     if (!b || !isOwner()) return;
     state.sheet = { id: id, name: b.name, to: to, typed: "", note: "", err: "", busy: false };
     paintSheet();
+  }
+  function openReview(id, to) {
+    var b = findBusiness(id);
+    if (!b || !isOwner()) return;
+    state.sheet = { kind: "review", id: id, name: b.name, to: to, typed: "", note: "", err: "", busy: false };
+    paintSheet();
+  }
+  function reviewSubmit() {
+    var sh = state.sheet;
+    if (!sh || sh.busy) return;
+    var body = { on: sh.to };
+    if (sh.note.trim()) body.note = sh.note.trim();
+    sh.busy = true; sh.err = "";
+    syncSheet();
+    busy(true);
+    var work = DEMO ? new Promise(function (res) { res(Demo.reviewConsent(sh.id, body)); }) : postJson("businesses/" + sh.id + "/review-consent", body);
+    work.then(function () {
+      busy(false);
+      state.vmsg = sh.to ? "Remy review is on for this business. Its conversations are kept from the next message." : "Remy review is off. Nothing new is kept.";
+      state.sheet = null;
+      paintSheet();
+      loadForView();
+    }).catch(function (e) {
+      busy(false);
+      if (!state.sheet) return;
+      state.sheet.busy = false;
+      state.sheet.err = sheetErr(e);
+      var box = $("sheetErr");
+      if (box) box.innerHTML = '<div class="err" role="alert">' + esc(state.sheet.err) + "</div>";
+      syncSheet();
+    });
   }
   function closeSheet() { state.sheet = null; paintSheet(); }
   function sheetErr(e) {
@@ -884,6 +935,7 @@
   }
   function sheetSubmit() {
     var sh = state.sheet;
+    if (sh && sh.kind === "review") { reviewSubmit(); return; }
     if (!sh || sh.busy || !nameMatches(sh.typed, sh.name)) return;
     var body = { verified: sh.to, confirmName: sh.typed.trim() };
     if (sh.note.trim()) body.note = sh.note.trim();
@@ -959,7 +1011,7 @@
   }
 
   /* Log */
-  var WHAT = { verify: "Verified a business", unverify: "Removed verified", verify_queue: "Opened the Verify tab", verify_try: "Tried to verify or remove verified" };
+  var WHAT = { verify: "Verified a business", unverify: "Removed verified", verify_queue: "Opened the Verify tab", verify_try: "Tried to verify or remove verified", review_consent: "Changed Remy review", remy_review: "Remy review was read" };
   function whatLabel(e) { return WHAT[e.what] || e.what; }
   function logHtml() {
     var h = '<h2 class="title">Log</h2><p class="hint">Every time the console was opened or exported, and every verified tick given or removed, newest first. Up to 200 entries.</p>';
@@ -1153,6 +1205,7 @@
     else if (act === "team-remove") { setTmsg(false, ""); state.pending = { kind: "remove", email: t.getAttribute("data-email") }; paintConfirm(); }
     else if (act === "team-cancel") { state.pending = null; paintConfirm(); }
     else if (act === "verify-open") openSheet(t.getAttribute("data-id"), t.getAttribute("data-to") === "1");
+    else if (act === "review-open") openReview(t.getAttribute("data-id"), t.getAttribute("data-to") === "1");
     else if (act === "sheet-close") closeSheet();
     else if (act === "team-yes") { if (state.pending) { t.disabled = true; teamApply(state.pending); } }
   });
@@ -1337,7 +1390,7 @@
       for (var s = 0; s < b.supportRecent; s++) {
         support.push({ at: ago(3 + s * 9), from: b.owner.name, message: s ? "The site photo did not upload on the first try.\nIt worked on the second try." : "I cannot find where to change my business phone number." });
       }
-      return { business: JSON.parse(JSON.stringify(b)), people: people, invites: invites, support: support };
+      return { business: JSON.parse(JSON.stringify(b)), reviewConsent: JSON.parse(JSON.stringify(REVIEW[id] || { on: false, setBy: null, setAt: null, note: null })), people: people, invites: invites, support: support };
     }
     var VLOG = [
       { at: ago(0.3), email: "founder@example.test", what: "verify", kind: "action", businessId: BIZ[1].id, businessName: BIZ[1].name, segment: null, rows: 0, exported: false, note: "Called Bola, saw the CAC certificate" }
@@ -1356,6 +1409,15 @@
       var q = BIZ.filter(function (b) { return !b.verified && !b.isTest && !b.closing; })
         .sort(function (a, b) { return a.createdAt < b.createdAt ? 1 : -1; });
       return { generatedAt: new Date().toISOString(), me: summary().me, queue: JSON.parse(JSON.stringify(q)) };
+    }
+    var REVIEW = {};
+    function reviewConsent(id, b) {
+      var biz = BIZ.filter(function (x) { return x.id === id; })[0];
+      if (!biz) throw new ConsoleError(404, "not_found", "No such business.", false);
+      if (DEMO_VIEWER) throw new ConsoleError(403, "not_allowed", "Only the founder can change Remy review.", false);
+      REVIEW[id] = b.on ? { on: true, setBy: "founder@example.test", setAt: new Date().toISOString(), note: b.note || null } : { on: false, setBy: "founder@example.test", setAt: new Date().toISOString(), note: b.note || null };
+      VLOG.unshift({ at: new Date().toISOString(), email: "founder@example.test", what: "review_consent", kind: "read", businessId: biz.id, businessName: null, segment: null, rows: 1, exported: false, note: null });
+      return { ok: true, changed: true, reviewConsent: JSON.parse(JSON.stringify(REVIEW[id])) };
     }
     function verify(id, b) {
       var biz = BIZ.filter(function (x) { return x.id === id; })[0];
@@ -1432,7 +1494,7 @@
       TEAM.events.unshift({ at: ago(0), by: "founder@example.test", action: "removed", email: email, role: null });
       return { ok: true, email: email };
     }
-    return { summary: summary, detail: detail, queue: queue, verify: verify, log: log, csv: csv, teamGet: teamGet, teamPost: teamPost, teamRemove: teamRemove };
+    return { summary: summary, detail: detail, queue: queue, verify: verify, reviewConsent: reviewConsent, log: log, csv: csv, teamGet: teamGet, teamPost: teamPost, teamRemove: teamRemove };
   })();
 
   /* ── go ────────────────────────────────────────────────── */
