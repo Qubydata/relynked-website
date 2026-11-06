@@ -25,13 +25,15 @@
  * email not on its allow list. The proxy is a door that is shut by default; the
  * API decides who may walk through.
  *
- * READ ONLY, WITH TWO EXCEPTIONS. Business data is only ever read: GET (and
+ * READ ONLY, WITH THREE EXCEPTIONS. Business data is only ever read: GET (and
  * HEAD) on `summary`, `log`, `export`, `verify-queue` and `businesses/<uuid>`.
  * The only writes are the founder's: POST on `team` and `team/remove` (who may
  * open the console), and POST on exactly `businesses/<uuid>/verify` (give or
- * remove a business's verified tick; a JSON body of 2 KB at most). The API
- * accepts those from the founder's email only, and the verify route changes
- * nothing but that tick. Nothing else can be POSTed, and no other method
+ * remove a business's verified tick) and on exactly
+ * `businesses/<uuid>/review-consent` (switch Remy's nightly review on or off for
+ * one business; a JSON body of 2 KB at most). The API accepts those from the
+ * founder's email only; the verify route changes nothing but the tick, and the
+ * consent route nothing but the review switch. Nothing else can be POSTed, and no other method
  * (PUT, PATCH, DELETE) is let through, so this cannot be turned into a general
  * window onto the API.
  *
@@ -63,7 +65,7 @@ const MAX_BODY = 2048;
 
 const UUID = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
 const READS = new RegExp(`^(summary|log|export|team|verify-queue|businesses/${UUID})$`);
-const WRITES = new RegExp(`^(team|team/remove|businesses/${UUID}/verify)$`);
+const WRITES = new RegExp(`^(team|team/remove|businesses/${UUID}/verify|businesses/${UUID}/review-consent)$`);
 
 // The body, or null when it is bigger than the cap. Read as a stream so a
 // large upload is cut off instead of buffered.
