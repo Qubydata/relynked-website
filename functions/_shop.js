@@ -6,6 +6,12 @@
  *   relynked.com/<handle>/report          the report page (GET) and a report (POST)
  *   relynked.com/<handle>/order           the cart the page posts for the Ref in its WhatsApp message (POST)
  *   relynked.com/s/<code>                 the permanent short link
+ *   relynked.com/sitemap-index.xml        the site's sitemap, then one per shop whose owner let search read it
+ *   relynked.com/sitemap-shop-<handle>.xml  that shop's page and the photos search may show
+ *
+ * The sitemaps sit at the top of the site on purpose: a sitemap may only list addresses under its own folder, and a
+ * shop's address is relynked.com/<handle>. While shop pages are off (or the API cannot answer) the index still answers,
+ * with the site's own sitemap only, so robots.txt never points at something broken.
  *
  * WHY HERE AND NOT A REDIRECT. The address customers share and print is
  * relynked.com/<handle>; a redirect would show the API's own domain, break the
@@ -248,8 +254,48 @@ export async function toApi(context, apiPath) {
  */
 export async function servePage(context) {
   const raw = String(context.params.handle || "");
+  if (raw === SITEMAP_INDEX || raw.startsWith("sitemap-shop-")) return (await serveSitemap(context, raw)) || context.next();
   const handle = raw.toLowerCase();
   if (!shopsOn(context.env) || !isHandle(handle)) return context.next();
   if (raw !== handle) return Response.redirect(new URL(`/${handle}`, context.request.url).toString(), 301);
   return toApi(context, `/shop-pages/${handle}`);
+}
+
+/** The sitemap index's own name, at the top of the site (robots.txt names it). */
+export const SITEMAP_INDEX = "sitemap-index.xml";
+const SHOP_SITEMAP = /^sitemap-shop-([a-z0-9][a-z0-9-]{1,28}[a-z0-9])\.xml$/;
+
+/** The index with the site's own sitemap only: what /sitemap-index.xml says while shop pages are off or the API cannot answer. Pure. */
+export function siteOnlyIndex(origin) {
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n<sitemap><loc>${origin}/sitemap.xml</loc></sitemap>\n</sitemapindex>\n`;
+}
+
+const xmlAnswer = (body, cacheControl, method) =>
+  new Response(method === "HEAD" ? null : body, {
+    status: 200,
+    headers: { "content-type": "application/xml; charset=utf-8", "cache-control": cacheControl, "x-robots-tag": "noindex", "x-content-type-options": "nosniff", "strict-transport-security": "max-age=31536000" },
+  });
+
+/**
+ * relynked.com/sitemap-index.xml and relynked.com/sitemap-shop-<handle>.xml, from the API (kept at the edge ten
+ * minutes, as the API says). The index always answers: with shop pages off, or the API down or saying no, it lists
+ * the site's own sitemap only. A shop's sitemap answers only while shop pages are on; null means "not a sitemap".
+ */
+export async function serveSitemap(context, seg) {
+  const { request, env } = context;
+  if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
+  const origin = new URL(request.url).origin;
+  if (seg === SITEMAP_INDEX) {
+    if (!shopsOn(env)) return xmlAnswer(siteOnlyIndex(origin), "public, max-age=3600", request.method);
+    try {
+      const r = await toApi(context, "/shop-pages/sitemap-index.xml");
+      if (r.status === 200 && /xml/.test(r.headers.get("content-type") || "")) return r;
+    } catch {
+      // The API is not answering: the site's own sitemap is still worth reading.
+    }
+    return xmlAnswer(siteOnlyIndex(origin), "public, max-age=300", request.method);
+  }
+  const m = SHOP_SITEMAP.exec(seg);
+  if (!m || !shopsOn(env) || !isHandle(m[1])) return null;
+  return toApi(context, `/shop-pages/${m[1]}/sitemap.xml`);
 }

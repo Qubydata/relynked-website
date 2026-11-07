@@ -228,3 +228,25 @@ The first three run on every pull request (`.github/workflows/site-shop-check.ym
 server and a preview of this site; they never take a test address from this repo, it is given on the command line.
 To try the functions locally: `npx wrangler pages dev .` with `--binding SHOP_PAGES_ENABLED=true` and the two other
 settings pointing at a mock of the API.
+
+### Found on Google and AI assistants
+
+A shop page is read by search engines and AI assistants only when its owner turns on **Let search and AI
+assistants read this page** (off by default; API migration 0526). Then the page says `index`, carries one block of
+schema.org JSON-LD drawn from the same data as the page (the business, and each item with its price in NGN and
+whether it is in stock; never a restricted item, a rating or a street), and is listed in the sitemaps. Off, the page
+says `noindex` in the page and in `X-Robots-Tag` and carries no structured data. All of this is drawn by the API;
+this site only passes it on.
+
+    relynked.com/sitemap-index.xml          the site's own sitemap.xml, then one sitemap per opted in shop
+    relynked.com/sitemap-shop-<handle>.xml  that shop's page and the photos search may show
+
+The sitemaps sit at the top of the site because a sitemap may only list addresses under its own folder. While shop
+pages are off the index still answers, with `sitemap.xml` only, so `robots.txt` (which names both) never points at
+something broken. After deploy, submit `sitemap-index.xml` in Search Console and Bing Webmaster Tools.
+
+To check the structured data (Node 18 or newer; schema.org's vocabulary is downloaded once, or give `--vocab`):
+
+    node scripts/check-jsonld.mjs --self-test                   a good shop passes and each broken one is caught
+    node scripts/check-jsonld.mjs --currency NGN <page.html | https://...>
+    node scripts/shop-e2e.mjs ... --listed                      once the test shop's owner has turned search on

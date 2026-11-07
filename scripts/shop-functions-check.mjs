@@ -34,8 +34,11 @@ globalThis.caches = { default: { match: async () => undefined, put: async () => 
 
 // The API: records what it was asked, answers with a page and some headers the visitor must never see.
 const calls = [];
+/** A test may answer for the API itself (a sitemap, a failure); otherwise the API answers with a page. */
+let apiAnswers = null;
 globalThis.fetch = async (url, init = {}) => {
   calls.push({ url: String(url), init, headers: new Headers(init.headers || {}) });
+  if (apiAnswers) return apiAnswers(String(url));
   return new Response("<html>from the api</html>", {
     status: 200,
     headers: {
@@ -161,6 +164,39 @@ const forged = await asPage("/mama-put", { headers: { "x-relynked-worker": "w".r
 ok(forged.calls[0]?.headers.get("x-relynked-client-ip") === "203.0.113.7", "a wrong Worker secret is ignored: the request's own address counts");
 const noWorker = await asPage("/mama-put", { env: { ...ON, SHOP_WORKER_SECRET: "" }, headers: { "x-relynked-worker": "", "x-relynked-visitor": "198.51.100.4" } });
 ok(noWorker.calls[0]?.headers.get("x-relynked-client-ip") === "203.0.113.7", "with no Worker secret set, the visitor header is ignored");
+
+console.log("\nThe sitemaps");
+const INDEX_XML = '<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><sitemap><loc>https://relynked.com/sitemap.xml</loc></sitemap><sitemap><loc>https://relynked.com/sitemap-shop-mama-put.xml</loc></sitemap></sitemapindex>';
+const xmlFrom = (body, status = 200) => () => new Response(body, { status, headers: { "content-type": "application/xml; charset=utf-8", "cache-control": "public, max-age=0, s-maxage=600", "x-robots-tag": "noindex" } });
+const offIndex = await asPage("/sitemap-index.xml", { env: {} });
+ok(offIndex.res.status === 200 && /xml/.test(offIndex.res.headers.get("content-type")) && offIndex.calls.length === 0 && offIndex.text.includes("<loc>https://relynked.com/sitemap.xml</loc>") && !offIndex.text.includes("sitemap-shop-"), "off: the index still answers, with the site's own sitemap only, and the API is not asked");
+ok(offIndex.res.headers.get("x-robots-tag") === "noindex" && /<sitemapindex xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/.test(offIndex.text), "it is a sitemap index, itself never indexed");
+const offHead = await asPage("/sitemap-index.xml", { env: {}, method: "HEAD" });
+ok(offHead.res.status === 200 && offHead.text === "", "HEAD gets the headers and no body");
+apiAnswers = xmlFrom(INDEX_XML);
+const onIndex = await asPage("/sitemap-index.xml");
+ok(onIndex.calls[0]?.url === "https://api.example.com/shop-pages/sitemap-index.xml" && onIndex.calls[0]?.headers.get("x-relynked-proxy") === SECRET && onIndex.text === INDEX_XML, "on: the index comes from the API, asked with the secret, as the API wrote it");
+const viaRest = await asRest("/sitemap-index.xml");
+ok(viaRest.text === INDEX_XML, "and the same when the catch-all function answers the bare address");
+for (const [why, answer] of [["a 404", xmlFrom("gone", 404)], ["an HTML answer", () => new Response("<html>", { status: 200, headers: { "content-type": "text/html" } })], ["no answer at all", () => { throw new Error("down"); }]]) {
+  apiAnswers = answer;
+  const r = await asPage("/sitemap-index.xml");
+  ok(r.res.status === 200 && r.text.includes("<loc>https://relynked.com/sitemap.xml</loc>") && !r.text.includes("sitemap-shop-"), `on, the API giving ${why}: the site's own sitemap only, never a broken index`);
+}
+apiAnswers = xmlFrom('<?xml version="1.0"?><urlset/>');
+const oneShop = await asPage("/sitemap-shop-mama-put.xml");
+ok(oneShop.calls[0]?.url === "https://api.example.com/shop-pages/mama-put/sitemap.xml" && /xml/.test(oneShop.res.headers.get("content-type")), "a shop's sitemap goes to the API under that shop's name");
+for (const bad of ["/sitemap-shop-admin.xml", "/sitemap-shop-ab.xml", "/sitemap-shop-Mama.xml", "/sitemap-shop-mama--put.xml", "/sitemap-shop-mama-put.txt", "/sitemap-shop-.xml"]) {
+  const r = await asPage(bad);
+  ok(r.nexted && r.calls.length === 0, `${bad} is not a shop's sitemap: it goes on to the site`);
+}
+const offShop = await asPage("/sitemap-shop-mama-put.xml", { env: {} });
+ok(offShop.nexted && offShop.calls.length === 0, "off: a shop's sitemap goes on to the site, the API is not asked");
+const posted = await asPage("/sitemap-index.xml", { method: "POST", body: "x" });
+ok(posted.res.status === 405 && posted.calls.length === 0, "a sitemap is read only");
+apiAnswers = null;
+ok(readFileSync(join(root, "robots.txt"), "utf8").includes("Sitemap: https://relynked.com/sitemap-index.xml") && readFileSync(join(root, "robots.txt"), "utf8").includes("Sitemap: https://relynked.com/sitemap.xml"), "robots.txt names the sitemap index beside the site's own sitemap");
+ok(!shopRoutes(root).exclude.includes("/sitemap-index.xml"), "no file is called sitemap-index.xml, so the function answers it");
 
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed ? 1 : 0);
