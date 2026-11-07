@@ -2,7 +2,8 @@
  * End to end check of the shop pages on a deployed copy of the website (the preview, never production by default).
  *
  *   node scripts/shop-e2e.mjs --base <preview address> --handle <test shop handle> --code <its short link code>
- *        [--expect <file.json>] [--site-headers]
+ *        [--expect <file.json>] [--site-headers] [--listed] [--vocab <schemaorg-current-https.jsonld>]
+ *        [--public-base <the API's SHOP_PAGES_BASE_URL, when it is not --base: a local run>]
  *
  * Nothing about the test server, the preview or the test shop is written in this public file: the addresses and the
  * handle come from the command line (or SHOP_E2E_BASE, SHOP_E2E_HANDLE and SHOP_E2E_CODE), and what the test shop
@@ -12,7 +13,10 @@
  *     "deal": { "label": "...", "price": "2,000", "oldPrice": "2,500" }, "combo": "..." }
  *
  * Every key is optional; a check whose key is missing is skipped and says so. --site-headers also checks that the
- * site's own pages carry the site's security headers (a deploy copy built with _headers).
+ * site's own pages carry the site's security headers (a deploy copy built with _headers). --listed says the test
+ * shop's owner turned on "Let search and AI assistants read this page": then the page must be indexable with valid
+ * schema.org structured data (checked by check-jsonld.mjs against schema.org's vocabulary, --vocab or downloaded once)
+ * and its own sitemap; without it, the page must say noindex and carry none.
  *
  * Run it once the test server has SHOP_PAGES_ENABLED=true, SHOP_PAGES_BASE_URL (the preview address) and the shared
  * SHOP_PAGES_PROXY_SECRET. It only reads, except one deliberately bad report and one nonsense cart (both refused, nothing kept).
@@ -25,6 +29,7 @@
  * showing a shop; capital letters redirecting.
  */
 import { readFileSync } from "node:fs";
+import { jsonLdBlocks, readVocab, validateJsonLd } from "./check-jsonld.mjs";
 
 const arg = (n, d) => {
   const i = process.argv.indexOf(`--${n}`);
@@ -52,6 +57,10 @@ const EXPECT = (() => {
   }
 })();
 const SITE_HEADERS = process.argv.includes("--site-headers");
+const LISTED = process.argv.includes("--listed");
+const VOCAB = arg("vocab", "");
+// The address the pages call their own (canonical, sitemaps): the preview itself on the staging run.
+const PUBLIC = (arg("public-base", "") || BASE).replace(/\/+$/, "");
 
 let failed = 0;
 let passed = 0;
@@ -180,7 +189,7 @@ ok(/strict-origin/.test(page.h("referrer-policy")), "referrer policy");
 ok(/camera=\(\)/.test(page.h("permissions-policy")), "permissions policy");
 ok(/max-age=\d{7,}/.test(page.h("strict-transport-security")), "HSTS");
 ok(/public/.test(page.h("cache-control")), "cache rule is public (a few seconds at the edge)", page.h("cache-control"));
-ok(/noindex/.test(page.h("x-robots-tag")) || !page.h("x-robots-tag"), "indexing header is sane", page.h("x-robots-tag"));
+ok(/^(noindex, follow|index, follow, max-image-preview:large)$/.test(page.h("x-robots-tag")), "indexing header is one of the two the API sends (section 8 checks it is the owner's choice)", page.h("x-robots-tag"));
 ok(!page.h("set-cookie"), "no cookies set");
 
 // 3. Photos (the first visit makes the web sized copies, so look again for a short while).
@@ -248,6 +257,47 @@ if (SITE_HEADERS) {
   ok(pricing.h("content-security-policy").includes("default-src 'self'"), "the site's own pages keep the site's CSP");
   ok(pricing.h("x-frame-options") === "DENY" && /max-age=\d{7,}/.test(pricing.h("strict-transport-security")), "the site's own pages keep their security headers");
 } else skip("the site's own security headers", "pass --site-headers for a deploy copy built with _headers");
+
+// 8. Search and AI assistants (growth build 7, API migration 0526).
+console.log(`\nSearch and AI assistants (${LISTED ? "the owner turned search on: --listed" : "search off, the default"})`);
+const metaOf = (key) => new RegExp(`<meta (?:name|property)="${esc(key)}" content="([^"]*)">`).exec(body)?.[1] ?? null;
+ok(body.includes(`<link rel="canonical" href="${PUBLIC}/${HANDLE}">`), "the canonical address is the page's own", /<link rel="canonical" href="([^"]+)">/.exec(body)?.[1]);
+ok(metaOf("og:url") === `${PUBLIC}/${HANDLE}` && !!metaOf("og:title") && metaOf("og:site_name") === "Relynked" && !!metaOf("twitter:title"), "Open Graph and Twitter tags: title, address, site name");
+const ogImage = metaOf("og:image");
+if (ogImage) {
+  ok(metaOf("twitter:card") === "summary_large_image" && metaOf("twitter:image") === ogImage && !!metaOf("og:image:alt"), "the share picture is on both cards, with its alt text");
+  const pic = await fetch(ogImage.replace(PUBLIC, BASE), { redirect: "manual" });
+  ok(pic.status === 200 && /image\/jpeg/.test(pic.headers.get("content-type") || ""), "the share picture loads", String(pic.status));
+} else ok(metaOf("twitter:card") === "summary", "no picture to share: a small card");
+const blocks = jsonLdBlocks(body);
+const robots = metaOf("robots") || "";
+const sitemapIndex = await get("/sitemap-index.xml");
+ok(sitemapIndex.status === 200 && /xml/.test(sitemapIndex.h("content-type")) && /<sitemapindex /.test(sitemapIndex.text) && sitemapIndex.text.includes("/sitemap.xml</loc>"), "the sitemap index answers, with the site's own sitemap in it", String(sitemapIndex.status));
+const shopMap = await get(`/sitemap-shop-${HANDLE}.xml`);
+if (LISTED) {
+  ok(robots.startsWith("index") && page.h("x-robots-tag").startsWith("index"), "indexable, in the page and in X-Robots-Tag", `${robots} / ${page.h("x-robots-tag")}`);
+  ok(blocks.length === 1, "one block of structured data", String(blocks.length));
+  const vocab = await readVocab(VOCAB || null);
+  const { errors, warnings } = validateJsonLd(blocks, { vocab, pageUrl: `${PUBLIC}/${HANDLE}`, currency: "NGN" });
+  ok(errors.length === 0, "the structured data is valid schema.org, priced in NGN, nothing invented", errors.slice(0, 3).join("; "));
+  if (warnings.length) console.log(`        warnings: ${warnings.slice(0, 3).join("; ")}`);
+  let ld = {};
+  try {
+    ld = JSON.parse(blocks[0] || "{}");
+  } catch {
+    ld = {};
+  }
+  const offers = (ld.hasOfferCatalog?.itemListElement || []).map((x) => ({ name: x.name, price: x.offers?.price }));
+  const naira = (p) => `\u20a6${Number(p).toLocaleString("en-NG", { minimumFractionDigits: /\./.test(String(p)) ? 2 : 0, maximumFractionDigits: 2 })}`;
+  const missing = offers.filter((o) => !body.includes(naira(o.price)));
+  ok(offers.length > 0 && missing.length === 0, "every price in the structured data is a price shown on the page", missing.slice(0, 2).map((o) => `${o.name} ${o.price}`).join(", "));
+  for (const item of products) ok(offers.some((o) => o.name === item), `structured data lists ${item}`);
+  ok(shopMap.status === 200 && shopMap.text.includes(`<loc>${PUBLIC}/${HANDLE}</loc>`), "the shop's own sitemap lists its page", String(shopMap.status));
+} else {
+  ok(robots.startsWith("noindex") && page.h("x-robots-tag").startsWith("noindex"), "not indexed until the owner turns search on (page and X-Robots-Tag)", `${robots} / ${page.h("x-robots-tag")}`);
+  ok(blocks.length === 0, "and no structured data");
+  ok(shopMap.status === 404 && !shopMap.text.includes("<urlset"), "and no sitemap of its own", String(shopMap.status));
+}
 
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed ? 1 : 0);
