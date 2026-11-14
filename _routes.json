@@ -5,6 +5,7 @@
   ],
   "exclude": [
     "/",
+    "/assets",
     "/assets/*",
     "/careers.html",
     "/careers",
@@ -15,11 +16,13 @@
     "/data-deletion.html",
     "/data-deletion",
     "/favicon.ico",
+    "/furjejkwnfuh737-x3-shift26",
     "/furjejkwnfuh737-x3-shift26/*",
     "/how-it-works.html",
     "/how-it-works",
     "/index.html",
     "/index",
+    "/industries",
     "/industries/*",
     "/press.html",
     "/press",
@@ -36,6 +39,7 @@
     "/sitemap.xml",
     "/terms.html",
     "/terms",
+    "/o",
     "/o/*"
   ]
 }
