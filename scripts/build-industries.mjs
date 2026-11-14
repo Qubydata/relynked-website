@@ -708,7 +708,11 @@ Allow: /
 Disallow: /dashboard
 Disallow: /api/
 
+# Shop pages (relynked.com/<handle>) decide for themselves: each says index or noindex in its own page and in
+# X-Robots-Tag, from its owner's "Let search and AI assistants read this page" switch. The sitemap index lists the
+# site's own sitemap and one per shop whose owner said yes (functions/_shop.js, the API's shop pages).
 Sitemap: ${SITE}/sitemap.xml
+Sitemap: ${SITE}/sitemap-index.xml
 `;
 
 // ---------------------------------------------------------------- write
