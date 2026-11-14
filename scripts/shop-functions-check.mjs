@@ -134,6 +134,13 @@ for (const odd of ["/mama-put/photo/evil.jpg", "/mama-put/photo/../../app", "/ma
   const r = await asRest(odd);
   ok(r.nexted && r.calls.length === 0, `${odd} goes on to the site, never to the API`);
 }
+const VID = `${"a".repeat(8)}-bbbb-cccc-dddd-${"e".repeat(12)}`;
+const vid = await asRest(`/mama-put/video/${VID}`);
+ok(vid.calls[0]?.url === `https://api.example.com/shop-pages/mama-put/video/${VID}` && vid.calls[0]?.init.redirect === "manual", "its own video goes to the API, whose redirect is passed back, not followed");
+for (const oddv of [`/mama-put/video/${VID}.mp4`, "/mama-put/video/evil", "/mama-put/video", `/mama-put/video/${VID}/x`]) {
+  const r = await asRest(oddv);
+  ok(r.nexted && r.calls.length === 0, `${oddv} goes on to the site, never to the API`);
+}
 const rep = await asRest("/mama-put/report");
 ok(rep.calls[0]?.url === "https://api.example.com/shop-pages/mama-put/report", "the report page goes to the API");
 const orderGet = await asRest("/mama-put/order");

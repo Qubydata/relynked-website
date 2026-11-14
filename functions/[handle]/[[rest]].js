@@ -1,11 +1,14 @@
 /**
- * relynked.com/<handle> (see servePage), relynked.com/<handle>/photo/<file> and relynked.com/<handle>/report, from
+ * relynked.com/<handle> (see servePage), relynked.com/<handle>/photo/<file>, relynked.com/<handle>/video/<id> and
+ * relynked.com/<handle>/report, from
  * the API (../_shop.js). Any other path under a first segment goes on to the
  * site's own files (/industries/..., /assets/..., /o/... are never handles).
  */
 import { isHandle, servePage, shopsOn, toApi } from "../_shop.js";
 
 const PHOTO = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-(t|l)\.jpg$/;
+/** An item's video (API 0591): the API answers with a redirect to a short-lived signed link, passed back as it is. */
+const VIDEO = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
 export async function onRequest(context) {
   const handle = String(context.params.handle || "");
@@ -14,6 +17,7 @@ export async function onRequest(context) {
   if (rest.length === 0) return servePage(context);
   if (!shopsOn(context.env) || !isHandle(handle)) return context.next();
   if (rest.length === 2 && rest[0] === "photo" && PHOTO.test(rest[1])) return toApi(context, `/shop-pages/${handle}/photo/${rest[1]}`);
+  if (rest.length === 2 && rest[0] === "video" && VIDEO.test(rest[1])) return toApi(context, `/shop-pages/${handle}/video/${rest[1]}`);
   if (rest.length === 1 && rest[0] === "report") return toApi(context, `/shop-pages/${handle}/report`);
   // The cart the page posts just before it opens WhatsApp, to get the Ref written at the end of the message (small JSON, POST only).
   if (rest.length === 1 && rest[0] === "order" && context.request.method === "POST") return toApi(context, `/shop-pages/${handle}/order`);
