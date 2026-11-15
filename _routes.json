@@ -7,6 +7,8 @@
     "/",
     "/assets",
     "/assets/*",
+    "/beta.html",
+    "/beta",
     "/careers.html",
     "/careers",
     "/contact.html",

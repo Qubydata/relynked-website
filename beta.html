@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Beta testers · Relynked</title>
+<meta name="description" content="Get paid to test Relynked and Remy, the assistant that answers a business's customers on WhatsApp. 12 spots in the first sprint, 5 days, paid per active day plus bonuses.">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://relynked.com/beta">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Relynked">
+<meta property="og:title" content="Beta testers · Relynked">
+<meta property="og:description" content="Get paid to test Relynked and Remy on WhatsApp. 12 spots in the first sprint.">
+<meta property="og:url" content="https://relynked.com/beta">
+<meta property="og:image" content="https://relynked.com/assets/img/og-relynked.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/img/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#070A09">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/styles.css?v=20261011c">
+<link rel="stylesheet" href="/assets/css/beta.css?v=20261115a">
+</head>
+<body class="beta">
+
+<!-- The doodles, drawn once and used where they are needed. Line drawings in Relynked's style: round ends, one weight. -->
+<svg class="sprite" aria-hidden="true" focusable="false" width="0" height="0">
+  <symbol id="d-bubble" viewBox="0 0 64 56"><path d="M10 6.5c13-1.6 31-1.7 44 .2 3.3.5 5.4 3 5.5 6.3.3 7.4.2 14.6-.3 21.8-.2 3.2-2.6 5.6-5.8 5.9-6.6.6-13.4.7-20 .6L19.5 50.2c-.9.7-2.2 0-2-1.2l1.4-8.8c-2.9 0-5.8-.2-8.7-.5-3.2-.3-5.6-2.9-5.8-6.1-.4-7-.4-14.1 0-21.1.2-3.1 2.6-5.6 5.6-6z"/><path d="M17 17.5h29M17 25h22M17 32.4h14"/></symbol>
+  <symbol id="d-ticks" viewBox="0 0 48 26"><path d="M3 14.5l7.2 7.3L24.5 4.6M20.5 18.6l3.4 3.3L44.6 3.8"/></symbol>
+  <symbol id="d-phone" viewBox="0 0 48 80"><rect x="5" y="3" width="38" height="74" rx="8.5"/><path d="M19 9.5h10"/><path d="M12.5 22.5h17c1.8 0 3 1.2 3 3v7.2c0 1.8-1.2 3-3 3h-10l-5 4.3.6-4.3h-2.6c-1.8 0-3-1.2-3-3v-7.2c0-1.8 1.2-3 3-3z"/><path d="M35.5 44.5h-14c-1.6 0-2.7 1-2.7 2.7v5.6c0 1.6 1 2.7 2.7 2.7h9l4.3 3.6-.5-3.6h1.2c1.6 0 2.7-1 2.7-2.7v-5.6c0-1.6-1-2.7-2.7-2.7z"/><circle cx="24" cy="69" r="2.3"/></symbol>
+  <symbol id="d-bag" viewBox="0 0 60 64"><path d="M9.5 20.5h41l3 37.3c.1 1.9-1.3 3.4-3.2 3.4H9.7c-1.9 0-3.3-1.5-3.2-3.4z"/><path d="M20 26V15.8C20 9.6 24.4 4.5 30 4.5s10 5.1 10 11.3V26"/><path d="M17.5 37.5c3.8 5.3 8 8 12.5 8s8.7-2.7 12.5-8"/></symbol>
+  <symbol id="d-receipt" viewBox="0 0 52 70"><path d="M8 4.5h36v60.5l-6-4-6 4-6-4-6 4-6-4-6 4z"/><path d="M15 17h22M15 26h22M15 35h14M31.5 35H37M15 47.5h10M29.5 47.5H37"/></symbol>
+  <symbol id="d-store" viewBox="0 0 76 66"><path d="M8 24v37.5h60V24"/><path d="M4 13.5L11 4h54l7 9.5v3.8c0 4-3.3 7.2-7.4 7.2s-7.5-3.2-7.5-7.2c0 4-3.3 7.2-7.4 7.2S42.2 21.3 42.2 17.3c0 4-3.3 7.2-7.4 7.2s-7.4-3.2-7.4-7.2c0 4-3.4 7.2-7.5 7.2s-7.4-3.2-7.4-7.2c0 4-3.3 7.2-7.4 7.2S4 21.3 4 17.3z"/><path d="M19 13.5L22.5 4M34.5 13.5L35.8 4M50.5 13.5L49.5 4"/><path d="M15.5 61.5V40.3c0-1.5 1.2-2.8 2.8-2.8h9.4c1.5 0 2.8 1.3 2.8 2.8v21.2"/><rect x="39" y="37.5" width="20" height="13" rx="2.2"/></symbol>
+  <symbol id="d-voice" viewBox="0 0 84 34"><path d="M17 3.5h50c7.5 0 13.5 6 13.5 13.5S74.5 30.5 67 30.5H17C9.5 30.5 3.5 24.5 3.5 17S9.5 3.5 17 3.5z"/><path d="M13.5 11.5l8 5.5-8 5.5z"/><path d="M31 14v6M37 10v14M43 12.5v9M49 8.5v17M55 13v8M61 11v12M67 15v4"/></symbol>
+  <symbol id="d-spark" viewBox="0 0 30 30"><path d="M15 2.5c.9 6.7 4.9 10.8 12.5 12.5-7.6 1.7-11.6 5.8-12.5 12.5-.9-6.7-4.9-10.8-12.5-12.5C10.1 13.3 14.1 9.2 15 2.5z"/></symbol>
+  <symbol id="d-squiggle" viewBox="0 0 120 20"><path d="M3 13c9-9 17-9 24 0s15 9 22 0 15-9 22 0 15 9 22 0 15-9 24 0"/></symbol>
+  <symbol id="d-check" viewBox="0 0 64 64"><circle cx="32" cy="32" r="27.5"/><path d="M19.5 33l8.5 8.7 17-19.2"/></symbol>
+</svg>
+
+<nav class="nav solid always-solid" id="nav">
+  <div class="wrap">
+    <a class="logo" href="/"><svg class="mk" viewBox="0 0 336 338" aria-hidden="true"><rect width="336" height="338" rx="84" fill="#0A3F32"/><rect x="54" y="85" width="176" height="65" rx="32.5" fill="#fff"/><rect x="54" y="186" width="227" height="67" rx="33.5" fill="#E2E41A"/></svg><span class="wm">Relynked<sup class="tm">™</sup></span></a>
+    <div class="links" id="menu">
+      <a href="/product">Products</a><a href="/how-it-works">How it works</a><a href="/pricing">Pricing</a><a href="/contact">Contact</a><a class="menu-cta" href="#apply">Apply to test</a>
+    </div>
+    <a class="btn forest magnet" href="#apply">Apply to test <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<main id="top">
+
+<!-- ================= HERO: fluted glass over forest and lime ================= -->
+<section class="bh" aria-labelledby="bh-title">
+  <div class="bh-orbs" aria-hidden="true"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span></div>
+  <div class="bh-flute" aria-hidden="true"></div>
+  <div class="wrap bh-in">
+    <div class="bh-copy">
+      <p class="bh-eye"><span class="dot" aria-hidden="true"></span>Paid beta testers <span class="sep" aria-hidden="true">/</span> first sprint</p>
+      <h1 id="bh-title">Test Remy on WhatsApp. <span class="lime-sweep">Get paid for it.</span></h1>
+      <p class="bh-lead">Relynked runs a business from one app, and Remy, the assistant inside it, answers the business's customers on WhatsApp. Help us find where Remy gets it wrong, before real customers do.</p>
+      <ul class="bh-facts">
+        <li><b data-k="spots.total">12</b><span>spots in the first sprint</span></li>
+        <li><b><span data-k="sprintDays">5</span> days</b><span>a little time each day</span></li>
+        <li><b data-k="business.upTo" data-naira>₦8,000</b><span>the most a business tester earns, plus bonuses</span></li>
+      </ul>
+      <div class="bh-cta">
+        <a class="btn lime magnet" href="#apply">Apply to test <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="bh-link" href="#pay">How pay works</a>
+      </div>
+      <p class="bh-closed" id="bh-closed" hidden>Sign up for this sprint is closed. You can still read how it works.</p>
+    </div>
+
+    <figure class="bh-chat" aria-label="An example chat: a customer orders from a shop on WhatsApp and Remy replies for the shop">
+      <div class="glass-card">
+        <div class="wa-head"><span class="wa-av" aria-hidden="true">MR</span><span><b>Mama Ruth's Kitchen</b><small>replies with Remy</small></span></div>
+        <div class="wa-body">
+          <p class="wa in">How far, una get jollof today? 🙏🏽</p>
+          <p class="wa out">Good afternoon ma 👋🏾 Yes, we have jollof today.<br><b>Mains</b><br>- Jollof rice: ₦2,500<br>- Fried rice: ₦2,800</p>
+          <p class="wa in">2 jollof abeg, deliver to Ikeja</p>
+          <p class="wa out">- 2 plates of Jollof rice: ₦5,000<br>- Delivery to Ikeja: ₦1,500<br><b>Total: ₦6,500</b><span class="tk" aria-hidden="true"><svg><use href="#d-ticks"/></svg></span></p>
+        </div>
+      </div>
+      <svg class="doodle dh1" aria-hidden="true"><use href="#d-bubble"/></svg>
+      <svg class="doodle dh2" aria-hidden="true"><use href="#d-bag"/></svg>
+      <svg class="doodle dh3" aria-hidden="true"><use href="#d-spark"/></svg>
+      <svg class="doodle dh4" aria-hidden="true"><use href="#d-voice"/></svg>
+    </figure>
+  </div>
+</section>
+
+<!-- ================= ROLES ================= -->
+<section class="bs roles" id="roles" aria-labelledby="roles-title">
+  <div class="wrap">
+    <div class="bs-head">
+      <p class="eyebrow">Two kinds of tester</p>
+      <h2 id="roles-title">Some run a test business. Others shop from it.</h2>
+      <p class="lead">You do not choose your role. We place people so every test business has customers messaging it, and nobody is left talking to an empty shop.</p>
+    </div>
+    <div class="role-grid">
+      <article class="role glass-light">
+        <svg class="doodle dr" aria-hidden="true"><use href="#d-store"/></svg>
+        <p class="role-tag">Business tester</p>
+        <h3>Run a test business in the Relynked app</h3>
+        <p class="role-pay"><span>Up to</span> <b data-k="business.upTo" data-naira>₦8,000</b> <span>for <span data-k="sprintDays">5</span> days, plus bonuses</span></p>
+        <ul class="role-list">
+          <li>Set up a business with at least 10 products or services, photos and prices.</li>
+          <li>Ask Remy at least 5 things a day: sales, a new price, a deal, a report.</li>
+          <li>Confirm orders, mark payments, handle a refund, and watch how Remy answers your customers.</li>
+        </ul>
+        <p class="role-time"><svg aria-hidden="true"><use href="#d-phone"/></svg><span><b><span data-k="business.minutes.min">45</span> to <span data-k="business.minutes.max">60</span> minutes a day</b>, any time, best in two sittings.</span></p>
+      </article>
+      <article class="role glass-light">
+        <svg class="doodle dr" aria-hidden="true"><use href="#d-bag"/></svg>
+        <p class="role-tag">Customer tester</p>
+        <h3>Message test businesses on WhatsApp as a buyer</h3>
+        <p class="role-pay"><span>Up to</span> <b data-k="customer.upTo" data-naira>₦5,500</b> <span>for <span data-k="sprintDays">5</span> days, plus bonuses</span></p>
+        <ul class="role-list">
+          <li>You get <span data-k="codes.min">3</span> to <span data-k="codes.max">5</span> business codes. Send a code to Relynked's WhatsApp number to reach that shop.</li>
+          <li>Ask prices and pictures, ask about delivery, place an order, change your mind once, send a voice note.</li>
+          <li>Write the way you normally do. Some customer testers will be asked to chat fully in Pidgin, text and voice notes, for the whole sprint.</li>
+        </ul>
+        <p class="role-time"><svg aria-hidden="true"><use href="#d-phone"/></svg><span><b><span data-k="customer.minutes.min">30</span> to <span data-k="customer.minutes.max">45</span> minutes a day</b>, any time, best in two sittings.</span></p>
+      </article>
+    </div>
+    <p class="roles-note"><svg aria-hidden="true"><use href="#d-ticks"/></svg>Every tester sends one short check-in a day: what you did, what broke, and screenshots.</p>
+  </div>
+</section>
+
+<!-- ================= PAY ================= -->
+<section class="bs pay" id="pay" aria-labelledby="pay-title">
+  <div class="pay-flute" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="bs-head">
+      <p class="eyebrow on-dark">How pay works</p>
+      <h2 id="pay-title">Paid daily, for every day you test.</h2>
+      <p class="lead on-dark">Each active day is paid the next morning, to your own bank account, by our testing partner. Relynked itself handles no money.</p>
+    </div>
+
+    <ol class="pay-flow">
+      <li><svg aria-hidden="true" class="pf-ticks"><use href="#d-ticks"/></svg><span class="pf-when">Today</span><span class="pf-what">Do the day's tasks and send the short check-in. That makes it an active day.</span></li>
+      <li><svg aria-hidden="true" class="pf-receipt"><use href="#d-receipt"/></svg><span class="pf-when">Next morning</span><span class="pf-what">That day's pay lands in your own bank account, sent by our testing partner.</span></li>
+      <li><svg aria-hidden="true" class="pf-spark"><use href="#d-spark"/></svg><span class="pf-when">End of the sprint</span><span class="pf-what">Bonuses for valid bugs and for the top 3 testers are paid.</span></li>
+    </ol>
+
+    <div class="pay-grid">
+      <div class="pay-card">
+        <p class="pay-tag">Business tester</p>
+        <p class="pay-day"><b data-k="business.dayPay" data-naira>₦1,500</b><span>a day</span></p>
+        <p class="pay-plus">+ <b data-k="business.dataTopup" data-naira>₦500</b> for data, once</p>
+        <p class="pay-who">Runs one test business for the whole sprint, <span data-k="business.minutes.min">45</span> to <span data-k="business.minutes.max">60</span> minutes a day.</p>
+        <p class="pay-max">Up to <b data-k="business.upTo" data-naira>₦8,000</b> for <span data-k="sprintDays">5</span> days</p>
+      </div>
+      <div class="pay-card">
+        <p class="pay-tag">Customer tester</p>
+        <p class="pay-day"><b data-k="customer.dayPay" data-naira>₦1,000</b><span>a day</span></p>
+        <p class="pay-plus">+ <b data-k="customer.dataTopup" data-naira>₦500</b> for data, once</p>
+        <p class="pay-who">Messages <span data-k="codes.min">3</span> to <span data-k="codes.max">5</span> test businesses as a buyer, <span data-k="customer.minutes.min">30</span> to <span data-k="customer.minutes.max">45</span> minutes a day.</p>
+        <p class="pay-max">Up to <b data-k="customer.upTo" data-naira>₦5,500</b> for <span data-k="sprintDays">5</span> days</p>
+      </div>
+      <div class="pay-card bonus">
+        <p class="pay-tag">Bonuses, both roles</p>
+        <dl class="bonus-list">
+          <div><dt data-k="bonuses.bug" data-naira>₦300</dt><dd>a valid bug: new, can be repeated, with a screenshot</dd></div>
+          <div><dt data-k="bonuses.seriousBug" data-naira>₦1,000</dt><dd>a serious bug: wrong money, wrong price, wrong customer, someone else's data, a sign in or PIN problem</dd></div>
+        </dl>
+        <p class="trio-l">Top 3 testers of the sprint</p>
+        <p class="pay-trio"><b data-k="bonuses.creativity.0" data-naira>₦3,000</b><b data-k="bonuses.creativity.1" data-naira>₦2,000</b><b data-k="bonuses.creativity.2" data-naira>₦1,000</b></p>
+      </div>
+    </div>
+
+    <ul class="pay-rules">
+      <li><svg aria-hidden="true"><use href="#d-receipt"/></svg><span><b>One bonus pool of <span data-k="bonuses.poolCap" data-naira>₦20,000</span> for the whole sprint.</b> Every bonus comes from it. When it is spent, bonuses stop.</span></li>
+      <li class="cap-line" hidden><svg aria-hidden="true"><use href="#d-receipt"/></svg><span>At most <b data-k="bonuses.bugCapPerTester" data-naira>₦0</b> in bug bonuses for one tester.</span></li>
+      <li><svg aria-hidden="true" class="wide"><use href="#d-ticks"/></svg><span><b>No check-in, no pay for that day.</b> The check-in is how we know you tested.</span></li>
+      <li><svg aria-hidden="true"><use href="#d-bubble"/></svg><span><b>The first report of a bug wins.</b> A repeat of a bug already reported earns nothing.</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section class="bs faqs" id="questions" aria-labelledby="faq-title">
+  <div class="wrap">
+    <div class="bs-head">
+      <p class="eyebrow">Questions</p>
+      <h2 id="faq-title">Before you apply.</h2>
+    </div>
+    <div class="faq-list">
+      <details>
+        <summary>Will other testers see my phone number?</summary>
+        <p>No. Customer testers reach each test business with a short code sent to Relynked's own WhatsApp number, like "code ABC2". Nobody gets anyone's phone number, and nobody sees yours.</p>
+      </details>
+      <details>
+        <summary>What data do I use?</summary>
+        <p>Test data only. Make up your business, your products and your orders. Never use a real customer's details, a real card, or anyone's real bank details. No real money moves unless we tell you so in writing. Your screenshots and reports stay with Relynked.</p>
+      </details>
+      <details>
+        <summary>Who picks the testers?</summary>
+        <p>Relynked does, with our testing partner. Business tester places go first to people who run or have run a business and do well on the short quiz. Then we fill customer tester places so every test business has customers, and some of them chat only in Pidgin. Everyone else goes on the waiting list for the next sprint.</p>
+      </details>
+      <details>
+        <summary>When will I hear back?</summary>
+        <p id="faq-when">We email the people we pick within a week of sign up closing. If you are not picked this time, you stay on the waiting list and we may email you for a later sprint.</p>
+      </details>
+      <details>
+        <summary>Do I have to write in Pidgin?</summary>
+        <p>Only if we ask you to. Some customer testers chat fully in Pidgin, text and voice notes, for the whole sprint, because many real customers do. Tell us honestly how comfortable you are, so we place you well.</p>
+      </details>
+      <details>
+        <summary>What phone do I need?</summary>
+        <p>Any Android phone or iPhone with WhatsApp and a working camera. Business testers also install the Relynked app; we send the link when you are picked.</p>
+      </details>
+      <details>
+        <summary>How and when am I paid?</summary>
+        <p>Daily. Each active day is paid the next morning, straight to your own bank account, by our testing partner. Bonuses are paid at the end of the sprint, while the bonus pool lasts. Relynked itself handles no money.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ================= APPLY ================= -->
+<section class="bs apply" id="apply" aria-labelledby="apply-title">
+  <div class="wrap">
+    <div class="apply-shell">
+      <div class="apply-side">
+        <p class="eyebrow">Apply</p>
+        <h2 id="apply-title">Spots are limited.</h2>
+        <p class="lead">We are picking <b data-k="spots.total">12</b> people for the first sprint: <span data-k="spots.business">3</span> business testers and <span data-k="spots.customer">9</span> customer testers. It takes about 5 minutes, and the 4 quiz questions help us place you.</p>
+        <ol class="next-steps">
+          <li><b>You apply.</b> One form, about 5 minutes.</li>
+          <li><b>We place you.</b> Business tester or customer tester, so every test business has customers.</li>
+          <li><b>We email you.</b> If you are picked: your role, tasks, dates and codes.</li>
+        </ol>
+        <svg class="doodle da1" aria-hidden="true"><use href="#d-phone"/></svg>
+        <svg class="doodle da2" aria-hidden="true"><use href="#d-squiggle"/></svg>
+        <svg class="doodle da3" aria-hidden="true"><use href="#d-receipt"/></svg>
+      </div>
+
+      <div class="apply-card">
+        <div class="closed-note" id="closed-note" hidden role="status">
+          <h3>Sign up is closed for now.</h3>
+          <p>Thank you for your interest. Follow Relynked on Instagram to hear when the next sprint opens.</p>
+        </div>
+
+        <form id="beta-form" novalidate>
+          <div class="hp" aria-hidden="true">
+            <label for="website">Leave this empty</label>
+            <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+          </div>
+
+          <fieldset class="grp">
+            <legend><span class="n">1</span>About you</legend>
+            <div class="row2">
+              <div class="f">
+                <label for="name">Full name</label>
+                <input id="name" name="name" type="text" autocomplete="name" required minlength="2" maxlength="80" aria-describedby="name-err">
+                <p class="err" id="name-err" hidden>Please write your name.</p>
+              </div>
+              <div class="f">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required maxlength="200" aria-describedby="email-err">
+                <p class="err" id="email-err" hidden>Please check your email address.</p>
+              </div>
+            </div>
+            <div class="row2">
+              <div class="f">
+                <label for="phone">WhatsApp number</label>
+                <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required maxlength="20" placeholder="0803 123 4567" aria-describedby="phone-help phone-err">
+                <p class="help" id="phone-help">The number you use on WhatsApp. 0803 123 4567 or +234 803 123 4567 both work.</p>
+                <p class="err" id="phone-err" hidden>Please check your WhatsApp number.</p>
+              </div>
+              <div class="f">
+                <label for="city">City or town</label>
+                <input id="city" name="city" type="text" autocomplete="address-level2" required minlength="2" maxlength="60" placeholder="Lagos, Benin City, Abuja ..." aria-describedby="city-err">
+                <p class="err" id="city-err" hidden>Please write your city or town.</p>
+              </div>
+            </div>
+            <div class="f">
+              <span class="lbl" id="pt-l">Your phone</span>
+              <div class="chips" role="radiogroup" aria-labelledby="pt-l" aria-describedby="phone_type-err">
+                <label class="chip-opt"><input type="radio" name="phoneType" value="android" required><span>Android</span></label>
+                <label class="chip-opt"><input type="radio" name="phoneType" value="iphone"><span>iPhone</span></label>
+              </div>
+              <p class="err" id="phone_type-err" hidden>Please pick your phone.</p>
+            </div>
+            <div class="f">
+              <span class="lbl" id="min-l">Time you can give a day</span>
+              <div class="chips" role="radiogroup" aria-labelledby="min-l" aria-describedby="minutes-err">
+                <label class="chip-opt"><input type="radio" name="minutes" value="15" required><span>15 min</span></label>
+                <label class="chip-opt"><input type="radio" name="minutes" value="30"><span>30 min</span></label>
+                <label class="chip-opt"><input type="radio" name="minutes" value="45"><span>45 min</span></label>
+                <label class="chip-opt"><input type="radio" name="minutes" value="60"><span>1 hour</span></label>
+                <label class="chip-opt"><input type="radio" name="minutes" value="90"><span>90 min or more</span></label>
+              </div>
+              <p class="err" id="minutes-err" hidden>Please pick how much time you have.</p>
+            </div>
+            <div class="f">
+              <span class="lbl" id="rb-l">Do you run a business, or have you run one?</span>
+              <div class="chips" role="radiogroup" aria-labelledby="rb-l" aria-describedby="ran_business-err">
+                <label class="chip-opt"><input type="radio" name="ranBusiness" value="yes" required><span>Yes</span></label>
+                <label class="chip-opt"><input type="radio" name="ranBusiness" value="no"><span>No</span></label>
+              </div>
+              <p class="err" id="ran_business-err" hidden>Please answer yes or no.</p>
+            </div>
+            <div class="f" id="kind-wrap" hidden>
+              <label for="businessKind">What kind of business?</label>
+              <input id="businessKind" name="businessKind" type="text" maxlength="80" placeholder="Food, fashion, salon, phones ..." aria-describedby="business_kind-err">
+              <p class="err" id="business_kind-err" hidden>Please say what kind of business.</p>
+            </div>
+          </fieldset>
+
+          <fieldset class="grp">
+            <legend><span class="n">2</span>Languages</legend>
+            <div class="f">
+              <span class="lbl" id="pg-l">How comfortable are you writing and speaking Pidgin?</span>
+              <div class="chips" role="radiogroup" aria-labelledby="pg-l" aria-describedby="pidgin_comfort-err">
+                <label class="chip-opt"><input type="radio" name="pidginComfort" value="none" required><span>Not at all</span></label>
+                <label class="chip-opt"><input type="radio" name="pidginComfort" value="little"><span>A little</span></label>
+                <label class="chip-opt"><input type="radio" name="pidginComfort" value="very"><span>Very comfortable</span></label>
+                <label class="chip-opt"><input type="radio" name="pidginComfort" value="daily"><span>It's how I talk every day</span></label>
+              </div>
+              <p class="err" id="pidgin_comfort-err" hidden>Please pick one.</p>
+            </div>
+            <div class="f">
+              <span class="lbl" id="ol-l">Other languages you speak <em>(optional)</em></span>
+              <div class="chips" role="group" aria-labelledby="ol-l">
+                <label class="chip-opt"><input type="checkbox" name="otherLanguages" value="yoruba"><span>Yoruba</span></label>
+                <label class="chip-opt"><input type="checkbox" name="otherLanguages" value="igbo"><span>Igbo</span></label>
+                <label class="chip-opt"><input type="checkbox" name="otherLanguages" value="hausa"><span>Hausa</span></label>
+                <label class="chip-opt"><input type="checkbox" name="otherLanguages" value="other"><span>Another language</span></label>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="grp">
+            <legend><span class="n">3</span>A short quiz</legend>
+            <p class="grp-help">Four quick questions. There is no trick: we want to see how you spot and describe problems.</p>
+
+            <div class="q-item">
+              <p class="q-title" id="q1-l"><b>Q1.</b> Look at this chat. Which line in the shop's last reply is wrong?</p>
+              <figure class="mini-chat" aria-label="A chat between a customer and a shop">
+                <div class="wa-head small"><span class="wa-av" aria-hidden="true">GH</span><span><b>Grill House</b><small>replies with Remy</small></span></div>
+                <div class="wa-body">
+                  <p class="wa out">Good evening ma 👋🏾 Here is our menu:<br><b>Grills</b><br>- Asun: ₦3,500<br>- Peppered snail: ₦4,000<br><b>Drinks</b><br>- Chapman: ₦1,500</p>
+                  <p class="wa in">2 asun and 1 chapman abeg</p>
+                  <p class="wa out">- 2 plates of Asun: ₦7,000<br>- 1 Chapman: ₦2,000<br><b>Total: ₦9,000</b><br>Should I place the order?</p>
+                </div>
+              </figure>
+              <div class="opts" role="radiogroup" aria-labelledby="q1-l">
+                <label class="opt"><input type="radio" name="wrongPrice" value="asun" required><span>2 plates of Asun: ₦7,000</span></label>
+                <label class="opt"><input type="radio" name="wrongPrice" value="chapman"><span>1 Chapman: ₦2,000</span></label>
+                <label class="opt"><input type="radio" name="wrongPrice" value="total"><span>Total: ₦9,000</span></label>
+                <label class="opt"><input type="radio" name="wrongPrice" value="none"><span>Nothing is wrong</span></label>
+              </div>
+            </div>
+
+            <div class="q-item">
+              <label class="q-title" for="bug"><b>Q2.</b> In one sentence, describe a bug you have seen in any app: what you did, and what went wrong.</label>
+              <textarea id="bug" name="bug" rows="2" maxlength="300" required placeholder="For example: when I tapped Pay, the app showed ₦0 instead of my total."></textarea>
+            </div>
+
+            <div class="q-item">
+              <p class="q-title" id="q3-l"><b>Q3.</b> A customer sends this:</p>
+              <div class="mini-chat one"><div class="wa-body"><p class="wa in">Abeg how much be the small chops? Una dey deliver reach Ikeja?</p></div></div>
+              <label class="q-sub" for="pidgin">Reply as the shop, <b>in Pidgin</b>. Small chops is ₦3,000 a pack, and delivery to Ikeja is ₦1,500.</label>
+              <textarea id="pidgin" name="pidgin" rows="2" maxlength="300" required aria-describedby="q3-l"></textarea>
+            </div>
+
+            <div class="q-item">
+              <p class="q-title" id="q4-l"><b>Q4.</b> A customer orders 3 plates of jollof rice at ₦2,500 each and 2 bottles of Zobo at ₦500 each. Delivery is ₦1,000. What is the right total?</p>
+              <div class="opts four" role="radiogroup" aria-labelledby="q4-l">
+                <label class="opt"><input type="radio" name="total" value="8500" required><span>₦8,500</span></label>
+                <label class="opt"><input type="radio" name="total" value="9000"><span>₦9,000</span></label>
+                <label class="opt"><input type="radio" name="total" value="9500"><span>₦9,500</span></label>
+                <label class="opt"><input type="radio" name="total" value="10000"><span>₦10,000</span></label>
+              </div>
+            </div>
+            <p class="err" id="quiz-err" hidden>Please answer all four questions.</p>
+          </fieldset>
+
+          <div class="consent">
+            <label class="check"><input type="checkbox" id="consent" name="consent" required aria-describedby="consent-err"><span>I agree to the beta terms: I will use test data only and never real customer data, my screenshots and reports stay with Relynked, and Relynked may email or WhatsApp me about the beta. See our <a href="/privacy">privacy policy</a>.</span></label>
+            <p class="err" id="consent-err" hidden>Please agree to the beta terms to apply.</p>
+          </div>
+
+          <div class="send">
+            <button class="btn forest" type="submit" id="send">Send my application <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+            <p class="send-note">We place people ourselves so every test business has customers. We will email you if you are picked.</p>
+          </div>
+          <p class="status" id="status" role="status" aria-live="polite"></p>
+        </form>
+
+        <div class="done" id="done" hidden tabindex="-1">
+          <svg class="done-mark" aria-hidden="true"><use href="#d-check"/></svg>
+          <svg class="doodle dd1" aria-hidden="true"><use href="#d-bubble"/></svg>
+          <svg class="doodle dd2" aria-hidden="true"><use href="#d-ticks"/></svg>
+          <h3 id="done-title">Thank you. Your application is in.</h3>
+          <p class="done-big">We will email you if you are picked.</p>
+          <p id="done-when">Picks go out within a week of sign up closing. If you are not picked this time, you stay on the waiting list for the next sprint.</p>
+          <p class="done-small">Keep an eye on your email, and on the spam folder too.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="fg">
+      <div><a class="logo" href="/"><svg class="mk" viewBox="0 0 336 338" aria-hidden="true"><rect width="336" height="338" rx="84" fill="#0A3F32"/><rect x="54" y="85" width="176" height="65" rx="32.5" fill="#fff"/><rect x="54" y="186" width="227" height="67" rx="33.5" fill="#E2E41A"/></svg><span class="wm">Relynked<sup class="tm">™</sup></span></a><p>Business management system built by business owners, for business owners. If you can measure it, you can manage it.</p><a class="soc" href="https://www.instagram.com/relynkedltd/" target="_blank" rel="noopener" aria-label="Relynked on Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></svg></a></div>
+      <div><h4>Product</h4><a href="/product">Relynked Business</a><a href="/product">Remy</a><a href="/pricing">Pricing</a></div>
+      <div><h4>Company</h4><a href="#">About</a><a href="/careers">Careers</a><a href="/press">Press</a></div>
+      <div><h4>Contact</h4><a href="tel:+2349115671307">0911 567 1307</a><a href="mailto:hello@relynked.com">hello@relynked.com</a><a href="/contact">7B Edegbe Street, off Giwa-Amu Street</a><a href="/contact">GRA, Benin City</a><a href="/contact">Edo State, Nigeria</a></div>
+    </div>
+    <div class="fb"><span>© 2026 Relynked Ltd. All rights reserved. Relynked™ is a trademark of Relynked Ltd. RC 9837720</span><span><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/refund-policy">Refund policy</a> · <a href="/pricing">Pricing</a> · <a href="/product#who-its-for">Who it is for</a> · <a href="/contact">Contact</a> · <a href="/data-deletion">Data deletion</a></span></div>
+  </div>
+</footer>
+
+<button class="totop" id="totop" aria-label="Back to top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+
+<script src="/assets/js/main.js?v=20260915a"></script>
+<script src="/assets/js/beta.js?v=20261115a"></script>
+</body>
+</html>
