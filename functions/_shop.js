@@ -182,7 +182,7 @@ async function post(context, apiPath) {
  * (a page: fresh for 2 seconds, then served up to 3 more while the API is asked again, cheaply, with the page's ETag:
  * a 304 sends no body; a photo: for good). `context.next()` when the feature is off or not configured.
  */
-export async function toApi(context, apiPath) {
+export async function toApi(context, apiPath, query = "") {
   const { request, env } = context;
   if (!shopsOn(env)) return context.next();
   const method = request.method;
@@ -190,7 +190,8 @@ export async function toApi(context, apiPath) {
   if (method === "POST") return post(context, apiPath);
   const url = new URL(request.url);
   const cache = caches.default;
-  const cacheKey = new Request(url.origin + url.pathname, { method: "GET" });
+  // A banner's colours ride in its query (already reduced to known keys by the caller), so they are part of what is kept.
+  const cacheKey = new Request(url.origin + url.pathname + query, { method: "GET" });
   const key = cacheKey.url;
   const answer = (status, headers, buf) => new Response(method === "HEAD" ? null : buf, { status, headers });
 
@@ -201,7 +202,7 @@ export async function toApi(context, apiPath) {
       pending = (async () => {
         const h = { "x-relynked-proxy": env.SHOP_PAGES_PROXY_SECRET, "x-relynked-client-ip": visitorOf(request, env), accept: request.headers.get("accept") || "*/*" };
         if (validator) h["if-none-match"] = validator;
-        const upstream = await fetch(env.SHOP_PAGES_API + apiPath, { method: "GET", headers: h, redirect: "manual" });
+        const upstream = await fetch(env.SHOP_PAGES_API + apiPath + query, { method: "GET", headers: h, redirect: "manual" });
         const rule = edgeRule(upstream.headers.get("cache-control") || "");
         if (upstream.status === 304 && hit) {
           // Unchanged: the page we hold is the page, fresh again; no body came.
