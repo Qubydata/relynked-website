@@ -87,6 +87,11 @@ ok(!/<script(?![^>]*\ssrc=)[^>]*>/i.test(html), "the page has no inline script (
 ok(!/https?:\/\/(?!relynked\.com|fonts\.g|www\.instagram\.com)/.test(html.replace(/xmlns="[^"]+"/g, "")) && !/https?:\/\//.test(js), "no third party script or call");
 ok(!/[–—]/.test(html + js + css), "no em or en dash in the page, its script or its styles");
 ok(!/chapman|9500/i.test(js), "the page's script holds no quiz answers");
+// No pay anywhere (founder, 16 Nov 2026): the testing partner brings the testers and handles their pay. Amounts are
+// only allowed inside the drawn chats and the quiz (shop prices), never as pay.
+const shown = html.replace(/<figure[\s\S]*?<\/figure>/g, "").replace(/<fieldset class="grp">\s*<legend><span class="n">3<\/span>[\s\S]*?<\/fieldset>/, "");
+ok(!/₦|data-naira|bonus|paid|earn|per active day|data top up|#pay\b/i.test(shown) && !/naira|₦|bonus/i.test(js), "no pay shown: no amount, no bonus, no pay timing");
+ok((shown.match(/\bpay\b/gi) || []).length === 2 && html.includes("Your testing partner handles your pay and schedule."), "at most one neutral pay line, in the FAQ");
 const ids = [...html.matchAll(/<input[^>]*\sid="([^"]+)"/g)].map((m) => m[1]).filter((id) => id !== "website" && id !== "consent");
 ok(ids.every((id) => html.includes(`for="${id}"`)), "every text field has a real label", ids.filter((id) => !html.includes(`for="${id}"`)).join(","));
 

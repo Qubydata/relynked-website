@@ -1,4 +1,4 @@
-/* relynked.com/beta: the numbers from the API's settings, and the sign up form.
+/* relynked.com/beta: the numbers from the API's settings (spots, days, minutes; no pay), and the sign up form.
    The page reads /api/beta/settings and posts /api/beta/apply, both through this
    site's Pages Functions (functions/api/beta), so nothing here talks to another
    site. The quiz is scored on the server: the page holds no answers. */
@@ -10,9 +10,6 @@
   var status = document.getElementById("status");
   var send = document.getElementById("send");
 
-  function naira(n) {
-    return "₦" + Number(n).toLocaleString("en-NG");
-  }
   function pick(obj, path) {
     return path.split(".").reduce(function (o, k) { return o == null ? undefined : o[k]; }, obj);
   }
@@ -26,10 +23,8 @@
     document.querySelectorAll("[data-k]").forEach(function (el) {
       var v = pick(s, el.getAttribute("data-k"));
       if (v === undefined || v === null) return;
-      el.textContent = el.hasAttribute("data-naira") ? naira(v) : String(v);
+      el.textContent = String(v);
     });
-    var cap = document.querySelector(".cap-line");
-    if (cap && s.bonuses && s.bonuses.bugCapPerTester) cap.hidden = false;
     if (s.replyBy) {
       var when = longDate(s.replyBy);
       if (when) {
