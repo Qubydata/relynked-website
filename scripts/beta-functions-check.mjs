@@ -6,7 +6,8 @@
  * Holds: off (503) without an https API and a long secret; the settings and an application go to the API with the
  * secret and the visitor's address and nothing else of the visitor's (no cookie, no referrer); JSON only, and small;
  * the visitor gets JSON back and never the API's own headers; the settings may be kept a minute, an application never;
- * a GET to apply is refused; /beta stays a page of the site (_routes.json) and is never a shop name.
+ * a GET to apply is refused; /beta stays a page of the site (_routes.json) and is never a shop name; the page is
+ * onboarding only (17 Nov 2026): the short form, no quiz, no pay, no marketing.
  */
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -86,12 +87,19 @@ const css = readFileSync(join(root, "assets/css/beta.css"), "utf8");
 ok(!/<script(?![^>]*\ssrc=)[^>]*>/i.test(html), "the page has no inline script (CSP: scripts from this site only)");
 ok(!/https?:\/\/(?!relynked\.com|fonts\.g|www\.instagram\.com)/.test(html.replace(/xmlns="[^"]+"/g, "")) && !/https?:\/\//.test(js), "no third party script or call");
 ok(!/[–—]/.test(html + js + css), "no em or en dash in the page, its script or its styles");
-ok(!/chapman|9500/i.test(js), "the page's script holds no quiz answers");
-// No pay anywhere (founder, 16 Nov 2026): the testing partner brings the testers and handles their pay. Amounts are
-// only allowed inside the drawn chats and the quiz (shop prices), never as pay.
-const shown = html.replace(/<figure[\s\S]*?<\/figure>/g, "").replace(/<fieldset class="grp">\s*<legend><span class="n">3<\/span>[\s\S]*?<\/fieldset>/, "");
-ok(!/₦|data-naira|bonus|paid|earn|per active day|data top up|#pay\b/i.test(shown) && !/naira|₦|bonus/i.test(js), "no pay shown: no amount, no bonus, no pay timing");
-ok((shown.match(/\bpay\b/gi) || []).length === 2 && html.includes("Your testing partner handles your pay and schedule."), "at most one neutral pay line, in the FAQ");
+// Onboarding only (founder, 17 Nov 2026): the testing partner recruits, trains and pays the testers. No quiz, no
+// marketing, no pay; one line sends pay, schedule and training questions to the partner.
+ok(!/wrongPrice|"total"|name="bug"|name="pidgin"|chapman|9500/i.test(html + js) && !/quiz/i.test(html), "no quiz on the page or in its script");
+ok(!/name="minutes"|minutes:/.test(html + js), "no minutes a day asked");
+ok(!/₦|naira|bonus|paid|earn|per active day|data top up|#pay\b/i.test(html + js), "no pay shown: no amount, no bonus, no pay timing");
+ok((html.match(/\bpay\b/gi) || []).length === 1 && html.includes("Questions about pay, schedule or training? Ask your testing partner."), "the one pay line: ask your testing partner");
+ok(!/<nav\b|class="links"|burger|<figure|faq|fluted|bh-flute|orb|class="sprite"|<symbol/i.test(html), "no menu, no hero chat, no FAQ, no glass, no doodle sprite");
+ok(html.includes("Relynked beta: tester onboarding") && html.includes("Your testing partner has signed you up."), "the title and the one line");
+ok((html.match(/<ol class="ob-steps"[\s\S]*?<\/ol>/)?.[0].match(/<li>/g) || []).length === 3, "three steps");
+for (const n of ["name", "email", "phone", "phoneType", "city", "ranBusiness", "businessKind", "pidginComfort", "otherLanguages", "consent"]) ok(html.includes(`name="${n}"`) && js.includes(`"${n}"`), `the form asks ${n} and the script sends it`);
+ok((html.match(/name="pidginComfort"/g) || []).length === 4, "Pidgin comfort: four options");
+ok(html.includes("Thanks, you're in the list.") && html.includes("We'll email you your role, tasks and codes."), "the success line");
+ok((css.match(/var\(--lime\)/g) || []).length === 0 && html.includes('class="btn lime ob-send"'), "lime is used once, on the Submit button (the site's .btn.lime)");
 const ids = [...html.matchAll(/<input[^>]*\sid="([^"]+)"/g)].map((m) => m[1]).filter((id) => id !== "website" && id !== "consent");
 ok(ids.every((id) => html.includes(`for="${id}"`)), "every text field has a real label", ids.filter((id) => !html.includes(`for="${id}"`)).join(","));
 
