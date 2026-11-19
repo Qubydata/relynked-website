@@ -7,7 +7,7 @@
  * Holds: the three calls go to the API as POST with the proxy secret and the visitor's address, the token in the
  * body and never in an address; a GET is refused; nothing is ever kept (no-store); the two pages stay pages of the
  * site (_routes.json); no inline script, no third party call (Google Fonts only, as the rest of the site), no
- * dash; under 60 KB in all; the token
+ * dash; drawn as the app's Ask Remy screen; under 60 KB in all; the token
  * is read after the # and nothing is built from HTML strings.
  */
 import { readFileSync } from "node:fs";
@@ -71,9 +71,10 @@ for (const [name, html] of Object.entries(pages)) {
   const third = html.match(/https?:\/\/[^"' )]+/g) || [];
   ok(third.every((u) => u === "https://fonts.googleapis.com" || u === "https://fonts.gstatic.com" || u.startsWith("https://fonts.googleapis.com/css2?")), `${name}: no third party file but Google Fonts (the site's CSP allows only those)`, third.join(" "));
   ok(html.indexOf('name="referrer" content="no-referrer"') < html.indexOf("fonts.googleapis"), `${name}: no referrer is set before the fonts are asked for`);
-  ok(html.includes('src="/assets/brand/relynked-lockup-dark-sm.png"'), `${name}: the white and lime logo, a small file`);
+  ok(/<header class="asknav">[\s\S]*class="ro"[\s\S]*<\/header>/.test(html) && html.includes('class="thd dwp"') && html.includes('class="pillrow"'), `${name}: the app's Ask Remy screen: the head with the orb, the doodle wallpaper, the forest pill`);
   ok(html.includes('content="noindex,nofollow"') && html.includes('name="referrer" content="no-referrer"'), `${name}: never indexed, and no referrer leaves the page`);
-  ok(Buffer.byteLength(html) + Buffer.byteLength(js) + Buffer.byteLength(css) < 60 * 1024, `${name}: the whole page is under 60 KB`, String(Buffer.byteLength(html) + Buffer.byteLength(js) + Buffer.byteLength(css)));
+  const doodle = readFileSync(join(root, "assets/beta/doodle.svg"));
+  ok(Buffer.byteLength(html) + Buffer.byteLength(js) + Buffer.byteLength(css) < 60 * 1024 && Buffer.byteLength(html) + Buffer.byteLength(js) + Buffer.byteLength(css) + doodle.length < 85 * 1024, `${name}: the page under 60 KB, under 85 KB with the wallpaper (before compression)`, String(Buffer.byteLength(html) + Buffer.byteLength(js) + Buffer.byteLength(css) + doodle.length));
 }
 ok(!/[–—]/.test(pages.checkin + pages.feedback + js + css), "no em or en dash in the pages, the script or the styles");
 ok(!/innerHTML|outerHTML|insertAdjacentHTML|document\.write|eval\(|new Function/.test(js), "nothing on the page is built from HTML strings");
@@ -82,26 +83,25 @@ ok(js.includes("/^#t=([A-Za-z0-9_-]{43})$/.exec(location.hash)") && !/location\.
 ok(js.includes('history.replaceState(null, "", location.pathname)') && js.indexOf("history.replaceState") > js.indexOf('store.set("t", m[1])'), "once kept, the token is taken out of the address bar and the history");
 ok(js.includes(`!/^https:\\/\\/[^\\s<>"'()[\\]\`]{4,290}$/.test(v)`), "a screenshot link with a bracket, a backtick or a space is refused on the page too");
 ok(routes.exclude.length === new Set(routes.exclude).size && routes.exclude.filter((p) => p === "/beta").length === 1, "_routes.json lists every rule once (/beta is not doubled)");
-ok(/\.chips\.many \.opt\{[^}]*min-height:5[6-9]px/.test(css) && js.includes('view.shops.length > 4 ? "chips many"'), "more than 4 shops: chips that wrap, each still 56px tall");
+ok(/\.qrow\{display:flex;flex-wrap:wrap/.test(css) && /\.qr\{[^}]*border-radius:999px;border:1px solid var\(--line\)/.test(css) && /\.qr\[aria-pressed=true\]\{background:var\(--sel\);box-shadow:var\(--sel-sh\)/.test(css), "shops and answers are the app's reply chips: they wrap, a hairline, the chosen one lifts (no coloured fill)");
 ok(!/₦|naira|bonus|\bpaid\b|\bpay\b|earn/i.test(pages.checkin + pages.feedback + js), "no pay anywhere on the tester's page");
-ok(/font:16px\/1\.5 Inter,system-ui/.test(css) && /--head:Montserrat,/.test(css) && !/@import|@font-face|url\(/.test(css), "Inter and Montserrat with system fonts behind; the styles load nothing else");
-ok(/min-height:(6[4-9]|[7-9]\d)px/.test(css.match(/\.ans\{[^}]+\}/)[0]) && /min-height:(5[6-9]|[6-9]\d)px/.test(css.match(/\.opt\{[^}]+\}/)[0]) && /min-height:(6[4-9]|[7-9]\d)px/.test(css.match(/\.btn\{[^}]+\}/)[0]) && /width:5[6-9]px;height:5[6-9]px/.test(css.match(/\.back\{[^}]+\}/)[0]), "big tap targets: an answer and a button 64px tall, a choice and the back arrow 56px");
+ok(/font:400 14px\/1\.42 Montserrat,"Noto Sans"/.test(css) && !/\b(800|900)\b/.test(css) && !/Inter/.test(css) && !/@import|@font-face/.test(css) && (css.match(/url\("([^"]+)"\)/g) || []).every((u) => u === 'url("../beta/doodle.svg")') && (css.match(/url\(/g) || []).length === (css.match(/url\("\.\.\/beta\/doodle\.svg"\)/g) || []).length, "the app's face and ladder: Montserrat at 14px, never heavier than 700; the styles load only the wallpaper");
+ok(/min-height:44px/.test(css.match(/\.cv-primary,\.cv-second\{[^}]+\}/)[0]) && /min-height:44px/.test(css.match(/\.cv-undo\{[^}]+\}/)[0]) && /\.qr::after\{content:"";position:absolute;inset:-2px 0\}/.test(css) && /\.seg::after\{content:"";position:absolute;inset:-4px -1px\}/.test(css), "tap targets: the card buttons and Undo 44px, as the app; a chip and a rating reach 44px with an invisible ring");
 ok(!/#(E5372B|8A1F11|C0392B|D32F2F|FF0000)\b|\bred\b/i.test(css), "no red anywhere");
 const decls = css.match(/(transition|animation):[^;}]+/g) || [];
-ok((css.match(/cubic-bezier\(/g) || []).length === 1 && css.includes("--ease:cubic-bezier(0.32,0.72,0,1)") && decls.length > 5 && decls.every((d) => /var\(--ease\)|none/.test(d)), "one easing for every motion (the --ease token), nothing else", decls.filter((d) => !/var\(--ease\)|none/.test(d)).join(" | "));
-ok((css.match(/(\d+)ms/g) || []).every((x) => parseInt(x, 10) <= 400) && /--t:(2[89]\d|3[01]\d|320)ms/.test(css), "no motion longer than 400ms; screens move in about 300ms");
-ok(/prefers-reduced-motion:reduce\)\{\*,\*::before,\*::after\{animation:none!important;transition:none!important\}/.test(css) && js.includes('matchMedia("(prefers-reduced-motion: reduce)")'), "reduced motion: instant cuts");
-ok(/\.dock\{position:fixed;left:0;right:0;bottom:0;[^}]*env\(safe-area-inset-bottom/.test(css) && js.includes('dock("next", [button("btn", "Next"') && js.includes('dock("three", buttons)'), "the main action is fixed at the bottom, above the safe area, the same place on every task and question");
-ok(/\.foot\{display:none;/.test(css) && /body\.dark \.foot\{display:flex\}/.test(css), "no footer in the flow: only on the forest screens");
-for (const [name, html] of Object.entries(pages)) ok(/<header class="band">[\s\S]*id="saved"[\s\S]*<\/header>/.test(html), `${name}: the save note lives in the band, not over the cards`);
-ok(!/position:fixed/.test(css.match(/\.saved\{[^}]+\}/)[0]) && !/pill/.test(js + css), "the save note is never a floating pill");
-ok(js.includes('var rows = el("div", "rates")') && /q\.kind === "shop_rating"[\s\S]{0,200}view\.shops\.forEach/.test(js) && !/shop_rating"\) view\.shops\.forEach\(function \(s\) \{ out\.push/.test(js) && /\.rate\{width:4[4-9]px;height:4[4-9]px/.test(css), "every shop rating on one screen, a row a shop, 44px chips");
+ok((css.match(/cubic-bezier\(/g) || []).length === 1 && css.includes("--ease:cubic-bezier(0.2,0.8,0.2,1)") && decls.length > 5 && decls.every((d) => /var\(--ease\)|none|ro-orbit 1\.1s linear/.test(d)), "one easing for every motion (the app's --ease), the orb's own spin aside", decls.filter((d) => !/var\(--ease\)|none|ro-orbit/.test(d)).join(" | "));
+ok((css.match(/(\d+)ms/g) || []).every((x) => parseInt(x, 10) <= 400), "no motion longer than 400ms");
+ok(/prefers-reduced-motion:reduce\)\{\*,\*::before,\*::after\{animation:none!important;transition:none!important/.test(css) && js.includes('matchMedia("(prefers-reduced-motion: reduce)")'), "reduced motion: instant cuts");
+ok(/\.comp\{[^}]*env\(safe-area-inset-bottom/.test(css) && /\.thd\{position:fixed;inset:0;display:flex;flex-direction:column/.test(css) && js.includes('composer({ key: "note:"') && js.includes("comp.hidden = true"), "the forest pill sits at the foot above the safe area, and only when there is something to type");
+for (const [name, html] of Object.entries(pages)) ok(!/<footer/.test(html) && js.includes('a.href = "/privacy"'), `${name}: no footer in the thread; Privacy is in the More menu`);
+for (const [name, html] of Object.entries(pages)) ok(/<header class="asknav">[\s\S]*id="sub"[\s\S]*<\/header>/.test(html), `${name}: "Saved" is the head's status line, never over the thread`);
+ok(!/position:fixed/.test((css.match(/\.asknav \.tx span\{[^}]+\}/) || [""])[0]) && !/\.saved|\.pill\{/.test(css), "the save status is never a floating box");
+ok(/q\.kind === "shop_rating"[\s\S]{0,400}view\.shops\.forEach\(function \(s\) \{\s*var row = el\("div", "rate-row"\)/.test(js) && /\.segment\{/.test(css) && js.includes('["1", "2", "3", "4", "5"]'), "every shop rating on ONE card: a row a shop, the app's segmented 1 to 5");
 const snapSrc = (js.match(/function snap\(\) \{[^}]+\}/) || [""])[0];
 ok(snapSrc && !/token/.test(snapSrc) && (js.match(/history\.(pushState|replaceState)\(/g) || []).length === (js.match(/history\.(pushState|replaceState)\((snap\(\)|null), "", location\.pathname\)/g) || []).length && js.includes("history.pushState(snap()") && js.includes('addEventListener("popstate"'), "a history entry per step (the phone's Back works), the address always the bare path: no token, no step");
 ok(js.includes('"Welcome back"') && js.includes("firstOpen(tasks)"), "coming back lands on the first task not answered, with a quiet Welcome back");
-for (const v of ["--forest:#0F3D2E", "--lime:#E2EE4D", "--soft:#F3F6F2"]) ok(css.includes(v), `the deck's colours as tokens: ${v}`);
 ok(js.includes('[["done", "Done", " done"], ["failed", "Didn\'t work", " bad"], ["stuck", "Got stuck", " stuck"]]'), "\"Didn't work\" saves the status failed");
-for (const s of ["Done", "Didn't work", "Got stuck", "Which shop?", "What happened?", "Screenshot link ", "(optional)", "Final questions", "Answer the final questions", "All done ", "Saving when you're back online", "Earlier days", "Back", "Next", "Skip", "Thank you.", "Try again", "No connection", "This link no longer works"]) ok(js.includes(`"${s}"`) || js.includes(s), `the page says "${s}"`);
+for (const s of ["Done", "Didn't work", "Got stuck", "Which shop?", "What happened?", "Add a screenshot link", "Undo", "Final questions", "That's everything for today. Thank you.", "Start", "Saving when you're back online", "Earlier days", "Back", "Skip", "Thank you.", "Try again", "No connection", "This link no longer works"]) ok(js.includes(`"${s}"`) || js.includes(s), `the page says "${s}"`);
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed) process.exit(1);

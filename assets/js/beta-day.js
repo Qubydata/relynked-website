@@ -2,10 +2,10 @@
    seamless for them"). One personal link, no sign in, no code to type. The link's token rides after the # (so it is
    never sent in an address), is kept on this phone, and is posted to /api/beta/* (this site's Pages Functions).
 
-   The look follows the tester proposal deck: one task, or one question, a screen, in a frame that never moves (the
-   band, the progress row and the actions at the bottom keep their place). Each step is a browser history entry, so
-   the phone's Back goes to the previous task; the address never changes (no token, no step in it). A swipe to the
-   right is Back too.
+   The check-in is a chat with Remy, drawn in the Relynked app's own look (the Ask Remy screen): Remy asks one task
+   at a time as a card, an answer folds into the app's receipt (tick, one line, Undo), a note is typed in the forest
+   pill, and the final questions come the same way. Each step is a browser history entry, so the phone's Back goes to
+   the step before; the address never changes (no token, no step in it). A swipe to the right is Back too.
 
    Every tap is saved at once, on its own. A save that could not be sent waits on this phone and is sent again when
    the connection is back, so a dropped connection or a closed tab loses nothing. Everything on the page is built
@@ -34,25 +34,24 @@
   var view = null;      // what the server last said
   var day = null;       // the day on screen
   var mode = PAGE === "feedback" ? "questions" : "day";   // day | questions | days (earlier days) | shops
-  var idx = null;       // the task on screen (null: the first one not answered yet)
-  var changing = null;  // the task whose three answers are shown again after "Change"
-  var step = 0;         // the question on screen
-  var dir = 0;          // 1: forward (the new screen comes from the right), -1: back
+  var idx = null;       // the task Remy is asking about (null: the first one not answered yet)
+  var changing = null;  // a task reopened (Undo): its three answers are shown again
+  var step = 0;         // the question Remy is asking
+  var qmax = 0;         // the furthest question reached, where an edited answer returns to
   var depth = 0;        // history entries this page has added
-  var opened = {};      // tasks whose "What happened?" is showing
-  var greeting = false; // the big "Hi" in the band (the first screen of a day only)
-  var booted = false;   // the first screen has been drawn
-  var backFn = null;    // what Back does on the screen on view
-  var dockKind = "";
-  var lastBar = null;
+  var opened = {};      // tasks whose "What happened?" is asked
+  var linking = {};     // tasks where the pill takes a screenshot link
+  var seen = {};        // thread items already on screen (only new ones arrive with motion)
+  var booted = false;
+  var backFn = null;
+  var greetLine = "";
   var pending = store.get("pending") || {};
   var sending = false;
   var touched = false;  // something was answered since the page asked the server
   var still = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
   var $ = function (id) { return document.getElementById(id); };
-  var slot = document.querySelector(".slot");
-  var greetEl = $("greet");
+  var sub = $("sub"), comp = $("comp"), backBtn = $("back"), moreBtn = $("more");
   function el(tag, cls, text) {
     var e = document.createElement(tag);
     if (cls) e.className = cls;
@@ -65,19 +64,25 @@
     if (on) b.addEventListener("click", on);
     return b;
   }
+  function clone(id) { return $(id).content.firstElementChild.cloneNode(true); }
   function niceDay(iso) {
     try { return new Date(iso + "T12:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: "Africa/Lagos" }); } catch (e) { return iso; }
   }
-  function top() { try { window.scrollTo(0, 0); } catch (e) { /* old browser */ } }
 
-  /* The band's right side: the day, or for a moment a note ("Welcome back", "Saved"). */
-  function when(text) { $("when").textContent = text || ""; }
-  function band(big) {
-    greeting = !!big;
-    greetEl.className = big ? "greet" : "greet shut";
-    slot.classList.toggle("big", !!big);
-    if (big && view) { $("hi").textContent = "Hi " + view.me.firstName; $("big-when").textContent = $("when").textContent; }
+  /* ── The head: the title, and under it one quiet status line (the day's count, or for a moment "Saved") ────── */
+  var subText = "", subTimer = null;
+  function status(text) { subText = text || ""; if (!subTimer) paintSub("", subText); }
+  function paintSub(kind, text) {
+    while (sub.firstChild) sub.removeChild(sub.firstChild);
+    if (kind === "ok") sub.appendChild(el("i", "dot"));
+    sub.appendChild(document.createTextNode(text));
   }
+  function flash(kind, text, ms) {
+    clearTimeout(subTimer);
+    paintSub(kind, text);
+    subTimer = setTimeout(function () { subTimer = null; paintSub("", subText); }, ms);
+  }
+  function progress(n, of) { $("prog").firstChild.style.width = of ? Math.round((n / of) * 100) + "%" : "0"; }
 
   function call(path, body) {
     body.token = token;
@@ -86,22 +91,10 @@
   }
 
   /* ── Saving: one small request per answer, kept on the phone until it is in ─────────────────────────────────── */
-  /* One quiet note in the band, never over the cards: a lime dot and "Saved" that fades in and out. */
-  var noteTimer = null;
+  /* One quiet word under the title, where the app shows a chat's status: "Saved", never a box over the thread. */
   function tick(key, cls, text) {
-    clearTimeout(noteTimer);
     if (cls === "wait" && text === "Saving") return;   // a save on its way says nothing until it is in
-    $("saved-text").textContent = text;
-    $("saved").className = "saved" + (cls ? " " + cls : "");
-    slot.classList.add("noting");
-    noteTimer = setTimeout(function () { slot.classList.remove("noting"); }, !cls ? 1400 : cls === "err" ? 5000 : 600000);
-  }
-  function welcome() {
-    $("saved-text").textContent = "Welcome back";
-    $("saved").className = "saved";
-    slot.classList.add("noting");
-    clearTimeout(noteTimer);
-    noteTimer = setTimeout(function () { slot.classList.remove("noting"); }, 2000);
+    flash(cls ? "" : "ok", text, !cls ? 1400 : cls === "err" ? 5000 : 600000);
   }
   function save(key, path, body) {
     touched = true;
@@ -177,44 +170,42 @@
   /* Before leaving a screen, a half typed answer is saved (its blur runs the save). */
   function settle() { var a = document.activeElement; if (a && a.blur && a.matches && a.matches("textarea,input")) a.blur(); }
 
-  /* ── Moving between screens: a history entry per step, never a change of address ──────────────────────────── */
+
+  /* ── Moving between steps: a history entry per step, never a change of address ────────────────────────────── */
   function snap() { return { rb: 1, m: mode, d: day, i: idx, s: step, c: changing, n: depth }; }
   function forward(change) {
     return function () {
       settle();
+      closeMenu();
       change();
       depth++;
       try { history.pushState(snap(), "", location.pathname); } catch (e) { /* old browser: Back leaves the page */ }
-      dir = 1;
-      top();
       render();
     };
   }
-  /* Back: the browser's own history when this page added the step, else straight to the screen before. */
+  /* Back: the browser's own history when this page added the step, else straight to the step before. */
   function backTo(change) {
     return function () {
       settle();
+      closeMenu();
       if (depth > 0) { try { history.back(); return; } catch (e) { /* fall through */ } }
       change();
       try { history.replaceState(snap(), "", location.pathname); } catch (e) { /* old browser */ }
-      dir = -1;
-      top();
       render();
     };
   }
-  // Each step opens at its top; the browser must not put back an old scroll position.
   try { if ("scrollRestoration" in history) history.scrollRestoration = "manual"; } catch (e) { /* old browser */ }
   window.addEventListener("popstate", function (e) {
     var st = e.state;
     if (!st || !st.rb || !view) return;
     settle();
-    dir = st.n < depth ? -1 : 1;
+    closeMenu();
     mode = st.m; day = st.d; idx = st.i; step = st.s; changing = st.c; depth = st.n;
     if (mode === "questions") store.set("qstep", step);
-    top();
     render();
   });
-  /* A swipe to the right is Back (touch only; a mostly sideways, quick swipe, so scrolling is never taken over). */
+  backBtn.addEventListener("click", function () { if (backFn) backFn(); });
+  /* A swipe to the right is Back (touch only; a quick, mostly sideways swipe, so scrolling is never taken over). */
   var sx = null, sy = 0, st0 = 0;
   app.addEventListener("touchstart", function (e) {
     var t = e.touches[0];
@@ -228,123 +219,172 @@
     if (dx > 72 && dy < 48 && dx > dy * 2.5 && Date.now() - st0 < 700) backFn();
   }, { passive: true });
 
-  /* ── The frame ─────────────────────────────────────────────────────────────────────────────────────────────── */
-  function clear() {
-    var old = app.querySelector(".stage > .card:not(.leave-f):not(.leave-b)");
-    while (app.firstChild) app.removeChild(app.firstChild);
-    var d = document.querySelector("body > .dock:not(.out)");
-    if (d) d.classList.add("old");
-    backFn = null;
-    return old;
-  }
-  /* The progress row: always the same height, at the same place. */
-  function meta(label, n, of, onBack) {
-    var box = el("div", "meta");
-    var row = el("div", "top");
-    var b = button("back" + (onBack ? "" : " hide"), "", onBack);
-    b.setAttribute("aria-label", "Back");
-    if (!onBack) { b.tabIndex = -1; b.setAttribute("aria-hidden", "true"); }
-    backFn = onBack || null;
-    row.appendChild(b);
-    row.appendChild(el("p", "count", label));
-    box.appendChild(row);
-    var bar = el("div", of ? "bar" : "bar none");
-    var fill = el("i");
-    var pct = of ? Math.round((n / of) * 100) : 0;
-    bar.appendChild(fill);
-    if (of) {
-      bar.setAttribute("role", "progressbar");
-      bar.setAttribute("aria-label", label);
-      bar.setAttribute("aria-valuemin", "1"); bar.setAttribute("aria-valuemax", String(of)); bar.setAttribute("aria-valuenow", String(n));
-      // The bar grows from where it was.
-      if (lastBar !== null && !still) { fill.style.width = lastBar + "%"; requestAnimationFrame(function () { requestAnimationFrame(function () { fill.style.width = pct + "%"; }); }); }
-      else fill.style.width = pct + "%";
-      lastBar = pct;
-    }
-    box.appendChild(bar);
-    app.appendChild(box);
-  }
-  /* The card: slides in from the side the tester is going while the old one slides out; the very first rises. */
-  function stage(card, old) {
-    var s = el("div", "stage");
-    s.appendChild(card);
-    app.appendChild(s);
-    if (!still) {
-      if (!booted) card.classList.add("rise");
-      else if (dir && old) {
-        old.className = old.className.replace(/ ?(enter|leave)-[fb]| ?rise/g, "") + (dir > 0 ? " leave-f" : " leave-b");
-        s.insertBefore(old, card);   // underneath the new card
-        setTimeout(function () { if (old.parentNode) old.parentNode.removeChild(old); }, 320);
-        card.classList.add(dir > 0 ? "enter-f" : "enter-b");
-      }
-    }
-    booted = true;
-    dir = 0;
-  }
-  /* The actions at the bottom: fixed, the same place on every screen of a kind. */
-  /* The old actions: gone at once when the new ones are the same, else they sink away while the new ones rise. */
-  function dropDock(keep) {
-    var olds = document.querySelectorAll("body > .dock.old");
-    for (var i = 0; i < olds.length; i++) {
-      var o = olds[i];
-      o.classList.remove("old");
-      if (keep && !still) { o.classList.add("out"); setTimeout((function (x) { return function () { if (x.parentNode) x.parentNode.removeChild(x); }; })(o), 320); }
-      else o.parentNode.removeChild(o);
-    }
-  }
-  function dock(kind, nodes) {
-    dropDock(kind !== dockKind);
-    var d = el("div", "dock" + (kind !== dockKind && booted && !still ? " in" : ""));
-    var w = el("div", "wrap");
-    nodes.forEach(function (n) { w.appendChild(n); });
-    d.appendChild(w);
-    document.body.appendChild(d);
-    app.className = "wrap flow " + (kind === "three" ? "dock3" : "dock1");
-    dockKind = kind;
-  }
-  function noDock() { dropDock(false); app.className = "wrap flow"; dockKind = ""; }
-  function heading(card) {
-    var h = card.querySelector("h2");
-    if (h && booted) { h.tabIndex = -1; try { h.focus({ preventScroll: true }); } catch (e) { /* old browser */ } }
-  }
+  /* ── The More menu (the head's three dots) ─────────────────────────────────────────────────────────────────── */
+  var menu = null;
+  function closeMenu() { if (menu) { menu.parentNode.removeChild(menu); menu = null; moreBtn.setAttribute("aria-expanded", "false"); } }
+  moreBtn.addEventListener("click", function () {
+    if (menu) return closeMenu();
+    if (!view) return;
+    var s = view.sprint;
+    menu = el("div", "menu");
+    menu.setAttribute("role", "menu");
+    var items = [
+      earlier().length ? ["Earlier days", forward(function () { mode = "days"; })] : null,
+      view.shops.length ? [view.me.role === "business" ? "Your business" : "Your shops", forward(function () { mode = "shops"; })] : null,
+      view.feedback.open && mode !== "questions" ? ["Final questions", forward(function () { mode = "questions"; })] : null,
+      mode !== "day" && s.dayIndex !== null && s.dayIndex >= 0 && s.dayIndex <= s.lastIndex ? ["Today's check-in", forward(toToday)] : null
+    ];
+    items.forEach(function (x) { if (x) { var b = button("", x[0], x[1]); b.setAttribute("role", "menuitem"); menu.appendChild(b); } });
+    var a = el("a", "", "Privacy");
+    a.href = "/privacy";
+    a.setAttribute("role", "menuitem");
+    menu.appendChild(a);
+    document.querySelector(".thd").appendChild(menu);
+    moreBtn.setAttribute("aria-expanded", "true");
+  });
+  document.addEventListener("click", function (e) { if (menu && !menu.contains(e.target) && e.target !== moreBtn && !moreBtn.contains(e.target)) closeMenu(); });
 
-  /* A whole forest screen: one huge line, one plain sentence, a button when there is something to do. */
-  function full(title, line, label, on) {
-    document.body.className = "dark";
-    band(false);
-    noDock();
-    var c = el("section", "full" + (still ? "" : " rise"));
+  /* ── The thread's pieces, each the app's own ───────────────────────────────────────────────────────────────── */
+  var items = [];
+  function put(key, node) { node.setAttribute("data-k", key); items.push(node); return node; }
+  /* Remy speaks: the orb, "Remy", a bubble a line; `more` (chips, a card) sits under the bubbles. */
+  function remy(key, lines, more) {
+    var row = el("div", "arow");
+    var ra = el("span", "ra");
+    ra.appendChild(clone("orbtpl"));
+    row.appendChild(ra);
+    var col = el("span", "col");
+    col.appendChild(el("div", "rlab", "Remy"));
+    lines.forEach(function (l) { if (l) col.appendChild(el("div", "rbub", l)); });
+    (more || []).forEach(function (n) { if (n) col.appendChild(n); });
+    row.appendChild(col);
+    return put(key, row);
+  }
+  /* The tester's own words, on the right. Tapping one changes it, when it can be changed. */
+  function mine(key, text, on, quiet) {
+    var w = el("div", "askmsg out");
+    w.appendChild(on ? button("b out" + (quiet ? " skip" : ""), text, on) : el("div", "b out" + (quiet ? " skip" : ""), text));
+    return put(key, w);
+  }
+  function divider(key, text) { return put(key, el("div", "daypill", text)); }
+  function chips(list) {
+    var q = el("div", "qrow");
+    list.forEach(function (c) {
+      if (!c) return;
+      var b = button("qr" + (c.quiet ? " quiet" : ""), c.label, c.on);
+      if (c.pressed !== undefined) b.setAttribute("aria-pressed", String(!!c.pressed));
+      q.appendChild(b);
+    });
+    return q;
+  }
+  function receipt(text, small, onUndo, soft) {
+    var c = el("div", "cv-card cv-receipt");
+    c.setAttribute("role", "status");
+    var row = el("div", "cv-rrow");
+    var t = clone("tick");
+    if (soft) t.className += " soft";
+    row.appendChild(t);
+    var tx = el("span", "cv-rtx", text);
+    if (small) tx.appendChild(el("small", "", small));
+    row.appendChild(tx);
+    if (onUndo) row.appendChild(button("cv-undo", "Undo", onUndo));
+    c.appendChild(row);
+    return c;
+  }
+  /* The quiet state of an empty Ask Remy: the orb in its halo, one line, one sentence. */
+  function state(title, line, label, on) {
+    items = [];
+    var c = el("section", "state");
+    var h = el("span", "halo");
+    h.appendChild(clone("orbtpl"));
+    c.appendChild(h);
     c.appendChild(el("h1", "", title));
-    if (line) c.appendChild(el("p", "line", line));
-    if (label) c.appendChild(button("btn", label, on));
-    app.appendChild(c);
-    booted = true;
+    if (line) c.appendChild(el("p", "", line));
+    if (label) c.appendChild(button("cv-primary", label, on));
+    put("state:" + title, c);
     return c;
   }
   function message(title, line, label, on) {
-    clear();
-    when("");
-    full(title, line, label, on);
+    backFn = null;
+    backBtn.setAttribute("aria-disabled", "true");
+    status("");
+    progress(0, 0);
+    composer(null);
+    items = [];
+    state(title, line, label, on);
+    paint();
   }
-  function quietLinks(list, into) {
-    var q = el("div", "quiet");
-    list.forEach(function (x) { if (x) q.appendChild(button("link", x[0], x[1])); });
-    if (q.firstChild) into.appendChild(q);
+
+  /* The pill: only when there is something to type. Its box is new for each question, so its autosave is its own. */
+  var compKey = null;
+  function composer(cfg) {
+    if (!cfg) { comp.hidden = true; compKey = null; return; }
+    comp.hidden = false;
+    if (typeof cfg === "string") cfg = { key: "hint:" + cfg, hint: cfg };
+    if (compKey === cfg.key) return;
+    compKey = cfg.key;
+    var fld = comp.querySelector(".fld");
+    while (fld.firstChild) fld.removeChild(fld.firstChild);
+    var send = $("send");
+    // Nothing to type here: the app's pill stays, saying where the answer goes; a tap brings the question into view.
+    if (cfg.hint) {
+      var h = button("hint", cfg.hint, function () { try { app.scrollTo({ top: app.scrollHeight, behavior: still ? "auto" : "smooth" }); } catch (e) { app.scrollTop = app.scrollHeight; } });
+      fld.appendChild(h);
+      send.hidden = true;
+      $("note").textContent = "";
+      return;
+    }
+    send.hidden = false;
+    var box = el(cfg.numeric ? "input" : "textarea");
+    if (cfg.numeric) { box.type = "text"; box.inputMode = "numeric"; box.maxLength = 3; }
+    else { box.rows = 1; box.maxLength = cfg.max || 500; }
+    if (cfg.url) { box.inputMode = "url"; box.maxLength = 300; }
+    box.id = "box";
+    box.placeholder = cfg.placeholder;
+    box.setAttribute("aria-label", cfg.placeholder);
+    box.value = cfg.value || "";
+    fld.appendChild(box);
+    $("note").textContent = "";
+    var grow = function () { if (box.tagName === "TEXTAREA") { box.style.height = "auto"; box.style.height = Math.min(120, box.scrollHeight) + "px"; } };
+    var lit = function () { send.className = box.value.trim() ? "send on" : "send"; };
+    box.addEventListener("input", function () { $("note").textContent = ""; grow(); lit(); });
+    if (cfg.save) typed(box, cfg.save);
+    box.addEventListener("keydown", function (e) { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); go(); } });
+    function go() { var v = box.value.trim(); if (!v && !cfg.empty) return; cfg.send(v, box); }
+    send.onclick = go;
+    lit();
+    requestAnimationFrame(grow);
   }
+
+  /* Draws the thread: what is new arrives with the app's message motion, then the thread follows to its end. */
+  function paint() {
+    while (app.firstChild) app.removeChild(app.firstChild);
+    var fresh = 0;
+    items.forEach(function (n) {
+      var k = n.getAttribute("data-k");
+      if (booted && !seen[k] && !still) { n.className += " new"; n.style.animationDelay = (fresh++ * 90) + "ms"; }
+      seen[k] = 1;
+      app.appendChild(n);
+    });
+    var smooth = booted && fresh && !still;
+    requestAnimationFrame(function () { try { app.scrollTo({ top: app.scrollHeight, behavior: smooth ? "smooth" : "auto" }); } catch (e) { app.scrollTop = app.scrollHeight; } });
+    booted = true;
+  }
+
   function earlier() { return view.days.filter(function (d) { return d.index < view.sprint.dayIndex; }); }
   function dayLabel(d) {
     for (var i = 0; i < view.days.length; i++) if (view.days[i].index === d) return view.days[i].label;
     return "Day " + d;
   }
-  function whenToday() {
-    var s = view.sprint;
-    var l = dayLabel(s.dayIndex);
-    return s.dayIndex >= 1 && s.lastIndex ? l + " of " + s.lastIndex : l;
-  }
-  var STATUS = { done: "Done", failed: "Didn't work", stuck: "Got stuck" };
+  var STATUS = { done: "done", failed: "didn't work", stuck: "got stuck" };
+  var SAID = { done: "Done", failed: "Didn't work", stuck: "Got stuck" };
   function toToday() { mode = "day"; day = view.sprint.dayIndex; idx = null; changing = null; }
+  function shopNames(refs) {
+    return view.shops.filter(function (s) { return (refs || []).indexOf(s.ref) >= 0; }).map(function (s) { return s.name; }).join(", ");
+  }
+  function things(n) { return n === 1 ? "1 quick thing." : n + " quick things."; }
 
-  /* ── The day: one task a screen ─────────────────────────────────────────────────────────────────────────────── */
+  /* ── The day: Remy asks one task at a time; an answered task folds into a receipt ──────────────────────────── */
   function todays() { return view.tasks.filter(function (t) { return t.day === day; }); }
   function answered(t) { var r = resultOf(t.key); return !!(r && r.status); }
   function firstOpen(tasks) {
@@ -352,329 +392,378 @@
     return tasks.length;
   }
 
-  function renderDay(old) {
+  function renderDay() {
     var s = view.sprint;
-    when(s.dayIndex >= 0 && s.dayIndex <= s.lastIndex ? whenToday() : "");
-    if (s.dayIndex === null || s.dayIndex === undefined) return full("Not started yet.", "We will email you the start day. Keep this link, it is the only one you need.");
-    if (s.dayIndex < 0) return full("Not open yet.", "The sprint starts on " + niceDay(s.starts) + ". Come back to this link that day.");
-    if (day !== s.dayIndex) return renderClosedDay(old);
+    $("title").textContent = (s.dayIndex >= 0 ? dayLabel(day) : "Day") + " check-in";
+    if (s.dayIndex === null || s.dayIndex === undefined) return message("Not started yet.", "We will email you the start day. Keep this link, it is the only one you need.");
+    if (s.dayIndex < 0) return message("Not open yet.", "The sprint starts on " + niceDay(s.starts) + ". Come back to this link that day.");
+    if (day !== s.dayIndex) return renderClosedDay();
     var tasks = todays();
     if (!tasks.length) {
-      if (s.dayIndex > s.lastIndex) return full("The sprint is over.", "Thank you for testing with us.");
-      var c = full("Nothing for you today.", view.me.role === "customer" && day === 0 ? "Today the business testers set up their shops. Your tasks start tomorrow." : "Check back tomorrow.");
-      return quietLinks([earlier().length ? ["Earlier days", forward(function () { mode = "days"; })] : null, view.feedback.open ? ["Final questions", forward(function () { mode = "questions"; })] : null], c);
+      if (s.dayIndex > s.lastIndex) return message("The sprint is over.", "Thank you for testing with us.");
+      return message("Nothing for you today.", view.me.role === "customer" && day === 0 ? "Today the business testers set up their shops. Your tasks start tomorrow." : "Check back tomorrow.");
     }
     if (idx === null) idx = firstOpen(tasks);
     if (idx >= tasks.length && firstOpen(tasks) < tasks.length) idx = firstOpen(tasks);
-    if (idx >= tasks.length) return renderDone();
-    document.body.className = "";
-    band(greeting && idx === greetAt);
-    var t = tasks[idx];
-    meta((idx + 1) + " of " + tasks.length, idx + 1, tasks.length, idx > 0 ? backTo(function () { changing = null; idx--; }) : null);
-    var card = taskCard(t);
-    stage(card, old);
-    heading(card);
+    var done = tasks.filter(answered).length;
+    status(done + " of " + tasks.length + " done");
+    progress(0, 0);   // the line under the head is for the final questions only
+    backFn = idx > 0 ? backTo(function () { idx--; changing = tasks[idx].key; }) : null;
+    backBtn.setAttribute("aria-disabled", String(!backFn));
+    items = [];
+    var dayWord = day === 0 ? "Setup day" : dayLabel(day);
+    remy("hi", ["Hi " + view.me.firstName + ". " + dayWord + ". " + things(tasks.length)]);
+    if (idx >= tasks.length) return renderDone(tasks);
+    // What is behind: one receipt each (their note first, as their own words).
+    tasks.forEach(function (t, i) {
+      if (i === idx || !answered(t)) return;
+      var r = resultOf(t.key);
+      if (r.status !== "done" && r.note) mine("n:" + t.key + ":" + r.note, r.note);
+      var row = el("div", "arow cont");
+      row.appendChild(el("span", "ra"));
+      var col = el("span", "col");
+      col.appendChild(receipt(t.title + ": " + STATUS[r.status], r.status !== "done" ? shopNames(r.shops) : null, forward(function () { idx = i; changing = t.key; }), r.status !== "done"));
+      row.appendChild(col);
+      put("r:" + t.key + ":" + r.status + ":" + (r.shops || []).join(), row);
+    });
+    askTask(tasks[idx], idx, tasks.length);
+    paint();
   }
 
-  function nextTask() { forward(function () { changing = null; idx++; if (greeting) band(false); })(); }
+  function nextTask() {
+    forward(function () {
+      changing = null;
+      var tasks = todays();
+      var n = firstOpen(tasks);
+      idx = n;
+    })();
+  }
 
-  function taskCard(t) {
+  function askTask(t, i, total) {
     var r = resultOf(t.key) || { task: t.key, status: null, note: null, screenshot: null, shops: [] };
     r = { task: r.task, status: r.status, note: r.note, screenshot: r.screenshot, shops: (r.shops || []).slice() };
-    var card = el("section", "card task");
-    card.appendChild(el("h2", "", t.title));
-    if (t.help) card.appendChild(el("p", "help", t.help));
     function push() {
       remember(t.key, r);
       save("c:" + t.key, "checkin", { task: t.key, status: r.status, note: r.note || "", screenshot: r.screenshot || "", shops: r.shops });
     }
-    var showMore = (r.status === "failed" || r.status === "stuck") && changing !== t.key;
-    if (!showMore) {
-      var buttons = [];
+    var more = (r.status === "failed" || r.status === "stuck") && changing !== t.key;
+    if (!more) {
+      composer("Tap an answer above");
+      var card = el("div", "cv-card");
+      card.setAttribute("role", "group");
+      var head = el("div", "cv-head");
+      head.appendChild(el("span", "cv-label", "Task " + (i + 1) + " of " + total));
+      card.appendChild(head);
+      card.appendChild(el("div", "cv-title", t.title));
+      if (t.help) card.appendChild(el("div", "cv-sub", t.help));
+      var acts = el("div", "cv-actions three");
       [["done", "Done", " done"], ["failed", "Didn't work", " bad"], ["stuck", "Got stuck", " stuck"]].forEach(function (o) {
-        var b = button("ans" + o[2], o[1], function () {
+        var b = button(o[0] === "done" ? "cv-primary" : "cv-second", o[1], function () {
           r.status = o[0];
           if (o[0] === "done") { r.note = null; r.screenshot = null; r.shops = []; }
-          buttons.forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
           push();
-          if (o[0] === "done") return setTimeout(nextTask, still ? 0 : 120);
+          if (o[0] === "done") return nextTask();
           changing = null;
-          greeting = false;   // the follow-up needs the room: the greeting folds away
-          render(true);
+          render();
         });
-        b.setAttribute("aria-pressed", String(r.status === o[0]));
-        buttons.push(b);
+        if (r.status === o[0]) b.setAttribute("aria-pressed", "true");
+        acts.appendChild(b);
       });
-      dock("three", buttons);
-      var links = [
-        earlier().length ? ["Earlier days", forward(function () { mode = "days"; })] : null,
-        view.shops.length ? [view.me.role === "business" ? "Your business" : "Your shops", forward(function () { mode = "shops"; })] : null,
-        view.feedback.open ? ["Final questions", forward(function () { mode = "questions"; })] : null
-      ];
-      quietLinks(links, card);
-      return card;
+      card.appendChild(acts);
+      remy("t:" + t.key + (changing === t.key ? ":again" : ""), [], [card]);
+      return;
     }
-
-    /* "Didn't work" or "Got stuck": a few calm questions on the same card, opening in place. */
-    var grow = el("div", "reveal");
-    var inner = el("div");
-    grow.appendChild(inner);
-    var picked = el("div", "picked");
-    picked.appendChild(el("span", "tag" + (r.status === "stuck" ? " stuck" : ""), STATUS[r.status]));
-    picked.appendChild(button("link", "Change", function () { settle(); changing = t.key; render(); }));
-    inner.appendChild(picked);
+    /* "Didn't work" or "Got stuck": their answer, then Remy asks which shop, then what happened. */
+    var card2 = el("div", "cv-card");
+    var h2 = el("div", "cv-head");
+    h2.appendChild(el("span", "cv-label", "Task " + (i + 1) + " of " + total));
+    card2.appendChild(h2);
+    card2.appendChild(el("div", "cv-title", t.title));
+    remy("t:" + t.key + ":asked", [], [card2]);
+    mine("s:" + t.key + ":" + r.status, SAID[r.status], function () { settle(); changing = t.key; render(); });
     var askShop = t.perShop && view.shops.length > 1;
-    var rest = el("div", "reveal");
-    var restIn = el("div");
-    rest.appendChild(restIn);
     if (askShop) {
-      inner.appendChild(el("p", "ask", view.me.role === "business" ? "Which business?" : "Which shop?"));
-      var chips = el("div", view.shops.length > 4 ? "chips many" : "chips");
-      view.shops.forEach(function (s) {
-        var c = button("opt", s.name, function () {
+      remy("w:" + t.key, [view.me.role === "business" ? "Which business?" : "Which shop?"], [chips(view.shops.map(function (s) {
+        return { label: s.name, pressed: r.shops.indexOf(s.ref) >= 0, on: function () {
           var at = r.shops.indexOf(s.ref);
           if (at >= 0) r.shops.splice(at, 1); else r.shops.push(s.ref);
-          c.setAttribute("aria-pressed", String(at < 0));
           push();
-          // The next question opens in place; the keyboard stays down until they tap the box.
-          if (!opened[t.key]) { opened[t.key] = true; rest.classList.add("open"); }
-        });
-        c.setAttribute("aria-pressed", String(r.shops.indexOf(s.ref) >= 0));
-        chips.appendChild(c);
-      });
-      inner.appendChild(chips);
+          opened[t.key] = true;
+          render();
+        } };
+      }))]);
     }
-    var id = "n-" + t.key;
-    var lab = el("label", "ask", "What happened?");
-    lab.htmlFor = id;
-    var box = el("textarea");
-    box.id = id; box.maxLength = 500; box.rows = 3; box.value = r.note || "";
-    box.placeholder = "What you did, what you expected, what you saw";
-    typed(box, function (v) { r.note = v || null; push(); });
-    restIn.appendChild(lab); restIn.appendChild(box);
-    var lab2 = el("label", "ask", "Screenshot link ");
-    lab2.appendChild(el("small", "", "(optional)"));
-    lab2.htmlFor = "s-" + t.key;
-    var shot = el("input");
-    shot.type = "url"; shot.id = "s-" + t.key; shot.maxLength = 300; shot.inputMode = "url"; shot.value = r.screenshot || "";
-    shot.placeholder = "https://";
-    var note = el("p", "note");
-    note.setAttribute("role", "status");
-    var good = true;
-    // The line under the field changes only while typing, never on leaving it, so a tap on Next never moves.
-    shot.addEventListener("input", function () { if (note.textContent) note.textContent = ""; });
-    typed(shot, function (v) {
-      if (v && !/^https:\/\/[^\s<>"'()[\]`]{4,290}$/.test(v)) { good = false; note.textContent = "A screenshot link starts with https:// and has no spaces or brackets."; return; }
-      good = true;
-      r.screenshot = v || null; push();
-    });
-    restIn.appendChild(lab2); restIn.appendChild(shot); restIn.appendChild(note);
-    inner.appendChild(rest);
-    card.appendChild(grow);
     if (!askShop || r.shops.length || r.note || r.screenshot) opened[t.key] = true;
-    var wasOpen = !!opened[t.key];
-    // Opening in place: the rows grow from nothing (grid rows), nothing is measured.
-    if (still || !justAnswered) { grow.classList.add("open"); if (wasOpen) rest.classList.add("open"); }
-    else requestAnimationFrame(function () { requestAnimationFrame(function () { grow.classList.add("open"); if (wasOpen) rest.classList.add("open"); }); });
-    dock("next", [button("btn", "Next", function () {
-      settle();
-      if (!good) { shot.focus(); return; }
-      nextTask();
-    })]);
-    return card;
+    if (!opened[t.key]) { composer("Pick the shop above"); return; }
+    var linkOn = !!linking[t.key];
+    remy("h:" + t.key, ["What happened? A few words below is fine."], [chips([
+      !r.screenshot && !linkOn ? { label: "Add a screenshot link", quiet: true, on: function () { linking[t.key] = true; render(); var b = $("box"); if (b) b.focus(); } } : null,
+      { label: r.note ? "Next task" : "Skip the note", quiet: !r.note, on: function () { settle(); nextTask(); } }
+    ])]);
+    if (r.screenshot) mine("l:" + t.key + ":" + r.screenshot, "Screenshot: " + r.screenshot, function () { linking[t.key] = true; render(); });
+    if (linkOn) {
+      composer({ key: "link:" + t.key, url: true, placeholder: "Paste the screenshot link", value: r.screenshot || "", save: function (v) {
+        if (v && !/^https:\/\/[^\s<>"'()[\]`]{4,290}$/.test(v)) { $("note").textContent = "A screenshot link starts with https:// and has no spaces or brackets."; return; }
+        r.screenshot = v || null; push();
+      }, empty: true, send: function (v) {
+        if (v && !/^https:\/\/[^\s<>"'()[\]`]{4,290}$/.test(v)) { $("note").textContent = "A screenshot link starts with https:// and has no spaces or brackets."; return; }
+        r.screenshot = v || null; push();
+        linking[t.key] = false;
+        render();
+      } });
+    } else {
+      composer({ key: "note:" + t.key, placeholder: "Type what happened", value: r.note || "", save: function (v) { r.note = v || null; push(); }, send: function (v, box) {
+        r.note = v || null; push();
+        box.value = "";
+        nextTask();
+      } });
+    }
   }
-  var justAnswered = false;
-  var greetAt = -1;
 
-  function renderDone() {
+  /* The day is done: Remy says so, and the day's list as the app's "ready" screen. */
+  function renderDone(tasks) {
+    composer("Everything is saved");
     var s = view.sprint;
     var last = view.feedback.open && day === s.dayIndex;
-    greeting = false;
-    var c = full("", last ? "One last thing: a few quick questions about how it felt." : "See you tomorrow.", last ? "Answer the final questions" : null, forward(function () { mode = "questions"; }));
-    var h = c.querySelector("h1");
-    h.appendChild(document.createTextNode("All done "));
-    h.appendChild(el("em", "", "for today."));
-    var tpl = $("tick");
-    if (tpl && tpl.content) c.insertBefore(tpl.content.firstElementChild.cloneNode(true), h);
-    when(whenToday());
-    quietLinks([
-      ["Change an answer", forward(function () { idx = 0; changing = null; })],
-      earlier().length ? ["Earlier days", forward(function () { mode = "days"; })] : null
-    ], c);
+    backFn = backTo(function () { idx = tasks.length - 1; changing = tasks[idx].key; });
+    backBtn.setAttribute("aria-disabled", "false");
+    var card = el("div", "cv-card");
+    var ready = el("div", "ready");
+    var head = el("div", "ready-head");
+    head.appendChild(clone("orbtpl"));
+    head.appendChild(el("h2", "", dayLabel(day) + " done"));
+    head.appendChild(el("p", "", last ? "One more thing below." : "See you tomorrow."));
+    ready.appendChild(head);
+    tasks.forEach(function (t, i) {
+      var r = resultOf(t.key);
+      var b = button("step", "", forward(function () { idx = i; changing = t.key; }));
+      var tk = clone("tick");
+      if (r.status !== "done") tk.className += " soft";
+      b.appendChild(tk);
+      var sp = el("span");
+      sp.appendChild(el("b", "", t.title));
+      sp.appendChild(el("small", "", SAID[r.status] + (r.status !== "done" && r.shops && r.shops.length ? ", " + shopNames(r.shops) : "")));
+      b.appendChild(sp);
+      ready.appendChild(b);
+    });
+    card.appendChild(ready);
+    remy("end:" + day, ["That's everything for today. Thank you."], [card]);
+    if (last) {
+      var q = el("div", "cv-card");
+      var hd = el("div", "cv-head");
+      hd.appendChild(el("span", "cv-label", "Last step"));
+      q.appendChild(hd);
+      q.appendChild(el("div", "cv-title", "A few questions about how it felt"));
+      q.appendChild(el("div", "cv-sub", "About 5 minutes, mostly taps."));
+      var a = el("div", "cv-actions");
+      a.appendChild(button("cv-primary", "Start", forward(function () { mode = "questions"; })));
+      q.appendChild(a);
+      remy("last", [], [q]).className += " cont";
+    }
+    paint();
   }
 
-  /* An earlier day: read only, all on one calm list. */
-  function listScreen(label, old, fill) {
-    document.body.className = "";
-    band(false);
-    meta(label, 0, 0, backTo(toToday));
-    var card = el("section", "card bare");
-    card.style.background = "transparent";
-    card.style.padding = "0";
-    fill(card);
-    stage(card, old);
-    dock("today", [button("btn forest", "Back to today", backTo(toToday))]);
+  /* An earlier day, the shops, the list of days: Remy shows them in a card. */
+  function listCard(rows) {
+    var c = el("div", "cv-card");
+    var r = el("div", "ready");
+    r.style.paddingTop = "14px";
+    rows.forEach(function (x) { r.appendChild(x); });
+    c.appendChild(r);
+    return c;
   }
-  function renderClosedDay(old) {
-    when(dayLabel(day) + ", closed");
-    listScreen("Read only", old, function (card) {
-      var list = el("div", "list");
-      todays().forEach(function (t) {
-        var r = resultOf(t.key);
-        var row = el("div", "row");
-        row.appendChild(el("b", "", t.title));
-        row.appendChild(el("span", r && r.status ? "" : "none", r && r.status ? STATUS[r.status] || r.status : "Not answered"));
-        list.appendChild(row);
-      });
-      if (!list.firstChild) list.appendChild(el("div", "row", "Nothing for you that day."));
-      card.appendChild(list);
-    });
+  function side() {
+    composer(null);
+    progress(0, 0);
+    backFn = backTo(toToday);
+    backBtn.setAttribute("aria-disabled", "false");
+    items = [];
   }
-  function renderDays(old) {
-    when("Earlier days");
-    listScreen("Days closed", old, function (card) {
-      var list = el("div", "list");
-      earlier().forEach(function (d) { list.appendChild(button("opt", d.label, forward(function () { mode = "day"; day = d.index; }))); });
-      card.appendChild(list);
-    });
+  function renderClosedDay() {
+    side();
+    status("Closed, read only");
+    $("title").textContent = dayLabel(day);
+    remy("closed:" + day, [dayLabel(day) + " is closed now. Here is what you said."], [listCard(todays().map(function (t) {
+      var r = resultOf(t.key);
+      var row = el("div", "step");
+      var tk = clone("tick");
+      if (!r || r.status !== "done") tk.className += " soft";
+      row.appendChild(tk);
+      var sp = el("span");
+      sp.appendChild(el("b", "", t.title));
+      sp.appendChild(el("small", "", r && r.status ? SAID[r.status] : "Not answered"));
+      row.appendChild(sp);
+      return row;
+    }))]);
+    paint();
   }
-  function renderShops(old) {
-    when(view.me.role === "business" ? "Your business" : "Your shops");
-    listScreen(view.shops.length + (view.shops.length === 1 ? " shop" : " shops"), old, function (card) {
-      var list = el("div", "list");
-      view.shops.forEach(function (s) {
-        var row = el("div", "row shop");
-        row.appendChild(el("b", "", s.name));
-        if (s.code) { var sp = el("span", "", "Code "); sp.appendChild(el("code", "", s.code)); row.appendChild(sp); }
-        list.appendChild(row);
-      });
-      card.appendChild(list);
-    });
+  function renderDays() {
+    side();
+    status("Closed, read only");
+    $("title").textContent = "Earlier days";
+    remy("days", ["Which day?"], [chips(earlier().map(function (d) { return { label: d.label, on: forward(function () { mode = "day"; day = d.index; }) }; }))]);
+    paint();
+  }
+  function renderShops() {
+    side();
+    status("");
+    $("title").textContent = view.me.role === "business" ? "Your business" : "Your shops";
+    remy("shops", [view.me.role === "business" ? "Your business on Relynked." : "Your shops, and the code to message each."], [listCard(view.shops.map(function (s) {
+      var row = el("div", "step");
+      var sp = el("span");
+      sp.appendChild(el("b", "", s.name));
+      if (s.code) sp.appendChild(el("small", "", "Code " + s.code));
+      row.appendChild(sp);
+      return row;
+    }))]);
+    paint();
   }
 
-  /* ── The final questions: one question a screen; every shop rating on one screen ───────────────────────────── */
+  /* ── The final questions: Remy asks one at a time in the same thread ───────────────────────────────────────── */
   function screens() {
     return view.feedback.questions.filter(function (q) { return !((q.kind === "shop_rating" || q.kind === "shop_choice") && !view.shops.length); });
-  }
-  function choiceRow(cls, options, current, on) {
-    var wrap = el("div", cls);
-    var all = [];
-    options.forEach(function (o) {
-      var b = button("opt", o.label, function () {
-        all.forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
-        on(o.value);
-      });
-      b.setAttribute("aria-pressed", String(current === o.value));
-      all.push(b);
-      wrap.appendChild(b);
-    });
-    return wrap;
-  }
-  var ONE_TO_FIVE = ["1", "2", "3", "4", "5"];
-  function questionCard(q, total, nav, move) {
-    var card = el("section", "card q");
-    card.appendChild(el("p", "eyebrow", q.sectionTitle));
-    card.appendChild(el("h2", "", q.prompt));
-    // One tap answers; the chosen answer fills, then the next question comes (unless they already moved).
-    var at = step;
-    var after = function () { setTimeout(function () { if (mode === "questions" && step === at) move(); }, still ? 0 : 250); };
-    if (q.kind === "shop_rating") {
-      card.className += " rating";
-      var rows = el("div", "rates");
-      view.shops.forEach(function (s) {
-        var row = el("div", "rrow");
-        row.appendChild(el("b", "", s.name));
-        var five = el("div", "five");
-        five.setAttribute("role", "group");
-        five.setAttribute("aria-label", s.name);
-        var cur = answerOf(q.key, s.ref);
-        var all = [];
-        ONE_TO_FIVE.forEach(function (n) {
-          var b = button("rate", n, function () {
-            all.forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
-            setAnswer(q.key, s.ref, n);
-            nav(true);
-          });
-          b.setAttribute("aria-pressed", String(cur === n));
-          all.push(b);
-          five.appendChild(b);
-        });
-        row.appendChild(five);
-        rows.appendChild(row);
-      });
-      card.appendChild(rows);   // the question itself says what 1 and 5 mean
-      return card;
-    }
-    if (q.kind === "choice" || q.kind === "shop_choice") {
-      var opts = q.kind === "choice" ? q.options : view.shops.map(function (s) { return { value: s.ref, label: s.name }; });
-      card.appendChild(choiceRow(q.kind === "shop_choice" && opts.length > 4 ? "chips many" : "stack", opts, answerOf(q.key), function (v) { setAnswer(q.key, "", v); nav(true); after(); }));
-      return card;
-    }
-    var input = el(q.kind === "minutes" ? "input" : "textarea");
-    if (q.kind === "minutes") { input.type = "number"; input.min = "0"; input.max = "600"; input.inputMode = "numeric"; input.placeholder = "Minutes"; }
-    else { input.maxLength = 500; input.rows = 5; input.placeholder = "Type here, a few words is fine"; }
-    input.setAttribute("aria-label", q.prompt);
-    input.value = answerOf(q.key);
-    var note = el("p", "note");
-    note.setAttribute("role", "status");
-    input.addEventListener("input", function () { note.textContent = ""; nav(input.value.trim() !== ""); });
-    typed(input, function (v) {
-      if (q.kind === "minutes" && v !== "" && !/^\d{1,3}$/.test(v)) { note.textContent = "Please type a number of minutes."; return; }
-      setAnswer(q.key, "", v);
-    });
-    card.appendChild(input);
-    card.appendChild(note);
-    return card;
   }
   function anyAnswer(q) {
     if (q.kind !== "shop_rating") return answerOf(q.key) !== "";
     return view.shops.some(function (s) { return answerOf(q.key, s.ref) !== ""; });
   }
-  function renderQuestions(old) {
-    var f = view.feedback;
-    var s = view.sprint;
-    if (!f.open) {
-      when("");
-      var past = s.dayIndex !== null && s.lastIndex !== null && s.dayIndex > s.lastIndex;
-      if (past) return full("All closed.", "The final questions are closed. Thank you for testing with us.");
-      return full("Not open yet.", (f.opensOn ? "The final questions open on " + niceDay(f.opensOn) + ", the last day." : "The final questions open on the last day of the sprint.") + " This same link will show them.", "Go to today's check-in", forward(toToday));
+  function said(q) {
+    if (q.kind === "shop_rating") {
+      var n = view.shops.filter(function (s) { return answerOf(q.key, s.ref) !== ""; }).length;
+      return n ? (n === view.shops.length ? "Rated every shop" : "Rated " + n + " of " + view.shops.length + " shops") : "";
     }
-    when("Final questions");
+    var a = answerOf(q.key);
+    if (a === "") return "";
+    if (q.kind === "choice") { for (var i = 0; i < q.options.length; i++) if (q.options[i].value === a) return q.options[i].label; }
+    if (q.kind === "shop_choice") return shopNames([a]) || a;
+    if (q.kind === "minutes") return a + (a === "1" ? " minute" : " minutes");
+    return a;
+  }
+  function moveTo(n, total) {
+    forward(function () { step = Math.max(0, Math.min(total, n)); qmax = Math.max(qmax, step); store.set("qstep", step); })();
+  }
+  function onward(total) { return step < qmax ? qmax : step + 1; }
+  function renderQuestions() {
+    var f = view.feedback, s = view.sprint;
+    $("title").textContent = "Final questions";
+    if (!f.open) {
+      var past = s.dayIndex !== null && s.lastIndex !== null && s.dayIndex > s.lastIndex;
+      if (past) return message("All closed.", "The final questions are closed. Thank you for testing with us.");
+      return message("Not open yet.", (f.opensOn ? "The final questions open on " + niceDay(f.opensOn) + ", the last day." : "The final questions open on the last day of the sprint.") + " This same link will show them.", "Go to today's check-in", forward(toToday));
+    }
     var list = screens();
-    if (!list.length) return full("No questions yet.", "Please check back a little later.");
-    if (step >= list.length) {
-      var d = full("Thank you.", "All your answers are saved, " + view.me.firstName + ". You can still change them this week.");
-      quietLinks([
-        ["Look at my answers again", forward(function () { step = 0; store.set("qstep", 0); })],
-        s.dayIndex !== null && s.dayIndex >= 0 && s.dayIndex <= s.lastIndex ? ["Today's check-in", forward(toToday)] : null
-      ], d);
+    if (!list.length) return message("No questions yet.", "Please check back a little later.");
+    step = Math.min(step, list.length);
+    qmax = Math.max(qmax, step);
+    var total = list.length;
+    status(Math.min(step + 1, total) + " of " + total);
+    progress(Math.min(step, total), total);
+    backFn = step > 0 ? backTo(function () { step--; store.set("qstep", step); }) : null;
+    backBtn.setAttribute("aria-disabled", String(!backFn));
+    items = [];
+    remy("qi", ["Hi " + view.me.firstName + ". A few questions about how it felt. Tap an answer, or type in the box."]);
+    var section = null;
+    for (var i = 0; i < Math.min(step, total); i++) {
+      var q = list[i];
+      if (q.section !== section) { section = q.section; divider("d:" + q.section, q.sectionTitle); }
+      remy("q:" + q.key, [q.prompt]);
+      var w = said(q);
+      mine("a:" + q.key + ":" + w, w || "Skipped", (function (n) { return function () { moveTo(n, total); }; })(i), !w);
+    }
+    if (step >= total) {
+      composer("Everything is saved");
+      status("All answered");
+      var c = el("div", "cv-card");
+      var ready = el("div", "ready");
+      var head = el("div", "ready-head");
+      head.appendChild(clone("orbtpl"));
+      head.appendChild(el("h2", "", "Thank you."));
+      head.appendChild(el("p", "", "Your answers are saved. Tap any of them above to change it this week."));
+      ready.appendChild(head);
+      c.appendChild(ready);
+      if (s.dayIndex !== null && s.dayIndex >= 0 && s.dayIndex <= s.lastIndex) {
+        var a = el("div", "cv-actions");
+        a.appendChild(button("cv-second", "Today's check-in", forward(toToday)));
+        c.appendChild(a);
+      }
+      remy("thanks", ["That's all of them. Thank you, " + view.me.firstName + "."], [c]);
+      return paint();
+    }
+    var cur = list[step];
+    if (cur.section !== section) divider("d:" + cur.section, cur.sectionTitle);
+    askQuestion(cur, total);
+    paint();
+  }
+  function askQuestion(q, total) {
+    var at = step;
+    var next = function () { if (mode === "questions" && step === at) moveTo(onward(total), total); };
+    var skip = { label: "Skip", quiet: true, on: function () { settle(); next(); } };
+    if (q.kind === "shop_rating") {
+      composer("Rate above, then Next");
+      var card = el("div", "cv-card");
+      var head = el("div", "cv-head");
+      head.appendChild(el("span", "cv-label", "1 is poor, 5 is great"));
+      card.appendChild(head);
+      view.shops.forEach(function (s) {
+        var row = el("div", "rate-row");
+        row.appendChild(el("b", "", s.name));
+        var seg = el("div", "segment");
+        seg.setAttribute("role", "group");
+        seg.setAttribute("aria-label", s.name);
+        var cur = answerOf(q.key, s.ref), all = [];
+        ["1", "2", "3", "4", "5"].forEach(function (n) {
+          var b = button("seg", n, function () {
+            all.forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+            setAnswer(q.key, s.ref, n);
+            go.textContent = "Next";
+          });
+          b.setAttribute("aria-pressed", String(cur === n));
+          all.push(b);
+          seg.appendChild(b);
+        });
+        row.appendChild(seg);
+        card.appendChild(row);
+      });
+      var acts = el("div", "cv-actions");
+      var go = button("cv-primary", anyAnswer(q) ? "Next" : "Skip", next);
+      acts.appendChild(go);
+      card.appendChild(acts);
+      remy("q:" + q.key, [q.prompt], [card]);
       return;
     }
-    document.body.className = "";
-    band(false);
-    var q = list[step];
-    var go = forward(function () { step = Math.min(list.length, step + 1); store.set("qstep", step); });
-    meta("Question " + (step + 1) + " of " + list.length, step + 1, list.length, step > 0 ? backTo(function () { step--; store.set("qstep", step); }) : null);
-    var nextBtn = button("btn", "Next", go);
-    var nav = function (has) {
-      nextBtn.textContent = has ? (step === list.length - 1 ? "Finish" : "Next") : "Skip";
-      nextBtn.className = has ? "btn" : "btn ghost";
-    };
-    var card = questionCard(q, list.length, nav, go);
-    nav(anyAnswer(q));
-    stage(card, old);
-    dock("next", [nextBtn]);
-    heading(card);
+    if (q.kind === "choice" || q.kind === "shop_choice") {
+      composer("Tap an answer above");
+      var opts = q.kind === "choice" ? q.options : view.shops.map(function (s) { return { value: s.ref, label: s.name }; });
+      var cur2 = answerOf(q.key);
+      var row2 = chips(opts.map(function (o) {
+        return { label: o.label, pressed: cur2 === o.value, on: function (e) {
+          var b = e.currentTarget;
+          row2.querySelectorAll(".qr").forEach(function (x) { if (!x.classList.contains("quiet")) x.setAttribute("aria-pressed", String(x === b)); });
+          setAnswer(q.key, "", o.value);
+          // The chosen chip lifts, then it is sent as their answer and Remy asks the next.
+          setTimeout(next, still ? 0 : 250);
+        } };
+      }).concat([skip]));
+      remy("q:" + q.key, [q.prompt], [row2]);
+      return;
+    }
+    remy("q:" + q.key, [q.prompt], [chips([skip])]);
+    composer({ key: "q:" + q.key, numeric: q.kind === "minutes", placeholder: q.kind === "minutes" ? "Minutes, as a number" : "Type your answer", value: answerOf(q.key), save: function (v) {
+      if (q.kind === "minutes" && v !== "" && !/^\d{1,3}$/.test(v)) { $("note").textContent = "Please type a number of minutes."; return; }
+      setAnswer(q.key, "", v);
+    }, send: function (v) {
+      if (q.kind === "minutes" && !/^\d{1,3}$/.test(v)) { $("note").textContent = "Please type a number of minutes."; return; }
+      setAnswer(q.key, "", v);
+      next();
+    } });
   }
 
-  function render(fromAnswer) {
-    var old = clear();
-    justAnswered = !!fromAnswer;
-    if (mode === "questions") renderQuestions(old);
-    else if (mode === "days") renderDays(old);
-    else if (mode === "shops") renderShops(old);
-    else renderDay(old);
-    justAnswered = false;
+  function render() {
+    closeMenu();
+    if (mode === "questions") renderQuestions();
+    else if (mode === "days") renderDays();
+    else if (mode === "shops") renderShops();
+    else renderDay();
   }
 
   /* ── Opening ───────────────────────────────────────────────────────────────────────────────────────────────── */
@@ -689,18 +778,14 @@
       idx = null;
       depth = 0;
       step = Math.max(0, Number(store.get("qstep")) || 0);
+      qmax = step;
       // After the last day the link goes straight to the final questions.
       if (v.feedback.open && s.dayIndex > s.lastIndex) mode = "questions";
-      // The first screen of a day says hello; coming back to a day already started says "Welcome back" for a moment.
+      render();
+      // Coming back to a day already started: it opens at the first task not answered, with "Welcome back".
       var tasks = v.tasks.filter(function (t) { return t.day === day; });
       var done = tasks.filter(function (t) { var r = resultOf(t.key); return r && r.status; }).length;
-      if (mode === "day" && s.dayIndex >= 0 && s.dayIndex <= s.lastIndex && tasks.length) {
-        when(whenToday());
-        greetAt = done === 0 ? 0 : -1;
-        if (done === 0) band(true);
-        else if (done < tasks.length) welcome();
-      }
-      render();
+      if (mode === "day" && done > 0 && done < tasks.length) flash("", "Welcome back", 2000);
       try { history.replaceState(snap(), "", location.pathname); } catch (e) { /* old browser */ }
     } else if (fresh && !document.activeElement.matches("textarea,input")) render();
   }
