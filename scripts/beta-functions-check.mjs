@@ -6,7 +6,9 @@
  * Holds: off (503) without an https API and a long secret; the settings and an application go to the API with the
  * secret and the visitor's address and nothing else of the visitor's (no cookie, no referrer); JSON only, and small;
  * the visitor gets JSON back and never the API's own headers; the settings may be kept a minute, an application never;
- * a GET to apply is refused; /beta stays a page of the site (_routes.json) and is never a shop name; the page is
+ * a GET to apply is refused; another site's Origin is refused and a preview's own only with the flag; a body that says
+ * it is too large is refused unread; the invite word (k) goes to the API with the form and the page hides the form
+ * without one; /beta stays a page of the site (_routes.json) and is never a shop name; the page is
  * onboarding only (17 Nov 2026): the short form, no quiz, no pay, no marketing.
  */
 import { readFileSync } from "node:fs";
@@ -14,7 +16,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { onRequestGet as settings } from "../functions/api/beta/settings.js";
 import { onRequestPost as apply, onRequestGet as applyGet } from "../functions/api/beta/apply.js";
-import { betaApi } from "../functions/api/beta/_proxy.js";
+import { betaApi, originAllowed } from "../functions/api/beta/_proxy.js";
 import { isHandle } from "../functions/_shop.js";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -69,6 +71,44 @@ ok(r.status === 413 && calls.length === before, "and small");
 r = await applyGet();
 ok(r.status === 405, "a GET to apply is refused");
 
+// The invite word goes with the form.
+const invited = JSON.stringify({ name: "Ada", k: "abc23456de" });
+r = await apply(ctx("POST", invited, ENV, { "content-type": "application/json", origin: "https://relynked.com" }));
+c = calls.at(-1);
+ok(r.status === 200 && JSON.parse(c.init.body).k === "abc23456de" && !c.url.includes("abc23456de") && !c.headers.has("origin"), "the invite word reaches the API in the form, from this site's own page");
+
+// A body that says it is too large is refused before it is read.
+const unread = () => {
+  let read = false;
+  const request = new Request("https://relynked.com/api/beta/apply", { method: "POST", headers: { "content-type": "application/json", "content-length": "9000", "cf-connecting-ip": "102.89.1.2" }, body: "{}" });
+  const text = request.text.bind(request);
+  request.text = () => { read = true; return text(); };
+  // undici sets the header from the real body; say what a large request would say.
+  const headers = new Headers(request.headers);
+  headers.set("content-length", "9000");
+  Object.defineProperty(request, "headers", { value: headers });
+  return { ctx: { request, env: ENV }, wasRead: () => read };
+};
+let n = calls.length;
+const u = unread();
+r = await apply(u.ctx);
+ok(r.status === 413 && !u.wasRead() && calls.length === n, "content-length over 8192: refused before the body is read");
+
+// Only this site's own page.
+n = calls.length;
+for (const origin of ["https://evil.example", "http://relynked.com", "https://relynked.com.evil.example", "https://www.relynked.com", "null", "https://x.relynked.pages.dev"]) {
+  r = await apply(ctx("POST", body, ENV, { "content-type": "application/json", origin }));
+  ok(r.status === 403 && calls.length === n, `another Origin is refused, the API never asked: ${origin}`);
+}
+r = await settings(ctx("GET", undefined, ENV, { origin: "https://evil.example" }));
+ok(r.status === 403 && calls.length === n, "and for the settings too");
+r = await apply(ctx("POST", body, ENV, { "content-type": "application/json" }));
+ok(r.status === 200, "no Origin at all (not a browser's cross site post): let through to the API's own checks");
+const preview = (flag, origin, url = "https://abc123.relynked.pages.dev/api/beta/apply") => originAllowed(new Request(url, { method: "POST", headers: { origin }, body: "{}" }), { ...ENV, ...(flag ? { BETA_ALLOW_PREVIEW_ORIGIN: flag } : {}) });
+ok(!preview(null, "https://abc123.relynked.pages.dev") && !preview("false", "https://abc123.relynked.pages.dev") && !preview("1", "https://abc123.relynked.pages.dev"), "a Pages preview is refused without the flag");
+ok(preview("true", "https://abc123.relynked.pages.dev"), "with BETA_ALLOW_PREVIEW_ORIGIN=true a preview's own page may post to itself");
+ok(!preview("true", "https://other.pages.dev") && !preview("true", "https://evil.example", "https://evil.example/api/beta/apply") && !preview("true", "https://abc123.relynked.pages.dev.evil.example", "https://abc123.relynked.pages.dev.evil.example/x"), "even with the flag: never another preview, never a site that is not pages.dev");
+
 answer = () => new Response(JSON.stringify({ ok: false, error: "slow_down" }), { status: 429, headers: { "content-type": "application/json", "retry-after": "600" } });
 r = await apply(ctx("POST", body, ENV, { "content-type": "application/json" }));
 ok(r.status === 429 && r.headers.get("retry-after") === "600", "the API's limit and its wait reach the page");
@@ -94,6 +134,8 @@ ok(!/name="minutes"|minutes:/.test(html + js), "no minutes a day asked");
 ok(!/₦|naira|bonus|paid|earn|per active day|data top up|#pay\b/i.test(html + js), "no pay shown: no amount, no bonus, no pay timing");
 ok((html.match(/\bpay\b/gi) || []).length === 1 && html.includes("Questions about pay, schedule or training? Ask your testing partner."), "the one pay line: ask your testing partner");
 ok(!/<nav\b|class="links"|burger|<figure|faq|fluted|bh-flute|orb|class="sprite"|<symbol/i.test(html), "no menu, no hero chat, no FAQ, no glass, no doodle sprite");
+ok(html.includes('id="invite-note" hidden>Open the link your testing partner sent you.</p>') && /get\("k"\)/.test(js) && /k: invite/.test(js) && /invite-note"\)\.hidden = false/.test(js), "with no invite word in the link: one plain line, and the form is hidden; with one, it is sent as k");
+ok(html.includes("are kept by Relynked and shared with your testing partner"), "the consent line says the details are shared with the testing partner");
 ok(html.includes("Relynked beta: tester onboarding") && html.includes("Your testing partner has signed you up."), "the title and the one line");
 ok((html.match(/<ol class="ob-steps"[\s\S]*?<\/ol>/)?.[0].match(/<li>/g) || []).length === 3, "three steps");
 for (const n of ["name", "email", "phone", "phoneType", "city", "ranBusiness", "businessKind", "pidginComfort", "otherLanguages", "consent"]) ok(html.includes(`name="${n}"`) && js.includes(`"${n}"`), `the form asks ${n} and the script sends it`);

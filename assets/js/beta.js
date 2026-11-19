@@ -1,6 +1,9 @@
 /* relynked.com/beta: tester onboarding (founder, 17 Nov 2026). Reads /api/beta/settings only to know whether sign up
    is open, and posts /api/beta/apply, both through this site's Pages Functions (functions/api/beta), so nothing here
-   talks to another site. No quiz: the testing partner recruits and trains the testers. */
+   talks to another site. No quiz: the testing partner recruits and trains the testers.
+   THE INVITE WORD (19 Nov 2026): the link the testing partner sends is /beta?k=WORD. The word is read from the
+   address and sent with the form, so the tester types nothing. With no word the page still shows, with one line
+   asking them to open their link, and no form. The server decides whether the word is right. */
 (function () {
   "use strict";
   var started = Date.now();
@@ -9,8 +12,17 @@
   var status = document.getElementById("status");
   var send = document.getElementById("send");
 
+  var invite = "";
+  try { invite = new URLSearchParams(window.location.search).get("k") || ""; } catch (e) { invite = ""; }
+  var invited = /^[A-Za-z0-9]{8,40}$/.test(invite);
+  if (!invited) {
+    form.hidden = true;
+    document.getElementById("invite-note").hidden = false;
+  }
+
   function closed() {
     form.hidden = true;
+    document.getElementById("invite-note").hidden = true;
     document.getElementById("closed-note").hidden = false;
   }
   fetch("/api/beta/settings", { headers: { accept: "application/json" } })
@@ -85,7 +97,7 @@
       phoneType: valueOf("phoneType"), ranBusiness: valueOf("ranBusiness"),
       businessKind: valueOf("ranBusiness") === "yes" ? valueOf("businessKind") : "", pidginComfort: valueOf("pidginComfort"),
       otherLanguages: Array.prototype.map.call(form.querySelectorAll('[name="otherLanguages"]:checked'), function (c) { return c.value; }),
-      consent: true, website: document.getElementById("website").value, formMs: Date.now() - started
+      consent: true, website: document.getElementById("website").value, formMs: Date.now() - started, k: invite
     };
     send.disabled = true;
     status.textContent = "Sending...";
