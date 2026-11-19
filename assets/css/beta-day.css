@@ -66,7 +66,10 @@ body{background-image:url("../beta/doodle.svg");background-size:520px 693.33px;b
 .menu button:active,.menu a:active{background:var(--fill)}
 
 /* The messages */
-.msgs{flex:1;overflow-y:auto;scrollbar-width:none;display:flex;flex-direction:column;padding:calc(var(--head-h) + 10px) 13.2px 16px;-webkit-overflow-scrolling:touch}
+.msgs{flex:1;overflow-y:auto;scrollbar-width:none;display:flex;flex-direction:column;padding:calc(var(--head-h) + 10px) 13.2px 16px;-webkit-overflow-scrolling:touch;transition:padding-bottom 300ms var(--ease);
+  /* Nothing readable under the frosted head: the thread fades out before it reaches the title and its status line */
+  -webkit-mask-image:linear-gradient(to bottom,transparent calc(var(--head-h) - 4px),#000 calc(var(--head-h) + 22px));mask-image:linear-gradient(to bottom,transparent calc(var(--head-h) - 4px),#000 calc(var(--head-h) + 22px))}
+.thd.typing .msgs{padding-bottom:96px}
 .msgs::-webkit-scrollbar{display:none}
 .arow{display:flex;gap:8.25px;align-items:flex-start;margin-bottom:4.95px}
 .arow .ra{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;flex:none;margin-top:14.85px}
@@ -148,7 +151,9 @@ button.b.out{cursor:pointer}
 .state .cv-primary{margin-top:24px;min-height:48px;padding:0 24px}
 
 /* The forest pill (remy-pill.css), only when there is something to type */
-.comp{flex:none;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));position:relative;z-index:5}
+/* Only when there is something to type: it slides up over the thread's foot (the thread makes room), never a jump */
+.comp{position:absolute;left:0;right:0;bottom:0;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));z-index:5;transform:translateY(110%);visibility:hidden;transition:transform 300ms var(--ease),visibility 0s var(--ease) 300ms}
+.comp.up{transform:none;visibility:visible;transition:transform 300ms var(--ease)}
 .note{font-size:13px;font-weight:600;color:var(--t1);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:0 0 8px;box-shadow:var(--sh)}
 .note:empty{display:none}
 .pillrow{display:flex;align-items:flex-end;gap:4.95px;min-height:52px;padding:6px;background:var(--forest);border-radius:28px;box-shadow:0 6px 20px rgba(11,61,46,.22)}
@@ -174,5 +179,4 @@ button.b.out{cursor:pointer}
 .cv-actions.three{flex-wrap:nowrap;gap:7px}
 .cv-actions.three>button{flex:1 1 auto;padding:0 9px;white-space:nowrap}
 .cv-actions.three>.cv-primary{flex:0 1 auto;padding:0 15px}
-@media (max-width:374px){.cv-actions.three{flex-wrap:wrap}}
-.pillrow .hint{flex:1;min-height:40px;border:0;background:none;padding:0;text-align:left;color:rgba(255,255,255,.66);font:500 13.6px/1.4 var(--font)}
+@media (max-width:374px){.cv-actions.three{flex-direction:column;align-items:stretch}.cv-actions.three>button,.cv-actions.three>.cv-primary{width:100%;flex:none;padding:0 16px}}

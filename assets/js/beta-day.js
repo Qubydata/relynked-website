@@ -317,24 +317,17 @@
 
   /* The pill: only when there is something to type. Its box is new for each question, so its autosave is its own. */
   var compKey = null;
+  var thd = document.querySelector(".thd");
   function composer(cfg) {
-    if (!cfg) { comp.hidden = true; compKey = null; return; }
+    if (!cfg) { comp.classList.remove("up"); thd.classList.remove("typing"); compKey = null; return; }
     comp.hidden = false;
-    if (typeof cfg === "string") cfg = { key: "hint:" + cfg, hint: cfg };
+    comp.classList.add("up");
+    thd.classList.add("typing");
     if (compKey === cfg.key) return;
     compKey = cfg.key;
     var fld = comp.querySelector(".fld");
     while (fld.firstChild) fld.removeChild(fld.firstChild);
     var send = $("send");
-    // Nothing to type here: the app's pill stays, saying where the answer goes; a tap brings the question into view.
-    if (cfg.hint) {
-      var h = button("hint", cfg.hint, function () { try { app.scrollTo({ top: app.scrollHeight, behavior: still ? "auto" : "smooth" }); } catch (e) { app.scrollTop = app.scrollHeight; } });
-      fld.appendChild(h);
-      send.hidden = true;
-      $("note").textContent = "";
-      return;
-    }
-    send.hidden = false;
     var box = el(cfg.numeric ? "input" : "textarea");
     if (cfg.numeric) { box.type = "text"; box.inputMode = "numeric"; box.maxLength = 3; }
     else { box.rows = 1; box.maxLength = cfg.max || 500; }
@@ -448,7 +441,7 @@
     }
     var more = (r.status === "failed" || r.status === "stuck") && changing !== t.key;
     if (!more) {
-      composer("Tap an answer above");
+      composer(null);
       var card = el("div", "cv-card");
       card.setAttribute("role", "group");
       var head = el("div", "cv-head");
@@ -494,7 +487,7 @@
       }))]);
     }
     if (!askShop || r.shops.length || r.note || r.screenshot) opened[t.key] = true;
-    if (!opened[t.key]) { composer("Pick the shop above"); return; }
+    if (!opened[t.key]) { composer(null); return; }
     var linkOn = !!linking[t.key];
     remy("h:" + t.key, ["What happened? A few words below is fine."], [chips([
       !r.screenshot && !linkOn ? { label: "Add a screenshot link", quiet: true, on: function () { linking[t.key] = true; render(); var b = $("box"); if (b) b.focus(); } } : null,
@@ -522,7 +515,7 @@
 
   /* The day is done: Remy says so, and the day's list as the app's "ready" screen. */
   function renderDone(tasks) {
-    composer("Everything is saved");
+    composer(null);
     var s = view.sprint;
     var last = view.feedback.open && day === s.dayIndex;
     backFn = backTo(function () { idx = tasks.length - 1; changing = tasks[idx].key; });
@@ -671,7 +664,7 @@
       mine("a:" + q.key + ":" + w, w || "Skipped", (function (n) { return function () { moveTo(n, total); }; })(i), !w);
     }
     if (step >= total) {
-      composer("Everything is saved");
+      composer(null);
       status("All answered");
       var c = el("div", "cv-card");
       var ready = el("div", "ready");
@@ -699,7 +692,7 @@
     var next = function () { if (mode === "questions" && step === at) moveTo(onward(total), total); };
     var skip = { label: "Skip", quiet: true, on: function () { settle(); next(); } };
     if (q.kind === "shop_rating") {
-      composer("Rate above, then Next");
+      composer(null);
       var card = el("div", "cv-card");
       var head = el("div", "cv-head");
       head.appendChild(el("span", "cv-label", "1 is poor, 5 is great"));
@@ -732,7 +725,7 @@
       return;
     }
     if (q.kind === "choice" || q.kind === "shop_choice") {
-      composer("Tap an answer above");
+      composer(null);
       var opts = q.kind === "choice" ? q.options : view.shops.map(function (s) { return { value: s.ref, label: s.name }; });
       var cur2 = answerOf(q.key);
       var row2 = chips(opts.map(function (o) {

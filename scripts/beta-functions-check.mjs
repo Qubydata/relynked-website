@@ -138,6 +138,7 @@ ok(html.includes('id="invite-note" hidden>Open the link your testing partner sen
 ok(html.includes("are kept by Relynked and shared with your testing partner"), "the consent line says the details are shared with the testing partner");
 ok(html.includes("Relynked beta: tester onboarding") && html.includes("Your testing partner has signed you up."), "the title and the one line");
 ok((html.match(/<ol class="ob-steps"[\s\S]*?<\/ol>/)?.[0].match(/<li>/g) || []).length === 3, "three steps");
+ok(html.includes('<label for="phone">WhatsApp number you will test with</label>') && html.includes('aria-describedby="phone-help phone-err"') && html.includes("We match your test shops and chats to this number."), "the sign up asks for the WhatsApp number they will TEST with, and says why (testers are matched by it)");
 for (const n of ["name", "email", "phone", "phoneType", "city", "ranBusiness", "businessKind", "pidginComfort", "otherLanguages", "consent"]) ok(html.includes(`name="${n}"`) && js.includes(`"${n}"`), `the form asks ${n} and the script sends it`);
 ok((html.match(/name="pidginComfort"/g) || []).length === 4, "Pidgin comfort: four options");
 ok(html.includes("Thanks, you're in the list.") && html.includes("We'll email you your role, tasks and codes."), "the success line");
