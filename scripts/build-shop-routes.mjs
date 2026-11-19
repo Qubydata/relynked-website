@@ -28,10 +28,12 @@ export function shopRoutes(dir = root) {
   for (const name of readdirSync(dir).sort()) {
     if (SKIP.has(name) || name.startsWith(".")) continue;
     const full = join(dir, name);
-    if (statSync(full).isDirectory()) exclude.push(`/${name}`, `/${name}/*`);
+    // A page and a folder can share a name (beta.html and beta/): each rule is listed once.
+    const add = (...rules) => { for (const r of rules) if (!exclude.includes(r)) exclude.push(r); };
+    if (statSync(full).isDirectory()) add(`/${name}`, `/${name}/*`);
     else {
-      exclude.push(`/${name}`);
-      if (name.endsWith(".html")) exclude.push(`/${name.slice(0, -5)}`);
+      add(`/${name}`);
+      if (name.endsWith(".html")) add(`/${name.slice(0, -5)}`);
     }
   }
   // The order link's page is copied in at publish time (Remy repo, npm run build:order).
