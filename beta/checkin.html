@@ -2,36 +2,39 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
 <title>Daily check-in · Relynked beta</title>
 <meta name="robots" content="noindex,nofollow">
-<meta name="referrer" content="no-referrer">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
-<meta name="theme-color" content="#FDFDFD">
-<link rel="stylesheet" href="/assets/css/beta-day.css?v=20261119a">
+<meta name="theme-color" content="#0F3D2E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap">
+<link rel="stylesheet" href="/assets/css/beta-day.css?v=20261119b">
 </head>
-<body data-page="checkin">
+<body data-page="checkin" class="dark">
 
-<header class="top">
+<header class="band">
   <div class="wrap">
-    <span class="logo" aria-label="Relynked"><svg class="mk" viewBox="0 0 336 338" aria-hidden="true"><rect width="336" height="338" rx="84" fill="#0A3F32"/><rect x="54" y="85" width="176" height="65" rx="32.5" fill="#fff"/><rect x="54" y="186" width="227" height="67" rx="33.5" fill="#E2E41A"/></svg><span class="wm">Relynked</span></span>
-    <span class="tag">Beta testers</span>
+    <img class="logo" src="/assets/brand/relynked-lockup-dark-sm.png" width="147" height="28" alt="Relynked">
+    <div id="hero"></div>
   </div>
 </header>
 
 <main class="wrap" id="app" aria-live="polite">
-  <div class="card center" id="boot">
-    <p class="big">Opening your page</p>
-    <p class="soft">One moment.</p>
-    <noscript><p class="soft">This page needs JavaScript. Please open it in Chrome or Safari.</p></noscript>
-  </div>
+  <section class="full" id="boot">
+    <h1>Opening your page.</h1>
+    <p class="line">One moment.</p>
+    <noscript><p class="line">This page needs JavaScript. Please open it in Chrome or Safari.</p></noscript>
+  </section>
 </main>
 
 <footer class="foot wrap">
   <span>© 2026 Relynked Ltd.</span>
-  <span><a href="/privacy">Privacy</a></span>
+  <a href="/privacy">Privacy</a>
 </footer>
 
-<script src="/assets/js/beta-day.js?v=20261119a"></script>
+<script src="/assets/js/beta-day.js?v=20261119b"></script>
 </body>
 </html>
