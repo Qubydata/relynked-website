@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tester onboarding · Relynked</title>
+<meta name="description" content="Relynked beta tester onboarding. Your testing partner has signed you up: fill this in and we email your tasks and codes.">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://relynked.com/beta">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Relynked">
+<meta property="og:title" content="Relynked beta: tester onboarding">
+<meta property="og:description" content="Your testing partner has signed you up. Fill this in and we email your tasks and codes.">
+<meta property="og:url" content="https://relynked.com/beta">
+<meta property="og:image" content="https://relynked.com/assets/img/og-relynked.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/img/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#FDFDFD">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=JetBrains+Mono:wght@600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/styles.css?v=20261011c">
+<link rel="stylesheet" href="/assets/css/beta.css?v=20261117b">
+</head>
+<body class="beta">
+
+<header class="ob-top">
+  <div class="ob-wrap">
+    <a class="logo" href="/" aria-label="Relynked home"><svg class="mk" viewBox="0 0 336 338" aria-hidden="true"><rect width="336" height="338" rx="84" fill="#0A3F32"/><rect x="54" y="85" width="176" height="65" rx="32.5" fill="#fff"/><rect x="54" y="186" width="227" height="67" rx="33.5" fill="#E2E41A"/></svg><span class="wm">Relynked<sup class="tm">™</sup></span></a>
+  </div>
+</header>
+
+<main class="ob-wrap" id="main">
+
+  <section class="ob-intro" aria-labelledby="ob-title">
+    <p class="ob-eye">Beta testers</p>
+    <h1 id="ob-title">Relynked beta: tester onboarding</h1>
+    <p class="ob-lead">Your testing partner has signed you up. Fill this in and we'll send your tasks, codes and how to report, by email.</p>
+    <ol class="ob-steps" aria-label="How it works">
+      <li><span class="n" aria-hidden="true">1</span><span>Fill this form</span></li>
+      <li><span class="n" aria-hidden="true">2</span><span>We place you as a business or customer tester</span></li>
+      <li><span class="n" aria-hidden="true">3</span><span>Check your email for your tasks and codes</span></li>
+    </ol>
+  </section>
+
+  <section class="ob-card" aria-label="Tester details">
+    <p class="ob-closed" id="invite-note" hidden>Open the link your testing partner sent you.</p>
+    <p class="ob-closed" id="closed-note" hidden>Sign up for this sprint is closed. Your testing partner will tell you when the next one opens.</p>
+
+    <form id="beta-form" novalidate>
+      <div class="hp" aria-hidden="true">
+        <label for="website">Leave this empty</label>
+        <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="f">
+        <label for="name">Full name</label>
+        <input id="name" name="name" type="text" autocomplete="name" required minlength="2" maxlength="80" aria-describedby="name-err">
+        <p class="err" id="name-err" hidden>Please write your name.</p>
+      </div>
+
+      <div class="f">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required maxlength="200" aria-describedby="email-help email-err">
+        <p class="help" id="email-help">Your tasks and codes come here.</p>
+        <p class="err" id="email-err" hidden>Please check your email address.</p>
+      </div>
+
+      <div class="f">
+        <label for="phone">WhatsApp number</label>
+        <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required maxlength="20" placeholder="0803 123 4567" aria-describedby="phone-err">
+        <p class="err" id="phone-err" hidden>Please check your WhatsApp number.</p>
+      </div>
+
+      <fieldset class="f">
+        <legend>Phone type</legend>
+        <div class="chips">
+          <label class="ob-chip"><input type="radio" name="phoneType" value="android" required aria-describedby="phone_type-err"><span>Android</span></label>
+          <label class="ob-chip"><input type="radio" name="phoneType" value="iphone"><span>iPhone</span></label>
+        </div>
+        <p class="err" id="phone_type-err" hidden>Please pick your phone.</p>
+      </fieldset>
+
+      <div class="f">
+        <label for="city">City</label>
+        <input id="city" name="city" type="text" autocomplete="address-level2" required minlength="2" maxlength="60" placeholder="Lagos, Benin City, Abuja" aria-describedby="city-err">
+        <p class="err" id="city-err" hidden>Please write your city or town.</p>
+      </div>
+
+      <fieldset class="f">
+        <legend>Have you run a business?</legend>
+        <div class="chips">
+          <label class="ob-chip"><input type="radio" name="ranBusiness" value="yes" required aria-describedby="ran_business-err"><span>Yes</span></label>
+          <label class="ob-chip"><input type="radio" name="ranBusiness" value="no"><span>No</span></label>
+        </div>
+        <p class="err" id="ran_business-err" hidden>Please answer yes or no.</p>
+        <div class="sub" id="kind-wrap" hidden>
+          <label for="businessKind">What kind of business?</label>
+          <input id="businessKind" name="businessKind" type="text" maxlength="80" placeholder="Food, fashion, salon, phones" aria-describedby="business_kind-err">
+          <p class="err" id="business_kind-err" hidden>Please say what kind of business.</p>
+        </div>
+      </fieldset>
+
+      <fieldset class="f">
+        <legend>How comfortable are you writing and speaking Pidgin?</legend>
+        <div class="chips">
+          <label class="ob-chip"><input type="radio" name="pidginComfort" value="none" required aria-describedby="pidgin_comfort-err"><span>Not at all</span></label>
+          <label class="ob-chip"><input type="radio" name="pidginComfort" value="little"><span>A little</span></label>
+          <label class="ob-chip"><input type="radio" name="pidginComfort" value="very"><span>Very comfortable</span></label>
+          <label class="ob-chip"><input type="radio" name="pidginComfort" value="daily"><span>It's how I talk every day</span></label>
+        </div>
+        <p class="err" id="pidgin_comfort-err" hidden>Please pick one.</p>
+      </fieldset>
+
+      <fieldset class="f">
+        <legend>Other languages you speak <span class="opt">optional</span></legend>
+        <div class="chips">
+          <label class="ob-chip"><input type="checkbox" name="otherLanguages" value="yoruba"><span>Yoruba</span></label>
+          <label class="ob-chip"><input type="checkbox" name="otherLanguages" value="igbo"><span>Igbo</span></label>
+          <label class="ob-chip"><input type="checkbox" name="otherLanguages" value="hausa"><span>Hausa</span></label>
+          <label class="ob-chip"><input type="checkbox" name="otherLanguages" value="other"><span>Another language</span></label>
+        </div>
+      </fieldset>
+
+      <div class="f consent">
+        <label class="check"><input type="checkbox" id="consent" name="consent" required aria-describedby="consent-err"><span>I agree to the beta terms: I will use test data only and never real customer data, my details, screenshots and reports are kept by Relynked and shared with your testing partner, and Relynked may email or WhatsApp me about the beta. See our <a href="/privacy">privacy policy</a>.</span></label>
+        <p class="err" id="consent-err" hidden>Please agree to the beta terms.</p>
+      </div>
+
+      <button class="btn lime ob-send" type="submit" id="send">Submit</button>
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+    </form>
+
+    <div class="done" id="done" tabindex="-1" hidden>
+      <svg class="done-mk" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="27.5"/><path d="M19.5 33l8.5 8.7 17-19.2"/></svg>
+      <h2 id="done-title">Thanks, you're in the list.</h2>
+      <p>We'll email you your role, tasks and codes.</p>
+    </div>
+  </section>
+
+  <p class="ob-note">Questions about pay, schedule or training? Ask your testing partner.</p>
+</main>
+
+<footer class="ob-foot">
+  <div class="ob-wrap">
+    <span>© 2026 Relynked Ltd.</span>
+    <span><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></span>
+  </div>
+</footer>
+
+<script src="/assets/js/beta.js?v=20261119a"></script>
+</body>
+</html>
