@@ -74,7 +74,11 @@ for (const [name, html] of Object.entries(pages)) {
 ok(!/[–—]/.test(pages.checkin + pages.feedback + js + css), "no em or en dash in the pages, the script or the styles");
 ok(!/innerHTML|outerHTML|insertAdjacentHTML|document\.write|eval\(|new Function/.test(js), "nothing on the page is built from HTML strings");
 ok(!/https?:\/\/[a-z]/.test(js.replace(/"https:\/\/"/g, "")) && (js.match(/fetch\(/g) || []).length === 1 && js.includes('fetch("/api/beta/" + path'), "the script only ever calls this site's /api/beta");
-ok(js.includes("location.hash") && /\{43\}/.test(js) && js.includes("body.token = token") && !/[?&]t=["' ]*\+/.test(js), "the token is read after the # and sent in the body, never put in an address");
+ok(js.includes("/^#t=([A-Za-z0-9_-]{43})$/.exec(location.hash)") && !/location\.search/.test(js) && js.includes("body.token = token") && !/[?&]t=["' ]*\+/.test(js), "the token is read from the # ONLY (no ?t=) and sent in the body, never put in an address");
+ok(js.includes('history.replaceState(null, "", location.pathname)') && js.indexOf("history.replaceState") > js.indexOf('store.set("t", m[1])'), "once kept, the token is taken out of the address bar and the history");
+ok(js.includes(`!/^https:\\/\\/[^\\s<>"'()[\\]\`]{4,290}$/.test(v)`), "a screenshot link with a bracket, a backtick or a space is refused on the page too");
+ok(routes.exclude.length === new Set(routes.exclude).size && routes.exclude.filter((p) => p === "/beta").length === 1, "_routes.json lists every rule once (/beta is not doubled)");
+ok(/\.chips\.many \.opt\{[^}]*min-height:44px/.test(css) && js.includes('view.shops.length > 4 ? "chips many"'), "more than 4 shops: a compact list that wraps, each still 44px tall");
 ok(!/₦|naira|bonus|\bpaid\b|\bpay\b|earn/i.test(pages.checkin + pages.feedback + js), "no pay anywhere on the tester's page");
 ok(/font:16px\/1\.5 Manrope,system-ui/.test(css) && !/@import|@font-face|url\(/.test(css), "system fonts behind Manrope; the styles load nothing else");
 ok(/min-height:5[0-9]px/.test(css.match(/\.ans\{[^}]+\}/)[0]) && /min-height:4[4-9]px|min-height:5\dpx/.test(css.match(/\.opt\{[^}]+\}/)[0]), "big tap targets: an answer is at least 56px tall, a choice 48px");

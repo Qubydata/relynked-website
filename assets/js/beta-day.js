@@ -15,13 +15,16 @@
     del: function (k) { try { localStorage.removeItem("rb." + k); } catch (e) { /* private mode */ } }
   };
 
-  /* The token: from the link (#t=...), else the one this phone already has. */
-  var m = /[#&?]t=([A-Za-z0-9_-]{43})(?:&|$)/.exec(location.hash + "&" + location.search.replace("?", "&"));
+  /* The token: from the link's # ONLY (#t=...; never a ?t=, which would be sent to servers and kept in their logs),
+     else the one this phone already has. Once kept it is taken out of the address bar and the history, so it is
+     not left on screen, in a screenshot, in a shared tab or in the browser's history. */
+  var m = /^#t=([A-Za-z0-9_-]{43})$/.exec(location.hash);
   var token = m ? m[1] : store.get("t");
   if (m) {
     if (store.get("t") !== m[1]) { store.del("view"); store.del("pending"); }
     store.set("t", m[1]);
   }
+  if (location.hash) { try { history.replaceState(null, "", location.pathname); } catch (e) { /* an old browser keeps the # */ } }
 
   var view = null;      // what the server last said
   var day = null;       // the day on screen
@@ -186,7 +189,7 @@
       if (more.hidden) return;
       if (t.perShop && view.shops.length > 1) {
         more.appendChild(el("label", "", view.me.role === "business" ? "With which business?" : "With which shop?"));
-        var chips = el("div", "chips");
+        var chips = el("div", view.shops.length > 4 ? "chips many" : "chips");
         view.shops.forEach(function (s) {
           var c = button("opt", s.name, function () {
             var at = r.shops.indexOf(s.ref);
@@ -214,7 +217,7 @@
       shot.type = "url"; shot.id = "s-" + t.key; shot.maxLength = 300; shot.inputMode = "url"; shot.value = r.screenshot || ""; shot.disabled = !open;
       shot.placeholder = "https://";
       typed(shot, function (v) {
-        if (v && !/^https:\/\/[^\s<>"']{4,290}$/.test(v)) { tick("c:" + t.key, "err", "A screenshot link starts with https://"); return; }
+        if (v && !/^https:\/\/[^\s<>"'()[\]`]{4,290}$/.test(v)) { tick("c:" + t.key, "err", "A screenshot link starts with https:// and has no spaces or brackets."); return; }
         r.screenshot = v || null; push();
       });
       more.appendChild(lab2); more.appendChild(shot);
@@ -326,7 +329,7 @@
     if (q.kind === "choice") {
       box.appendChild(choiceRow(q.options.length > 4 || q.options.some(function (o) { return o.label.length > 12; }) ? "stack" : "chips", q.options, answerOf(q.key), function (v) { setAnswer(q.key, "", v); }));
     } else if (q.kind === "shop_choice") {
-      box.appendChild(shops.length ? choiceRow("stack", shops, answerOf(q.key), function (v) { setAnswer(q.key, "", v); }) : el("p", "soft", "You have no shops listed yet."));
+      box.appendChild(shops.length ? choiceRow(shops.length > 4 ? "chips many" : "stack", shops, answerOf(q.key), function (v) { setAnswer(q.key, "", v); }) : el("p", "soft", "You have no shops listed yet."));
     } else if (q.kind === "shop_rating") {
       if (!shops.length) box.appendChild(el("p", "soft", "You have no shops listed yet."));
       view.shops.forEach(function (s) {

@@ -52,6 +52,9 @@ textarea:focus,input:focus{outline:none;background:#fff;border-color:#013F32}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .opt{min-height:48px;padding:8px 16px;border-radius:14px;border:1.5px solid rgba(1,63,50,.2);background:#F4F6F5;font:inherit;font-weight:700;font-size:.95rem;color:#161616;cursor:pointer;text-align:left}
 .opt[aria-pressed=true]{background:#013F32;border-color:#013F32;color:#fff}
+/* Many shops (a customer tester has 10): a compact list that wraps, still a finger wide and 44px tall */
+.chips.many{gap:6px}
+.chips.many .opt{min-height:44px;padding:6px 12px;font-size:.88rem;border-radius:12px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .stack{display:grid;gap:8px}
 .five{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
 .five .opt{text-align:center;padding:8px 0}
