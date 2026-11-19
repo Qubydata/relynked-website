@@ -11,30 +11,30 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap">
-<link rel="stylesheet" href="/assets/css/beta-day.css?v=20261119b">
+<link rel="stylesheet" href="/assets/css/beta-day.css?v=20261119c">
 </head>
-<body data-page="feedback" class="dark">
+<body data-page="feedback">
 
 <header class="band">
-  <div class="wrap">
-    <img class="logo" src="/assets/brand/relynked-lockup-dark-sm.png" width="147" height="28" alt="Relynked">
-    <div id="hero"></div>
+  <div class="wrap head">
+    <img class="logo" src="/assets/brand/relynked-lockup-dark-sm.png" width="126" height="24" alt="Relynked">
+    <p class="slot"><span id="when"></span><span class="saved" id="saved" role="status" aria-live="polite"><i></i><span id="saved-text"></span></span></p>
   </div>
+  <div class="greet shut" id="greet"><div class="wrap"><div class="greet-in"><p class="hi" id="hi"></p><p class="big-when" id="big-when"></p></div></div></div>
 </header>
 
-<main class="wrap" id="app" aria-live="polite">
-  <section class="full" id="boot">
-    <h1>Opening your page.</h1>
-    <p class="line">One moment.</p>
-    <noscript><p class="line">This page needs JavaScript. Please open it in Chrome or Safari.</p></noscript>
-  </section>
+<main class="wrap flow" id="app">
+  <div class="meta"></div>
+  <div class="stage"><section class="card pulse" id="boot"><noscript><p class="help">This page needs JavaScript. Please open it in Chrome or Safari.</p></noscript></section></div>
 </main>
+
+<template id="tick"><svg class="tickmark" viewBox="0 0 76 76" aria-hidden="true"><circle cx="38" cy="38" r="38"/><path pathLength="1" d="M22 39l11 11 21-23"/></svg></template>
 
 <footer class="foot wrap">
   <span>© 2026 Relynked Ltd.</span>
   <a href="/privacy">Privacy</a>
 </footer>
 
-<script src="/assets/js/beta-day.js?v=20261119b"></script>
+<script src="/assets/js/beta-day.js?v=20261119c"></script>
 </body>
 </html>
