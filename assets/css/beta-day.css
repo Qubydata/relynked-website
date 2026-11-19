@@ -1,0 +1,81 @@
+/* relynked.com/beta/checkin and /beta/feedback: a tester's own page (founder, 19 Nov 2026: seamless, very plain,
+   big tap targets, phone first). Stands alone on purpose: no site stylesheet and no web font, so the whole page is a
+   few kilobytes on a slow connection. Relynked's colours as beta.css: paper, forest, and lime only on the main
+   button. A chosen answer is forest, so it reads at a glance. */
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:#FDFDFD;color:#161616;font:16px/1.5 Manrope,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+[hidden]{display:none!important}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px}
+.top{padding:16px 0 4px}
+.top .wrap{display:flex;align-items:center;justify-content:space-between}
+.logo{display:inline-flex;align-items:center;gap:9px;min-height:40px}
+.mk{width:30px;height:30px}
+.wm{font-weight:800;font-size:1.2rem;letter-spacing:-.03em;color:#013F32}
+.tag{font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#013F32;opacity:.7}
+h1{font-size:1.6rem;line-height:1.15;letter-spacing:-.03em;color:#013F32;margin:18px 0 4px}
+h2{font-size:1.05rem;line-height:1.35;margin:0;color:#161616}
+p{margin:0}
+.soft{color:rgba(22,22,22,.66);font-size:.95rem}
+.big{font-weight:800;font-size:1.2rem;color:#013F32}
+.card{background:#fff;border:1px solid rgba(1,63,50,.14);border-radius:16px;padding:18px 16px;margin:12px 0}
+.center{text-align:center;padding:36px 18px}
+.center .btn{margin-top:18px}
+
+/* The days: one row that scrolls sideways if it must, never the page */
+.days{display:flex;gap:8px;overflow-x:auto;padding:14px 0 6px;margin:0 -16px;padding-left:16px;padding-right:16px;scrollbar-width:none}
+.days::-webkit-scrollbar{display:none}
+.day{flex:none;min-height:44px;padding:0 16px;border-radius:100px;border:1.5px solid rgba(1,63,50,.18);background:#fff;font:inherit;font-weight:700;font-size:.92rem;color:#013F32;cursor:pointer}
+.day[aria-pressed=true]{background:#013F32;border-color:#013F32;color:#fff}
+.day.final{border-color:#C9CC10}
+.count{font-size:.9rem;font-weight:700;color:#013F32;margin:8px 0 0}
+
+.shops{font-size:.9rem;color:rgba(22,22,22,.75);margin-top:8px}
+.shops b{color:#161616}
+
+/* A task: the words, then three big answers */
+.task h2{margin-bottom:12px}
+.tri{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.ans{min-height:56px;border-radius:14px;border:1.5px solid rgba(1,63,50,.2);background:#F4F6F5;font:inherit;font-weight:800;font-size:.98rem;color:#161616;cursor:pointer;padding:6px 4px;-webkit-tap-highlight-color:transparent}
+.ans:focus-visible,.day:focus-visible,.btn:focus-visible,.opt:focus-visible{outline:3px solid #E2E41A;outline-offset:2px}
+.ans[aria-pressed=true]{background:#013F32;border-color:#013F32;color:#fff}
+.ans.bad[aria-pressed=true]{background:#8A1F11;border-color:#8A1F11}
+.ans.stuck[aria-pressed=true]{background:#8A5A00;border-color:#8A5A00}
+.ans:disabled,.opt:disabled{cursor:default;opacity:.55}
+.ans[aria-pressed=true]:disabled{opacity:1}
+.more{display:grid;gap:10px;margin-top:14px}
+.more label,.q label.lab{font-weight:700;font-size:.92rem}
+textarea,input[type=url],input[type=number]{width:100%;font:inherit;font-size:1rem;color:#161616;background:#F4F6F5;border:1.5px solid transparent;border-radius:12px;padding:12px 13px;min-height:50px}
+textarea{min-height:96px;resize:vertical}
+textarea:focus,input:focus{outline:none;background:#fff;border-color:#013F32}
+.hint{font-size:.82rem;color:rgba(22,22,22,.6)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.opt{min-height:48px;padding:8px 16px;border-radius:14px;border:1.5px solid rgba(1,63,50,.2);background:#F4F6F5;font:inherit;font-weight:700;font-size:.95rem;color:#161616;cursor:pointer;text-align:left}
+.opt[aria-pressed=true]{background:#013F32;border-color:#013F32;color:#fff}
+.stack{display:grid;gap:8px}
+.five{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.five .opt{text-align:center;padding:8px 0}
+.saved{min-height:1.3em;font-size:.82rem;font-weight:700;color:#0B6B3A;margin-top:10px}
+.saved.wait{color:rgba(22,22,22,.55)}
+.saved.err{color:#8A1F11}
+.closed{font-size:.88rem;color:rgba(22,22,22,.66);margin-top:10px}
+
+/* The final questions: one section a screen */
+.bar{height:8px;border-radius:8px;background:#E7ECEA;overflow:hidden;margin:16px 0 4px}
+.bar i{display:block;height:100%;background:#013F32;border-radius:8px;transition:width .25s}
+.q{padding:16px 0;border-top:1px solid rgba(1,63,50,.1)}
+.q:first-of-type{border-top:0;padding-top:4px}
+.q h2{margin-bottom:10px}
+.shoprow{margin-top:10px}
+.shoprow span{display:block;font-weight:700;font-size:.9rem;margin-bottom:6px}
+.nav{display:grid;grid-template-columns:1fr 2fr;gap:10px;margin:16px 0 8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:0 22px;border-radius:100px;border:0;background:#E2E41A;color:#013F32;font:inherit;font-weight:800;font-size:1rem;cursor:pointer;text-decoration:none;width:100%}
+.btn.ghost{background:#fff;border:1.5px solid rgba(1,63,50,.25)}
+.btn:disabled{opacity:.5;cursor:default}
+.banner{background:#013F32;color:#fff;border:0}
+.banner .big{color:#fff}
+.banner .soft{color:rgba(255,255,255,.8);margin:4px 0 14px}
+.foot{display:flex;justify-content:space-between;font-size:.8rem;color:rgba(22,22,22,.5);padding-top:26px;padding-bottom:30px}
+.foot a{color:inherit}
+@media (max-width:359px){.ans{font-size:.88rem}.opt{padding:8px 12px}}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
