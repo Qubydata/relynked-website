@@ -108,11 +108,13 @@ ok(js.includes('[["done", "Done", " done"], ["failed", "Didn\'t work", " bad"], 
 for (const s of ["Done", "Didn't work", "Got stuck", "Which shop?", "What happened?", "Add a screenshot link", "Undo", "Final questions", "That's everything for today. Thank you.", "Start", "Saving when you're back online", "Earlier days", "Back", "Skip", "Thank you.", "Try again", "No connection", "This link no longer works"]) ok(js.includes(`"${s}"`) || js.includes(s), `the page says "${s}"`);
 
 // The one time open code (relynked 0612): the email carries #o=, the page trades it once for its own token.
-ok(js.includes("/^#o=([A-Za-z0-9_-]{43})$/.exec(location.hash)") && js.includes('call("open", { code: code })') && js.indexOf("history.replaceState(null") < js.indexOf("function trade()"), "an open code is read from the # only, taken out of the address bar at once, and traded through /api/beta/open");
+ok(js.includes("/^#o=([A-Za-z0-9_-]{43})$/.exec(location.hash)") && js.includes('call("open", { code: code })') && js.indexOf("history.replaceState(null") < js.indexOf("function trade("), "an open code is read from the # only, taken out of the address bar at once, and traded through /api/beta/open");
 ok(js.includes('if (path !== "open" && path !== "resend") body.token = token;'), "the open and resend calls never carry the page's token");
 ok(/store\.set\("t", token\)[\s\S]{0,40}return start\(\)/.test(js), "the traded token is kept on this phone, exactly as a #t= link was");
 ok(js.includes('"Send me a new link"') && js.includes('call("resend", body)') && js.includes("If that address is on our list, a new link is on its way."), "a used or expired link offers one button, Send me a new link, and answers the same whatever happened");
-ok(/if \(token\) return start\(\);\s*return gone\(\);/.test(js), "a spent open code on a phone that already has its token just opens the page");
+ok(js.includes('token = token || store.get("t");\n      if (token) return start();\n      if (r.status === 404) return gone();'), "a phone that already has a token (or another tab just kept one) opens its page whatever the code's answer (404, 429, an error)");
+ok(js.includes("if (token && Object.keys(pending).length && n < 40)") && js.includes("if (token !== r.json.token) { pending = {};"), "answers waiting under the old token are sent before a code is traded, and never sent under a new token");
+ok(!/window\.prompt|prompt\(/.test(js) && js.includes('box.type = "email"'), "the email for a new link is typed in the card, not a browser prompt");
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed) process.exit(1);

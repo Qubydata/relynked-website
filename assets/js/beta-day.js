@@ -1,15 +1,6 @@
-/* relynked.com/beta/checkin and /beta/feedback: a tester's own page (founder, 19 Nov 2026: "we have to make it
-   seamless for them"). One personal link, no sign in, no code to type. The link's token rides after the # (so it is
-   never sent in an address), is kept on this phone, and is posted to /api/beta/* (this site's Pages Functions).
-
-   The check-in is a chat with Remy, drawn in the Relynked app's own look (the Ask Remy screen): Remy asks one task
-   at a time as a card, an answer folds into the app's receipt (tick, one line, Undo), a note is typed in the forest
-   pill, and the final questions come the same way. Each step is a browser history entry, so the phone's Back goes to
-   the step before; the address never changes (no token, no step in it). A swipe to the right is Back too.
-
-   Every tap is saved at once, on its own. A save that could not be sent waits on this phone and is sent again when
-   the connection is back, so a dropped connection or a closed tab loses nothing. Everything on the page is built
-   with textContent, never HTML. No library. */
+/* relynked.com/beta/checkin and /beta/feedback: a tester's own page, a chat with Remy in the app's look. The link
+   rides after the # and is kept on this phone; every tap saves at once and waits on the phone when offline. Each step
+   is a history entry (Back works); the address never changes. Built with textContent only, no library. */
 (function () {
   "use strict";
   var app = document.getElementById("app");
@@ -72,7 +63,7 @@
     try { return new Date(iso + "T12:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: "Africa/Lagos" }); } catch (e) { return iso; }
   }
 
-  /* ── The head: the title, and under it one quiet status line (the day's count, or for a moment "Saved") ────── */
+  /* The head: the title, and under it one quiet status line (the day's count, or for a moment "Saved") */
   var subText = "", subTimer = null;
   function status(text) { subText = text || ""; if (!subTimer) paintSub("", subText); }
   function paintSub(kind, text) {
@@ -93,7 +84,7 @@
       .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, json: j }; }); });
   }
 
-  /* ── Saving: one small request per answer, kept on the phone until it is in ─────────────────────────────────── */
+  /* Saving: one small request per answer, kept on the phone until it is in */
   /* One quiet word under the title, where the app shows a chat's status: "Saved", never a box over the thread. */
   function tick(key, cls, text) {
     if (cls === "wait" && text === "Saving") return;   // a save on its way says nothing until it is in
@@ -174,7 +165,7 @@
   function settle() { var a = document.activeElement; if (a && a.blur && a.matches && a.matches("textarea,input")) a.blur(); }
 
 
-  /* ── Moving between steps: a history entry per step, never a change of address ────────────────────────────── */
+  /* Moving between steps: a history entry per step, never a change of address */
   function snap() { return { rb: 1, m: mode, d: day, i: idx, s: step, c: changing, n: depth }; }
   function forward(change) {
     return function () {
@@ -222,7 +213,7 @@
     if (dx > 72 && dy < 48 && dx > dy * 2.5 && Date.now() - st0 < 700) backFn();
   }, { passive: true });
 
-  /* ── The More menu (the head's three dots) ─────────────────────────────────────────────────────────────────── */
+  /* The More menu (the head's three dots) */
   var menu = null;
   function closeMenu() { if (menu) { menu.parentNode.removeChild(menu); menu = null; moreBtn.setAttribute("aria-expanded", "false"); } }
   moreBtn.addEventListener("click", function () {
@@ -247,7 +238,7 @@
   });
   document.addEventListener("click", function (e) { if (menu && !menu.contains(e.target) && e.target !== moreBtn && !moreBtn.contains(e.target)) closeMenu(); });
 
-  /* ── The thread's pieces, each the app's own ───────────────────────────────────────────────────────────────── */
+  /* The thread's pieces, each the app's own */
   var items = [];
   function put(key, node) { node.setAttribute("data-k", key); items.push(node); return node; }
   /* Remy speaks: the orb, "Remy", a bubble a line; `more` (chips, a card) sits under the bubbles. */
@@ -380,7 +371,7 @@
   }
   function things(n) { return n === 1 ? "1 quick thing." : n + " quick things."; }
 
-  /* ── The day: Remy asks one task at a time; an answered task folds into a receipt ──────────────────────────── */
+  /* The day: Remy asks one task at a time; an answered task folds into a receipt */
   function todays() { return view.tasks.filter(function (t) { return t.day === day; }); }
   function answered(t) { var r = resultOf(t.key); return !!(r && r.status); }
   function firstOpen(tasks) {
@@ -615,7 +606,7 @@
     paint();
   }
 
-  /* ── The final questions: Remy asks one at a time in the same thread ───────────────────────────────────────── */
+  /* The final questions: Remy asks one at a time in the same thread */
   function screens() {
     return view.feedback.questions.filter(function (q) { return !((q.kind === "shop_rating" || q.kind === "shop_choice") && !view.shops.length); });
   }
@@ -762,7 +753,7 @@
     else renderDay();
   }
 
-  /* ── Opening ───────────────────────────────────────────────────────────────────────────────────────────────── */
+  /* Opening */
   function show(v, fresh) {
     var first = view === null || view.sprint.dayIndex !== v.sprint.dayIndex || view.me.role !== v.me.role;
     view = v;
@@ -811,38 +802,45 @@
     message("This link no longer works.", "Nothing you saved is lost. We can email you a new link to the address you signed up with.", "Send me a new link", resend);
   }
   function resend() {
-    var body = {};
-    if (usedCode) body.code = usedCode;
-    else {
-      var typed = window.prompt("The email you signed up with");
-      if (!typed) return;
-      body.email = String(typed).trim().slice(0, 200);
-    }
+    if (usedCode) return sendNew({ code: usedCode });
+    // No spent code on this phone: the email, typed in the card itself.
+    message("Send me a new link", "Type the email you signed up with.");
+    var cards = app.querySelectorAll("section.state"), c = cards[cards.length - 1];
+    var box = el("input", "st-mail");
+    box.type = "email"; box.autocomplete = "email"; box.maxLength = 200; box.setAttribute("aria-label", "Your email");
+    c.appendChild(box);
+    c.appendChild(button("cv-primary", "Send me a new link", function () { var v = box.value.trim(); if (!v) return box.focus(); sendNew({ email: v.slice(0, 200) }); }));
+    box.focus();
+  }
+  function sendNew(body) {
     message("Sending...", "");
     call("resend", body).then(function (r) {
-      if (r.status === 429) return message("Too many tries.", "Please wait a few minutes, then try again.", "Try again", resend);
+      if (r.status === 429) return message("Too many tries.", "Please wait a few minutes, then try again.", "Try again", function () { sendNew(body); });
       message("Check your email.", "If that address is on our list, a new link is on its way. It works once, within 3 days: open it on the phone you test with.");
-    }, function () { message("No connection.", "Check your data or Wi-Fi, then try again.", "Try again", resend); });
+    }, function () { message("No connection.", "Check your data or Wi-Fi, then try again.", "Try again", function () { sendNew(body); }); });
   }
-  function trade() {
+  /* Answers waiting under this phone's token go first, so a new token (perhaps another tester's) never carries them. */
+  function trade(n) {
+    n = n || 0;
+    if (token && Object.keys(pending).length && n < 40) { if (!sending) flush(); return setTimeout(function () { trade(n + 1); }, 250); }
     var code = openCode;
     openCode = null;
     call("open", { code: code }).then(function (r) {
       if (r.status === 200 && r.json && r.json.ok && /^[A-Za-z0-9_-]{43}$/.test(r.json.token || "")) {
-        if (store.get("t") !== r.json.token) { store.del("view"); store.del("pending"); }
+        if (token !== r.json.token) { pending = {}; store.del("view"); store.del("pending"); }
         token = r.json.token;
         store.set("t", token);
         return start();
       }
-      if (r.status === 429) { openCode = code; return message("Too many tries.", "Please wait a few minutes, then try again.", "Try again", trade); }
-      if (r.status === 404) {
-        usedCode = code;
-        if (token) return start();
-        return gone();
-      }
+      if (r.status === 404) usedCode = code;
+      // Another tab may have kept a token meanwhile; a phone with one opens its page whatever the code's answer.
+      token = token || store.get("t");
+      if (token) return start();
+      if (r.status === 404) return gone();
       openCode = code;
+      if (r.status === 429) return message("Too many tries.", "Please wait a few minutes, then try again.", "Try again", trade);
       message("We could not open your page.", "This is on our side, not yours. Please try again in a moment.", "Try again", trade);
-    }, function () { openCode = code; message("No connection.", "Check your data or Wi-Fi, then try again.", "Try again", trade); });
+    }, function () { token = token || store.get("t"); if (token) return start(); openCode = code; message("No connection.", "Check your data or Wi-Fi, then try again.", "Try again", trade); });
   }
   function start() {
     if (openCode) return trade();
