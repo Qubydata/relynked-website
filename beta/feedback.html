@@ -2,36 +2,43 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
 <title>Final questions · Relynked beta</title>
 <meta name="robots" content="noindex,nofollow">
-<meta name="referrer" content="no-referrer">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
-<meta name="theme-color" content="#FDFDFD">
-<link rel="stylesheet" href="/assets/css/beta-day.css?v=20261119a">
+<meta name="theme-color" content="#f6f7f7">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/css/beta-day.css?v=20261119d">
 </head>
 <body data-page="feedback">
 
-<header class="top">
-  <div class="wrap">
-    <span class="logo" aria-label="Relynked"><svg class="mk" viewBox="0 0 336 338" aria-hidden="true"><rect width="336" height="338" rx="84" fill="#0A3F32"/><rect x="54" y="85" width="176" height="65" rx="32.5" fill="#fff"/><rect x="54" y="186" width="227" height="67" rx="33.5" fill="#E2E41A"/></svg><span class="wm">Relynked</span></span>
-    <span class="tag">Beta testers</span>
+<div class="thd dwp">
+  <header class="asknav">
+    <button class="bk2" id="back" type="button" aria-label="Back" aria-disabled="true"><svg viewBox="66 36 110 184" class="ico" fill="currentColor" aria-hidden="true"><path d="M168.49,199.51a12,12,0,0,1-17,17l-80-80a12,12,0,0,1,0-17l80-80a12,12,0,0,1,17,17L97,128Z"/></svg></button>
+    <span class="lg"><span class="ro" id="orb" data-ro="idle" aria-hidden="true"><span class="ro-ball"><span class="ro-dot"></span></span></span></span>
+    <span class="tx"><b id="title">Final questions</b><span id="sub" role="status" aria-live="polite"></span></span>
+    <button class="ib" id="more" type="button" aria-label="More" aria-haspopup="menu" aria-expanded="false"><svg viewBox="0 0 256 256" class="ico" fill="currentColor" aria-hidden="true"><path d="M140,128a12,12,0,1,1-12-12A12,12,0,0,1,140,128ZM128,72a12,12,0,1,0-12-12A12,12,0,0,0,128,72Zm0,112a12,12,0,1,0,12,12A12,12,0,0,0,128,184Z"/></svg></button>
+    <span class="prog" id="prog" aria-hidden="true"><i></i></span>
+  </header>
+  <main class="msgs" id="app">
+    <section class="state"><span class="halo"><span class="ro" data-ro="think" aria-hidden="true"><span class="ro-ball"><span class="ro-dot"></span></span></span></span><noscript><h1>This page needs JavaScript.</h1><p>Please open it in Chrome or Safari.</p></noscript></section>
+  </main>
+  <div class="comp" id="comp">
+    <p class="note" id="note" role="status"></p>
+    <div class="pillrow">
+      <span class="orb" aria-hidden="true"><span class="ro" data-ro="idle"><span class="ro-ball"><span class="ro-dot"></span></span></span></span>
+      <span class="fld"><textarea id="box" rows="1" aria-label="Message Remy"></textarea></span>
+      <button class="send" id="send" type="button" aria-label="Send"><svg viewBox="0 0 256 256" class="ico" fill="currentColor" aria-hidden="true"><path d="M208.49,120.49a12,12,0,0,1-17,0L140,69V216a12,12,0,0,1-24,0V69L64.49,120.49a12,12,0,0,1-17-17l72-72a12,12,0,0,1,17,0l72,72A12,12,0,0,1,208.49,120.49Z"/></svg></button>
+    </div>
   </div>
-</header>
+</div>
 
-<main class="wrap" id="app" aria-live="polite">
-  <div class="card center" id="boot">
-    <p class="big">Opening your page</p>
-    <p class="soft">One moment.</p>
-    <noscript><p class="soft">This page needs JavaScript. Please open it in Chrome or Safari.</p></noscript>
-  </div>
-</main>
+<template id="tick"><span class="cv-tick" aria-hidden="true"><svg viewBox="0 0 256 256" class="ico" fill="currentColor"><path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z"/></svg></span></template>
+<template id="orbtpl"><span class="ro" data-ro="idle" aria-hidden="true"><span class="ro-ball"><span class="ro-dot"></span></span></span></template>
 
-<footer class="foot wrap">
-  <span>© 2026 Relynked Ltd.</span>
-  <span><a href="/privacy">Privacy</a></span>
-</footer>
-
-<script src="/assets/js/beta-day.js?v=20261119a"></script>
+<script src="/assets/js/beta-day.js?v=20261119d"></script>
 </body>
 </html>

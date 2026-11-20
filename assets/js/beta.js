@@ -118,7 +118,8 @@
         } else if (res.status === 409) {
           closed();
         } else if (res.status === 429) {
-          status.textContent = "Too many tries from this connection. Please try again in a few minutes.";
+          var said = typeof res.j.message === "string" ? res.j.message.slice(0, 200) : "";
+          status.textContent = said || "Too many people are signing up right now. Please try again later.";
         } else {
           status.textContent = "We could not send it just now. Please try again in a moment.";
         }
