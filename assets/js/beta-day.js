@@ -22,8 +22,11 @@
 
   /* The token: from the link's # ONLY (#t=...; never a ?t=, which would be sent to servers and kept in their logs),
      else the one this phone already has. Once kept it is taken out of the address bar and the history, so it is
-     not left on screen, in a screenshot, in a shared tab or in the browser's history. */
+     not left on screen, in a screenshot, in a shared tab or in the browser's history.
+     An email carries a one time open code (#o=), traded once for this phone's token (the mail service may log links). */
   var m = /^#t=([A-Za-z0-9_-]{43})$/.exec(location.hash);
+  var om = /^#o=([A-Za-z0-9_-]{43})$/.exec(location.hash);
+  var openCode = om ? om[1] : null;
   var token = m ? m[1] : store.get("t");
   if (m) {
     if (store.get("t") !== m[1]) { store.del("view"); store.del("pending"); }
@@ -85,7 +88,7 @@
   function progress(n, of) { $("prog").firstChild.style.width = of ? Math.round((n / of) * 100) + "%" : "0"; }
 
   function call(path, body) {
-    body.token = token;
+    if (path !== "open" && path !== "resend") body.token = token;
     return fetch("/api/beta/" + path, { method: "POST", headers: { "content-type": "application/json", accept: "application/json" }, body: JSON.stringify(body), cache: "no-store" })
       .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, json: j }; }); });
   }
@@ -792,7 +795,7 @@
       }
       if (r.status === 404) {
         store.del("t"); store.del("view"); store.del("pending");
-        return message("This link no longer works.", "Reply to our last email and we will send you a new link. Nothing you saved is lost.");
+        return gone();
       }
       if (view) return;   // the copy kept on this phone is on screen; saves go on waiting
       if (r.status === 429) return message("Too many tries.", "Please wait a few minutes, then try again.", "Try again", start);
@@ -802,7 +805,47 @@
       message("No connection.", "Check your data or Wi-Fi, then try again.", "Try again", start);
     });
   }
+  /* A spent link: one button emails a fresh one to the address on file. The answer is always the same. */
+  var usedCode = null;
+  function gone() {
+    message("This link no longer works.", "Nothing you saved is lost. We can email you a new link to the address you signed up with.", "Send me a new link", resend);
+  }
+  function resend() {
+    var body = {};
+    if (usedCode) body.code = usedCode;
+    else {
+      var typed = window.prompt("The email you signed up with");
+      if (!typed) return;
+      body.email = String(typed).trim().slice(0, 200);
+    }
+    message("Sending...", "");
+    call("resend", body).then(function (r) {
+      if (r.status === 429) return message("Too many tries.", "Please wait a few minutes, then try again.", "Try again", resend);
+      message("Check your email.", "If that address is on our list, a new link is on its way. It works once, within 3 days: open it on the phone you test with.");
+    }, function () { message("No connection.", "Check your data or Wi-Fi, then try again.", "Try again", resend); });
+  }
+  function trade() {
+    var code = openCode;
+    openCode = null;
+    call("open", { code: code }).then(function (r) {
+      if (r.status === 200 && r.json && r.json.ok && /^[A-Za-z0-9_-]{43}$/.test(r.json.token || "")) {
+        if (store.get("t") !== r.json.token) { store.del("view"); store.del("pending"); }
+        token = r.json.token;
+        store.set("t", token);
+        return start();
+      }
+      if (r.status === 429) { openCode = code; return message("Too many tries.", "Please wait a few minutes, then try again.", "Try again", trade); }
+      if (r.status === 404) {
+        usedCode = code;
+        if (token) return start();
+        return gone();
+      }
+      openCode = code;
+      message("We could not open your page.", "This is on our side, not yours. Please try again in a moment.", "Try again", trade);
+    }, function () { openCode = code; message("No connection.", "Check your data or Wi-Fi, then try again.", "Try again", trade); });
+  }
   function start() {
+    if (openCode) return trade();
     if (!token) return message("Open the link in your email.", "Your personal link is in the email from Relynked titled \"Your Relynked beta check-in link\". Open it on this phone once, and this page will remember you.");
     var kept = store.get("view");
     if (kept && kept.me && kept.sprint && kept.feedback) show(kept, false);
