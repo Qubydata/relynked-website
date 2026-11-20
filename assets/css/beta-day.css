@@ -180,3 +180,4 @@ button.b.out{cursor:pointer}
 .cv-actions.three>button{flex:1 1 auto;padding:0 9px;white-space:nowrap}
 .cv-actions.three>.cv-primary{flex:0 1 auto;padding:0 15px}
 @media (max-width:374px){.cv-actions.three{flex-direction:column;align-items:stretch}.cv-actions.three>button,.cv-actions.three>.cv-primary{width:100%;flex:none;padding:0 16px}}
+.st-mail{margin:18px 0 12px;width:100%;max-width:300px;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:12px;font:inherit;background:transparent;color:var(--t2)}
