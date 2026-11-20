@@ -1,0 +1,80 @@
+/* relynked.com/beta: tester onboarding (founder, 17 Nov 2026: plain and calm, the company's branding, no marketing).
+   One narrow column on the site's paper background, the site's fonts and logo, forest for text and focus, and lime
+   only on the Submit button. A chosen option lifts to white (the site's white lift rule in styles.css), never a tint.
+   Phone first. */
+
+body.beta{background:var(--paper);color:var(--ink)}
+.beta [hidden]{display:none!important}
+.ob-wrap{max-width:640px;margin:0 auto;padding:0 20px}
+
+/* Header: the logo only */
+.ob-top{padding:22px 0 0}
+.ob-top .logo{display:inline-flex;min-height:44px}
+
+/* Title, one line, three steps */
+.ob-intro{padding:44px 0 28px}
+.ob-eye{font-family:var(--m);font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--forest);opacity:.75;margin-bottom:14px}
+.ob-intro h1{font-size:clamp(1.85rem,6.4vw,2.6rem);color:var(--forest);letter-spacing:-.035em;line-height:1.08}
+.ob-lead{margin-top:14px;font-size:1.05rem;line-height:1.6;color:rgba(22,22,22,.72);max-width:52ch}
+.ob-steps{list-style:none;padding:0;margin:28px 0 0;display:grid;gap:12px}
+.ob-steps li{display:flex;align-items:center;gap:12px;font-size:.95rem;font-weight:600;color:rgba(22,22,22,.82)}
+.ob-steps .n{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--forest);color:var(--paper);font-family:var(--m);font-size:.78rem;font-weight:700}
+
+/* The form */
+.ob-card{background:#fff;border:1px solid rgba(1,63,50,.12);border-radius:18px;padding:26px 20px 24px;margin-bottom:22px}
+#beta-form{display:grid;gap:22px}
+.f{border:0;padding:0;margin:0;min-width:0;display:grid;gap:8px}
+.f > label,.f legend,.sub > label{font-weight:700;font-size:.95rem;color:var(--ink);padding:0}
+.f legend{margin-bottom:8px}
+.opt{font-weight:500;font-size:.82rem;color:rgba(22,22,22,.55);margin-left:6px}
+.help{font-size:.84rem;color:rgba(22,22,22,.58);margin-top:-2px}
+input[type=text],input[type=email],input[type=tel]{width:100%;font:inherit;font-size:1rem;color:var(--ink);background:var(--mist);border:1.5px solid transparent;border-radius:12px;padding:13px 14px;min-height:48px;transition:border-color .2s,background .2s}
+input[type=text]:focus,input[type=email]:focus,input[type=tel]:focus{outline:none;background:#fff;border-color:var(--forest)}
+input::placeholder{color:rgba(22,22,22,.4)}
+input[aria-invalid=true]{border-color:var(--red);background:#fff}
+.sub{display:grid;gap:8px;margin-top:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.ob-chip{position:relative;display:inline-flex}
+.ob-chip input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.ob-chip span{display:inline-flex;align-items:center;min-height:44px;padding:10px 16px;border-radius:100px;background:var(--mist);font-size:.92rem;font-weight:600;color:rgba(22,22,22,.78);transition:background .2s,box-shadow .2s,color .2s;cursor:pointer}
+.ob-chip input:checked + span{background:var(--sel);box-shadow:var(--sel-sh),inset 0 0 0 1.5px var(--forest);color:var(--forest);font-weight:800}
+.ob-chip input:focus-visible + span{outline:2px solid var(--forest);outline-offset:2px}
+
+.f > .check{display:flex;gap:12px;align-items:flex-start;font-size:.9rem;font-weight:500;line-height:1.55;color:rgba(22,22,22,.75);cursor:pointer}
+.check input{flex:none;width:22px;height:22px;margin-top:1px;accent-color:var(--forest);cursor:pointer}
+.check a{color:var(--forest);text-decoration:underline;text-decoration-color:rgba(1,63,50,.35)}
+
+.err{font-size:.85rem;font-weight:600;color:var(--red)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+.ob-send{justify-content:center;width:100%;min-height:52px;font-size:1rem}
+.ob-send:focus-visible{outline:2px solid var(--forest);outline-offset:3px}
+.ob-send:disabled{opacity:.6;cursor:default}
+.status{font-size:.9rem;font-weight:600;color:rgba(22,22,22,.7);min-height:1.2em;margin-top:-10px}
+.status:empty{display:none}
+
+.ob-closed{font-size:1rem;line-height:1.6;color:rgba(22,22,22,.8)}
+
+/* Success */
+.done{text-align:center;padding:18px 4px 10px;outline:none}
+.done-mk{width:56px;height:56px;fill:none;stroke:var(--forest);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;margin:0 auto 16px;display:block}
+.done h2{font-size:1.5rem;color:var(--forest);letter-spacing:-.03em;line-height:1.2}
+.done p{margin-top:8px;color:rgba(22,22,22,.72);font-size:1rem}
+
+.ob-note{font-size:.9rem;color:rgba(22,22,22,.6);text-align:center;margin-bottom:56px}
+
+/* Footer: one quiet line */
+.ob-foot{border-top:1px solid rgba(1,63,50,.1);padding:22px 0 30px;font-size:.82rem;color:rgba(22,22,22,.55)}
+.ob-foot .ob-wrap{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:space-between}
+.ob-foot a:hover{color:var(--forest)}
+
+@media (min-width:720px){
+  .ob-wrap{padding:0 24px}
+  .ob-intro{padding:72px 0 36px}
+  .ob-steps{grid-template-columns:repeat(3,1fr);gap:16px}
+  .ob-steps li{align-items:flex-start;font-size:.9rem}
+  .ob-card{padding:36px 36px 32px}
+  .ob-send{width:auto;padding-left:36px;padding-right:36px;justify-self:start}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}

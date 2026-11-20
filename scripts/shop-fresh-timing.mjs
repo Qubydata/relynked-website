@@ -2,29 +2,36 @@
  * How long an edit in the app takes to show on the shop page: edits one item as a business's owner through the API, then
  * polls the page on the site until the change is there. Reports the seconds for each run.
  *
- *   SHOP_TEST_PASSWORD=... node scripts/shop-fresh-timing.mjs [runs] [--phone 08000000003] [--handle mama-put-kitchen]
- *        [--api https://relynked-api-staging.up.railway.app] [--site https://shop-staging.relynked-3wg.pages.dev]
+ *   SHOP_TEST_PASSWORD=... node scripts/shop-fresh-timing.mjs [runs] --api <test server> --site <preview address>
+ *        --handle <test shop handle> --phone <its owner's test number> [--item <item name>]
  *
- * The defaults are the test server and the preview with the test business Mama Put Kitchen (the password is in
- * remy-hq/testing/test-accounts.md, never in this file). Only ever the test server: the item's description is changed
- * for a few seconds and put back. Before the fast shop pages (30 second edge, 15 second API cache) it took 26 to 29
- * seconds; the goal is under 10.
+ * Nothing about the test server, the preview or the test business is written in this public file: every address, the
+ * handle and the number come from the command line, and the password from SHOP_TEST_PASSWORD (it lives with the test
+ * accounts, never in this repo). Only ever the test server: the item's description is changed for a few seconds and put
+ * back. Before the fast shop pages (30 second edge, 15 second API cache) it took 26 to 29 seconds; the goal is under 10.
  */
-const arg = (n, d) => { const i = process.argv.indexOf(`--${n}`); return i > 0 ? process.argv[i + 1] : d; };
-const API = arg("api", "https://relynked-api-staging.up.railway.app");
-const SITE = arg("site", "https://shop-staging.relynked-3wg.pages.dev");
-const HANDLE = arg("handle", "mama-put-kitchen");
+const arg = (n, d) => { const i = process.argv.indexOf(`--${n}`); return i > 0 && process.argv[i + 1] ? process.argv[i + 1] : d; };
+const API = (arg("api", "") || "").replace(/\/+$/, "");
+const SITE = (arg("site", "") || "").replace(/\/+$/, "");
+const HANDLE = arg("handle", "");
+const PHONE = arg("phone", "");
+const ITEM = arg("item", "");
 const RUNS = Number(process.argv[2] && !process.argv[2].startsWith("--") ? process.argv[2] : 5);
+if (!/^https?:\/\/[^/]+$/.test(API) || !/^https?:\/\/[^/]+$/.test(SITE) || !/^[a-z0-9-]{3,30}$/.test(HANDLE) || !PHONE || !process.env.SHOP_TEST_PASSWORD) {
+  console.log("Say where to look: SHOP_TEST_PASSWORD=... node scripts/shop-fresh-timing.mjs [runs] --api <test server> --site <preview address> --handle <handle> --phone <owner's test number> [--item <name>]");
+  process.exit(2);
+}
 if (/^https:\/\/(www\.)?relynked\.com/.test(SITE) || /relynked-api-production/.test(API)) { console.log("Test server only."); process.exit(2); }
 const rf = async (u, o) => { for (let i = 0; i < 5; i++) { try { return await fetch(u, o); } catch (e) { await new Promise((r) => setTimeout(r, 400)); } } return fetch(u, o); };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const j = async (path, opts = {}) => { const r = await rf(API + path, { ...opts, headers: { "content-type": "application/json", ...(opts.headers || {}) } }); const t = await r.text(); let b; try { b = JSON.parse(t); } catch { b = t; } return { status: r.status, body: b }; };
-const login = await j("/auth/login", { method: "POST", body: JSON.stringify({ phone: arg("phone","08000000003"), password: process.env.SHOP_TEST_PASSWORD || "" }) });
+const login = await j("/auth/login", { method: "POST", body: JSON.stringify({ phone: PHONE, password: process.env.SHOP_TEST_PASSWORD || "" }) });
 if (login.status !== 200) { console.log("login failed", login.status); process.exit(1); }
 const auth = { authorization: `Bearer ${login.body.sessionToken}` };
 const list = await j("/resources", { headers: auth });
 const items = Array.isArray(list.body) ? list.body : list.body.resources || [];
-const item = items.find((i) => i.name === "Puff Puff") || items.find((i) => i.name === "Zobo") || items[0];
+const item = (ITEM && items.find((i) => i.name === ITEM)) || items[0];
+if (!item) { console.log("the test shop has no items"); process.exit(1); }
 console.log("item", item.name, item.id);
 const original = item.menu_description ?? null;
 const times = [];

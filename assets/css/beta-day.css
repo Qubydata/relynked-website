@@ -1,0 +1,183 @@
+/* relynked.com/beta/checkin and /beta/feedback: the tester's check-in, as a chat with Remy drawn in the Relynked
+   app's own look (founder, 19 Nov 2026: testers spend the day in the app, so this page must look like the app's Ask
+   Remy screen, not like a separate site). Ported from the app (Qubydata/Remy src/next/styles): tokens.css (colours,
+   radii, shadows, the type ladder at the default text size), app.css (.asknav, .rbub, .b.out, .stamp, .arow, .qrow,
+   .segment), cards-v2.css (.cv-card, the receipt), glass.css (the frosted head), remy-orb.css (the orb),
+   remy-pill.css (the forest pill), controls.css (the doodle wallpaper, ui/doodleTile.ts as a file), setup-interview.css
+   (the ready list), motion.css (the easing). Values are the app's computed ones in light, at the default text size.
+   Light only, as the app's light theme, so every colour is set here. */
+:root{
+  --forest:#0b3d2e;
+  --lime:#dcef4e;
+  --bg:#f6f7f7;
+  --card:#ffffff;
+  --sel:#ffffff;
+  --sel-sh:0 1px 2px rgba(15,20,18,.06),0 8px 22px rgba(15,20,18,.08);
+  --t1:#0f1412;
+  --t2:#6c7478;
+  --t3:#a3aaae;
+  --line:#edefef;
+  --fill:#f0f2f2;
+  --edge:#c1c2c2;
+  --label:#575a59;
+  --sh:0 1px 2px rgba(15,20,18,.04),0 8px 24px rgba(15,20,18,.05);
+  --gl-tint:rgba(255,255,255,.6);
+  --gl-hair:rgba(15,20,18,.08);
+  --gl-blur:blur(32px) saturate(170%);
+  --font:"Montserrat","Noto Sans",-apple-system,system-ui,"Segoe UI",sans-serif;
+  --ease:cubic-bezier(0.2,0.8,0.2,1);
+  --head-h:57px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--t1);font:400 14px/1.42 Montserrat,"Noto Sans",-apple-system,system-ui,"Segoe UI",sans-serif;height:100vh;height:100dvh;overflow:hidden}
+[hidden]{display:none!important}
+p{margin:0}
+button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent;touch-action:manipulation;cursor:pointer}
+:focus-visible{outline:2px solid var(--forest);outline-offset:2px}
+.ico{width:1.25em;height:1.25em;flex:none;display:block}
+
+/* The screen: the doodle wallpaper behind everything, the frosted head over the messages, the pill at the foot */
+.thd{position:fixed;inset:0;display:flex;flex-direction:column;max-width:440px;margin:0 auto}
+.dwp{background-color:var(--bg);background-image:url("../beta/doodle.svg");background-repeat:repeat;background-size:520px 693.33px;background-position:center top}
+body{background-image:url("../beta/doodle.svg");background-size:520px 693.33px;background-position:center top}
+
+.asknav{position:relative;z-index:50;flex:none;display:flex;align-items:center;gap:9.9px;height:var(--head-h);padding:0 14.85px;margin-bottom:calc(-1 * var(--head-h));background-color:var(--gl-tint);-webkit-backdrop-filter:var(--gl-blur);backdrop-filter:var(--gl-blur);border-bottom:1px solid var(--gl-hair)}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.asknav{background-color:#f7f8f8}}
+.bk2,.ib{flex:none;width:36.3px;height:36.3px;border-radius:50%;border:0;padding:0;background:var(--fill);color:var(--t1);display:grid;place-items:center;position:relative}
+.bk2::after,.ib::after{content:"";position:absolute;inset:-4px}
+.bk2 .ico{width:9px;height:15.7px}
+.ib{width:34.6px;height:34.6px}
+.ib .ico{width:22.6px;height:22.6px}
+.bk2[aria-disabled=true]{visibility:hidden}
+.asknav .lg{width:42.9px;height:42.9px;margin:-2.5px;display:grid;place-items:center;flex:none}
+.asknav .lg .ro{width:42.9px;height:42.9px}
+.asknav .tx{flex:1;min-width:0}
+.asknav b{display:block;font-size:17px;font-weight:700;line-height:1.25;letter-spacing:-.02em;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.asknav .tx span{display:block;font-size:13px;font-weight:500;color:var(--t2);line-height:1.3;min-height:17px;transition:opacity 200ms var(--ease)}
+.asknav .tx span.fade{opacity:0}
+.asknav .tx span .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 1px rgba(11,61,46,.18);margin-right:6px;vertical-align:1px}
+.prog{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:transparent}
+.prog i{display:block;height:100%;width:0;background:var(--forest);transition:width 350ms var(--ease)}
+
+/* The More menu */
+.menu{position:absolute;z-index:60;top:calc(var(--head-h) + 6px);right:12px;min-width:200px;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--sel-sh);padding:6px;display:grid;animation:in 220ms var(--ease) both}
+.menu button,.menu a{display:flex;align-items:center;min-height:44px;padding:0 14px;border:0;background:none;border-radius:12px;font-size:15px;font-weight:600;color:var(--t1);text-decoration:none;text-align:left}
+.menu button:active,.menu a:active{background:var(--fill)}
+
+/* The messages */
+.msgs{flex:1;overflow-y:auto;scrollbar-width:none;display:flex;flex-direction:column;padding:calc(var(--head-h) + 10px) 13.2px 16px;-webkit-overflow-scrolling:touch;transition:padding-bottom 300ms var(--ease);
+  /* Nothing readable under the frosted head: the thread fades out before it reaches the title and its status line */
+  -webkit-mask-image:linear-gradient(to bottom,transparent calc(var(--head-h) - 4px),#000 calc(var(--head-h) + 22px));mask-image:linear-gradient(to bottom,transparent calc(var(--head-h) - 4px),#000 calc(var(--head-h) + 22px))}
+.thd.typing .msgs{padding-bottom:96px}
+.msgs::-webkit-scrollbar{display:none}
+.arow{display:flex;gap:8.25px;align-items:flex-start;margin-bottom:4.95px}
+.arow .ra{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;flex:none;margin-top:14.85px}
+.arow .ra .ro{width:28px;height:28px}
+.arow .col{flex:1;min-width:0}
+.rlab{font-size:13px;font-weight:600;color:var(--t2);margin-bottom:4.1px}
+.rbub{width:fit-content;max-width:100%;background:var(--fill);border-radius:14.85px;padding:11.55px;font-size:14px;line-height:1.45;font-weight:500;color:var(--t1)}
+.rbub+.rbub{margin-top:6px}
+.arow.cont .ra{visibility:hidden;margin-top:0}
+.arow.cont .rlab{display:none}
+.askmsg.out{display:flex;flex-direction:column;align-items:flex-end;margin-top:6px}
+.b.out{max-width:80%;padding:9.9px 12.375px;background:var(--forest);color:#fff;border-radius:16.5px 16.5px 5.775px 16.5px;font-size:14px;font-weight:500;line-height:1.42;overflow-wrap:anywhere;border:0;text-align:left}
+button.b.out{cursor:pointer}
+.b.out.skip{background:var(--fill);color:var(--t2)}
+.stamp{font-size:12px;color:var(--t2);font-weight:500;margin:4.1px 1.65px 9.9px}
+.daypill{align-self:center;margin:14px 0 10px;background:var(--fill);color:var(--t2);border-radius:11.55px;padding:4.95px 11.55px;font-size:13px;font-weight:600}
+.new{animation:in 350ms var(--ease) both}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* A card in the thread (cards-v2.css .cv-card) */
+.cv-card{width:100%;margin-top:8px;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--sh);overflow:hidden}
+.cv-head{display:flex;align-items:center;gap:8px;padding:12px 14px 4px}
+.cv-label{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--label)}
+.cv-title{padding:2px 14px 4px;font-size:17px;font-weight:700;line-height:1.3;letter-spacing:-.01em;color:var(--t1)}
+.cv-sub{padding:0 14px;font-size:13px;color:var(--t2);font-weight:500}
+.cv-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 14px 14px}
+.cv-primary,.cv-second{min-height:44px;padding:0 13px;border-radius:12px;font-size:15px;font-weight:600;line-height:1.42;border:1px solid var(--edge);background:var(--card);color:var(--t1);transition:transform 120ms var(--ease),background-color 120ms var(--ease)}
+.cv-primary{background:var(--forest);border-color:var(--forest);color:#fff;padding:0 16px}
+.cv-primary:active,.cv-second:active,.qr:active,.seg:active{transform:scale(.97)}
+.cv-second:active{background:var(--fill)}
+.cv-link{border:0;background:none;padding:0 4px;min-height:44px;font-size:14px;font-weight:600;color:var(--forest)}
+.cv-card.full .cv-primary{width:100%}
+/* The receipt: tick, one line, Undo (cards-v2.css .cv-receipt) */
+.cv-rrow{display:flex;align-items:center;gap:12px;padding:12px 14px}
+.cv-tick{flex:none;width:32px;height:32px;border-radius:50%;background:var(--forest);color:#fff;display:grid;place-items:center}
+.cv-tick .ico{width:16px;height:16px}
+.cv-tick.soft{background:var(--fill);color:var(--t1)}
+.cv-rtx{flex:1;min-width:0;font-size:15px;font-weight:600;line-height:1.3;color:var(--t1)}
+.cv-rtx small{display:block;font-size:13px;font-weight:500;color:var(--t2);margin-top:2px}
+.cv-undo{flex:none;min-height:44px;padding:0 14px;border-radius:10px;border:1px solid var(--edge);background:var(--card);font-size:14px;font-weight:700;color:var(--t1)}
+
+/* Reply chips (app.css .qrow button): white pills, a hairline; the chosen one lifts */
+.qrow{display:flex;flex-wrap:wrap;gap:6.6px;margin-top:8px}
+.qr{flex:none;max-width:100%;min-height:40px;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:14px;font-weight:600;color:var(--t1);text-align:left;line-height:1.3;position:relative;transition:transform 120ms var(--ease)}
+.qr::after{content:"";position:absolute;inset:-2px 0}
+.qr[aria-pressed=true]{background:var(--sel);box-shadow:var(--sel-sh);border-color:transparent;font-weight:700}
+.qr[aria-pressed=true]::before{content:"";display:inline-block;width:5px;height:9px;border:solid var(--forest);border-width:0 2px 2px 0;transform:rotate(45deg);margin:0 9px 2px 1px}
+.qr.quiet{color:var(--t2);background:var(--fill);border-color:transparent}
+
+/* All the shop ratings on one card: a row a shop, the app's segmented track (app.css .segment) */
+.rate-row{display:flex;align-items:center;gap:10px;padding:8px 14px;border-top:1px solid var(--line)}
+.rate-row:first-of-type{border-top:0}
+.rate-row b{flex:1 1 70px;min-width:0;font-size:15px;font-weight:600;line-height:1.25}
+.segment{flex:none;display:flex;padding:3.3px;border-radius:999px;background:var(--fill);border:1px solid var(--line)}
+.seg{width:37px;height:37px;padding:0;border:0;background:none;border-radius:999px;font-size:13px;font-weight:700;color:var(--t2);position:relative;transition:color 180ms var(--ease),box-shadow 180ms var(--ease)}
+.seg::after{content:"";position:absolute;inset:-4px -1px}
+.seg[aria-pressed=true]{background:var(--sel);box-shadow:var(--sel-sh);color:var(--t1)}
+@media (max-width:359px){.rate-row{flex-wrap:wrap;gap:6px}.rate-row b{flex-basis:100%}.seg{width:34px;height:34px}}
+
+/* The day's list, as the app's "ready" screen (setup-interview.css .iv-rv-*) */
+.ready{padding:20px 14px 14px;display:grid;gap:10px}
+.ready-head{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;margin-bottom:6px}
+.ready-head .ro{width:56px;height:56px}
+.ready-head h2{margin:6px 0 0;font-size:22px;font-weight:700;letter-spacing:-.02em;line-height:1.2}
+.ready-head p{font-size:15px;color:var(--t2)}
+.step{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:16px;background:var(--card);border:1px solid var(--line);text-align:left;width:100%}
+.step .cv-tick{width:30px;height:30px}
+.step span{display:flex;flex-direction:column;gap:2px;min-width:0}
+.step b{font-size:15px;font-weight:600;line-height:1.3}
+.step small{font-size:13px;color:var(--t2);font-weight:500}
+
+/* The quiet state (an empty Ask Remy): the orb in its halo, one line, one sentence */
+.state{margin:auto 0;min-height:calc(100% - 20px);justify-content:center;display:flex;flex-direction:column;align-items:center;text-align:center;padding:24px 16px 40px}
+.state .halo{position:relative;width:90px;height:90px;display:grid;place-items:center;margin-bottom:38px}
+.state .halo::before{content:"";position:absolute;inset:-52px;border-radius:50%;background:radial-gradient(closest-side,rgba(220,239,78,.34) 0%,rgba(220,239,78,.26) 46%,rgba(220,239,78,.12) 64%,rgba(220,239,78,.04) 82%,rgba(220,239,78,0) 100%);z-index:-1}
+.state .halo .ro{width:90px;height:90px}
+.state h1{margin:0;font-size:26px;font-weight:700;line-height:1.1;letter-spacing:-.035em;color:var(--t2);max-width:16ch}
+.state p{margin-top:12px;font-size:15px;line-height:1.45;color:var(--t2);max-width:30ch}
+.state .cv-primary{margin-top:24px;min-height:48px;padding:0 24px}
+
+/* The forest pill (remy-pill.css), only when there is something to type */
+/* Only when there is something to type: it slides up over the thread's foot (the thread makes room), never a jump */
+.comp{position:absolute;left:0;right:0;bottom:0;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));z-index:5;transform:translateY(110%);visibility:hidden;transition:transform 300ms var(--ease),visibility 0s var(--ease) 300ms}
+.comp.up{transform:none;visibility:visible;transition:transform 300ms var(--ease)}
+.note{font-size:13px;font-weight:600;color:var(--t1);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:0 0 8px;box-shadow:var(--sh)}
+.note:empty{display:none}
+.pillrow{display:flex;align-items:flex-end;gap:4.95px;min-height:52px;padding:6px;background:var(--forest);border-radius:28px;box-shadow:0 6px 20px rgba(11,61,46,.22)}
+.pillrow .orb{flex:none;width:40px;height:40px;display:grid;place-items:center}
+.pillrow .orb .ro{width:40px;height:40px;box-shadow:0 0 0 1px rgba(255,255,255,.16);border-radius:50%}
+.pillrow .fld{flex:1;min-width:0;display:flex;padding:0 4.95px}
+.pillrow textarea,.pillrow input{width:100%;border:0;outline:0;background:transparent;resize:none;color:#fff;font:500 16px/1.4 var(--font);padding:9px 0;min-height:40px;max-height:120px}
+.pillrow textarea::placeholder,.pillrow input::placeholder{color:rgba(255,255,255,.66)}
+.send{flex:none;width:40px;height:40px;border-radius:50%;border:0;padding:0;background:rgba(255,255,255,.13);color:#fff;display:grid;place-items:center;transition:background-color 160ms var(--ease),color 160ms var(--ease)}
+.send .ico{width:20px;height:20px}
+.send.on{background:var(--lime);color:var(--forest)}
+
+/* The orb (remy-orb.css) */
+.ro{position:relative;display:inline-block;flex:none;vertical-align:middle;aspect-ratio:1;border-radius:50%;container-type:size;width:24px;height:24px}
+.ro-ball{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 34% 28%,#1f7357 0%,var(--forest) 56%,#06281e 100%);box-shadow:inset 0 -7cqw 18cqw rgba(0,0,0,.25),inset 0 4.5cqw 7cqw rgba(255,255,255,.08),0 9cqw 32cqw rgba(11,61,46,.22)}
+.ro-dot{position:absolute;left:50%;top:50%;width:30%;height:30%;margin:-15%;border-radius:50%;background:var(--lime);box-shadow:0 0 22cqw rgba(220,239,78,.55)}
+.ro[data-ro=think] .ro-dot{width:22%;height:22%;margin:-11%;animation:ro-orbit 1.1s linear infinite}
+@keyframes ro-orbit{from{transform:rotate(0deg) translateX(20cqw)}to{transform:rotate(360deg) translateX(20cqw)}}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+.cv-title:last-child{padding-bottom:14px}
+/* The three answers on one line, as the app's two (wrapping only on a narrow phone) */
+.cv-actions.three{flex-wrap:nowrap;gap:7px}
+.cv-actions.three>button{flex:1 1 auto;padding:0 9px;white-space:nowrap}
+.cv-actions.three>.cv-primary{flex:0 1 auto;padding:0 15px}
+@media (max-width:374px){.cv-actions.three{flex-direction:column;align-items:stretch}.cv-actions.three>button,.cv-actions.three>.cv-primary{width:100%;flex:none;padding:0 16px}}
+.st-mail{margin:18px 0 12px;width:100%;max-width:300px;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:12px;font:inherit;background:transparent;color:var(--t2)}
