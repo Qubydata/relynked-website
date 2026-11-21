@@ -14,7 +14,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { isHandle, NOT_A_PAGE, shopsOn } from "../functions/_shop.js";
+import { isHandle, isPageRef, NOT_A_PAGE, shopsOn, tiktokQuery, TIKTOK_KEYS } from "../functions/_shop.js";
 import { onRequest as page } from "../functions/[handle].js";
 import { onRequest as rest } from "../functions/[handle]/[[rest]].js";
 import { onRequest as short } from "../functions/s/[code].js";
@@ -76,7 +76,7 @@ async function call(fn, path, { env = ON, params, method = "GET", headers = {}, 
   const res = await fn(context);
   return { res, nexted, calls: [...calls], text: await res.text() };
 }
-const segs = (path) => path.split("/").filter(Boolean);
+const segs = (path) => path.split("?")[0].split("/").filter(Boolean);
 const asPage = (path, o = {}) => call(page, path, { ...o, params: { handle: segs(path)[0] } });
 const asRest = (path, o = {}) => call(rest, path, { ...o, params: { handle: segs(path)[0], rest: segs(path).slice(1) } });
 const asShort = (code, o = {}) => call(short, `/s/${code}`, { ...o, params: { code } });
@@ -204,6 +204,87 @@ ok(posted.res.status === 405 && posted.calls.length === 0, "a sitemap is read on
 apiAnswers = null;
 ok(readFileSync(join(root, "robots.txt"), "utf8").includes("Sitemap: https://relynked.com/sitemap-index.xml") && readFileSync(join(root, "robots.txt"), "utf8").includes("Sitemap: https://relynked.com/sitemap.xml"), "robots.txt names the sitemap index beside the site's own sitemap");
 ok(!shopRoutes(root).exclude.includes("/sitemap-index.xml"), "no file is called sitemap-index.xml, so the function answers it");
+
+console.log("\nTikTok links and ads, read on the server (API 0614)");
+// Pages' HTMLRewriter, faked: it sets the attribute on <body> the way the real one does, on the streamed page.
+globalThis.HTMLRewriter = class {
+  on(sel, h) {
+    this.h = h;
+    return this;
+  }
+  transform(res) {
+    const h = this.h;
+    const body = new ReadableStream({
+      async start(c) {
+        const t = (await res.text()).replace(/<body([^>]*)>/, (m, attrs) => {
+          const set = {};
+          h.element({ setAttribute: (k, v) => (set[k] = v) });
+          return `<body${attrs}${Object.entries(set).map(([k, v]) => ` ${k}="${v}"`).join("")}>`;
+        });
+        c.enqueue(new TextEncoder().encode(t));
+        c.close();
+      },
+    });
+    return new Response(body, { status: res.status, headers: res.headers });
+  }
+};
+const PAGE_HTML = "<html><body class=k>shop</body></html>";
+let arrival = { ref: "TK7Q4M2P" };
+apiAnswers = (url) =>
+  url.endsWith("/arrival")
+    ? typeof arrival === "function"
+      ? arrival()
+      : new Response(JSON.stringify(arrival), { status: 200, headers: { "content-type": "application/json" } })
+    : new Response(PAGE_HTML, { status: 200, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=0, s-maxage=2" } });
+{
+  const bio = await asPage("/mama-put?r=k7q4m");
+  ok(bio.calls.length === 1 && !bio.calls[0].url.includes("arrival") && bio.text.includes('data-cf="K7Q4M"') && bio.res.headers.get("cache-control") === "private, no-store", "a TikTok bio link (?r=CODE): the code goes on the page's body, no extra call, and that answer is never kept", bio.text);
+  const badR = await asPage("/mama-put?r=TK7Q4M2P");
+  ok(!badR.text.includes("data-cf") && badR.calls.length === 1, "?r= takes a link code only, never a tap's token (a shared address can never carry someone's tap)");
+  for (const r of ["ABCDO", "22222", "<scr>", "K7Q4M%22%3E"]) {
+    const x = await asPage(`/mama-put?r=${r}`);
+    ok(!x.text.includes("data-cf"), `?r=${r} is not a code: the page is as it always is`);
+  }
+  const ad = await asPage("/mama-put?utm_source=tiktok&utm_medium=paid&utm_campaign=Ankara%20sale&utm_id=1790000000001&aid=1790000000002&cid=1790000000003&ttclid=E.C.P.abcdefgh&fbclid=xyz&email=a%40b.c");
+  const posted = ad.calls.find((c) => c.url.endsWith("/shop-pages/mama-put/arrival"));
+  const sent = posted ? JSON.parse(posted.init.body).q : {};
+  ok(!!posted && posted.init.method === "POST" && posted.headers.get("x-relynked-proxy") === SECRET && posted.headers.get("x-relynked-client-ip") === "203.0.113.7", "a TikTok ad: the API is asked server to server, with the secret and the visitor's address");
+  ok(sent.utm_campaign === "Ankara sale" && sent.ttclid === "E.C.P.abcdefgh" && sent.aid === "1790000000002" && !("fbclid" in sent) && !("email" in sent) && Object.keys(sent).every((k) => TIKTOK_KEYS.includes(k)), "only TikTok's own values are passed on; nothing else of the address leaves the edge", JSON.stringify(sent));
+  ok(ad.text.includes('data-cf="TK7Q4M2P"') && ad.res.headers.get("cache-control") === "private, no-store", "the API's ref goes on the page for this answer only");
+  ok(!(await asPage("/mama-put?utm_source=facebook&utm_campaign=x")).calls.some((c) => c.url.endsWith("/arrival")), "not TikTok: the API is not asked about it");
+  ok((await asPage("/mama-put?utm_source=TikTok&utm_campaign=x")).calls.some((c) => c.url.endsWith("/arrival")), "TikTok's Auto-attach writes TikTok with a capital: still read");
+  arrival = { ref: '"><script>alert(1)</script>' };
+  const evil = await asPage("/mama-put?utm_source=tiktok&utm_campaign=x");
+  ok(!evil.text.includes("data-cf") && !evil.text.includes("<script>"), "an answer that is not a ref is never written on the page");
+  arrival = () => new Response("no", { status: 404 });
+  ok(!(await asPage("/mama-put?utm_source=tiktok")).text.includes("data-cf"), "the API refusing: the page as it always is");
+  arrival = () => Promise.reject(new Error("down"));
+  const down = await asPage("/mama-put?utm_source=tiktok&ttclid=abcdefghij");
+  ok(down.res.status === 200 && down.text === PAGE_HTML, "the API down: the page as it always is");
+  const long = await asPage(`/mama-put?utm_source=tiktok&utm_campaign=${"A".repeat(5000)}`);
+  const lq = JSON.parse(long.calls.find((c) => c.url.endsWith("/arrival"))?.init.body ?? "{}").q ?? {};
+  ok(!("utm_campaign" in lq), "a value over 1000 characters is never passed on");
+  arrival = { ref: "K7Q4M" };
+  const head = await asPage("/mama-put?utm_source=tiktok", { method: "HEAD" });
+  ok(!head.calls.some((c) => c.url.endsWith("/arrival")), "a HEAD is not an arrival");
+  ok(isPageRef("K7Q4M") && isPageRef("TK7Q4M2P") && !isPageRef("23456") && !isPageRef("K7Q4M.T8RX") && !isPageRef("TK7Q4M2") && !isPageRef("23456789") && !isPageRef("K7Q4O"), "the ref's shape matches the API's and the page script's");
+  ok(tiktokQuery("https://relynked.com/x?utm_source=x") === null && tiktokQuery("https://relynked.com/x?ttclid=abc").ttclid === "abc", "a ttclid alone is a TikTok ad too");
+  // The ref is asked for while the page is fetched, not after it (both requests are out before either answers).
+  const events = [];
+  const slowApi = apiAnswers;
+  apiAnswers = (url) => {
+    const what = url.endsWith("/arrival") ? "arrival" : "page";
+    events.push(`start ${what}`);
+    return new Promise((res) => setTimeout(() => { events.push(`end ${what}`); res(slowApi(url)); }, 30));
+  };
+  arrival = { ref: "TK7Q4M2P" };
+  const both = await asPage("/mama-put?utm_source=tiktok&utm_campaign=x");
+  ok(events.indexOf("start page") >= 0 && events.indexOf("start page") < events.indexOf("end arrival") && events.indexOf("start arrival") < events.indexOf("end page") && both.text.includes('data-cf="TK7Q4M2P"'), "the ref and the page are asked for together (Promise.all), not one after the other", events.join(", "));
+  apiAnswers = slowApi;
+  const caps = await asPage("/Mama-Put?r=K7Q4M");
+  ok(caps.res.status === 301 && caps.res.headers.get("location") === "https://relynked.com/mama-put?r=K7Q4M", "capital letters redirect and keep the ref");
+}
+apiAnswers = null;
 
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed ? 1 : 0);
