@@ -267,7 +267,7 @@ apiAnswers = (url) =>
   arrival = { ref: "K7Q4M" };
   const head = await asPage("/mama-put?utm_source=tiktok", { method: "HEAD" });
   ok(!head.calls.some((c) => c.url.endsWith("/arrival")), "a HEAD is not an arrival");
-  ok(isPageRef("K7Q4M") && isPageRef("TK7Q4M2P") && !isPageRef("23456") && !isPageRef("K7Q4M.T8RX") && !isPageRef("TK7Q4M2") && !isPageRef("K7Q4O"), "the ref's shape matches the API's and the page script's");
+  ok(isPageRef("K7Q4M") && isPageRef("TK7Q4M2P") && !isPageRef("23456") && !isPageRef("K7Q4M.T8RX") && !isPageRef("TK7Q4M2") && !isPageRef("23456789") && !isPageRef("K7Q4O"), "the ref's shape matches the API's and the page script's");
   ok(tiktokQuery("https://relynked.com/x?utm_source=x") === null && tiktokQuery("https://relynked.com/x?ttclid=abc").ttclid === "abc", "a ttclid alone is a TikTok ad too");
   // The ref is asked for while the page is fetched, not after it (both requests are out before either answers).
   const events = [];

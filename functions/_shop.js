@@ -289,7 +289,7 @@ const ARRIVAL_WAIT_MS = 1500;
 
 /** A ref the page may carry: a counted link's code, or a TikTok ad tap's 8 character token. Pure. */
 export function isPageRef(v) {
-  return typeof v === "string" && ((LINK_CODE.test(v) && /[A-Z]/.test(v)) || TAP_TOKEN.test(v));
+  return typeof v === "string" && (LINK_CODE.test(v) || TAP_TOKEN.test(v)) && /[A-Z]/.test(v);
 }
 
 /** The TikTok values in a page address, or null when it is not from a TikTok ad. Pure. */
