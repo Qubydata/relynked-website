@@ -229,7 +229,7 @@ globalThis.HTMLRewriter = class {
   }
 };
 const PAGE_HTML = "<html><body class=k>shop</body></html>";
-let arrival = { ref: "K7Q4M.T8RX" };
+let arrival = { ref: "TK7Q4M2P" };
 apiAnswers = (url) =>
   url.endsWith("/arrival")
     ? typeof arrival === "function"
@@ -239,7 +239,7 @@ apiAnswers = (url) =>
 {
   const bio = await asPage("/mama-put?r=k7q4m");
   ok(bio.calls.length === 1 && !bio.calls[0].url.includes("arrival") && bio.text.includes('data-cf="K7Q4M"') && bio.res.headers.get("cache-control") === "private, no-store", "a TikTok bio link (?r=CODE): the code goes on the page's body, no extra call, and that answer is never kept", bio.text);
-  const badR = await asPage("/mama-put?r=K7Q4M.T8RX");
+  const badR = await asPage("/mama-put?r=TK7Q4M2P");
   ok(!badR.text.includes("data-cf") && badR.calls.length === 1, "?r= takes a link code only, never a tap's token (a shared address can never carry someone's tap)");
   for (const r of ["ABCDO", "22222", "<scr>", "K7Q4M%22%3E"]) {
     const x = await asPage(`/mama-put?r=${r}`);
@@ -250,7 +250,7 @@ apiAnswers = (url) =>
   const sent = posted ? JSON.parse(posted.init.body).q : {};
   ok(!!posted && posted.init.method === "POST" && posted.headers.get("x-relynked-proxy") === SECRET && posted.headers.get("x-relynked-client-ip") === "203.0.113.7", "a TikTok ad: the API is asked server to server, with the secret and the visitor's address");
   ok(sent.utm_campaign === "Ankara sale" && sent.ttclid === "E.C.P.abcdefgh" && sent.aid === "1790000000002" && !("fbclid" in sent) && !("email" in sent) && Object.keys(sent).every((k) => TIKTOK_KEYS.includes(k)), "only TikTok's own values are passed on; nothing else of the address leaves the edge", JSON.stringify(sent));
-  ok(ad.text.includes('data-cf="K7Q4M.T8RX"') && ad.res.headers.get("cache-control") === "private, no-store", "the API's ref goes on the page for this answer only");
+  ok(ad.text.includes('data-cf="TK7Q4M2P"') && ad.res.headers.get("cache-control") === "private, no-store", "the API's ref goes on the page for this answer only");
   ok(!(await asPage("/mama-put?utm_source=facebook&utm_campaign=x")).calls.some((c) => c.url.endsWith("/arrival")), "not TikTok: the API is not asked about it");
   ok((await asPage("/mama-put?utm_source=TikTok&utm_campaign=x")).calls.some((c) => c.url.endsWith("/arrival")), "TikTok's Auto-attach writes TikTok with a capital: still read");
   arrival = { ref: '"><script>alert(1)</script>' };
@@ -267,8 +267,20 @@ apiAnswers = (url) =>
   arrival = { ref: "K7Q4M" };
   const head = await asPage("/mama-put?utm_source=tiktok", { method: "HEAD" });
   ok(!head.calls.some((c) => c.url.endsWith("/arrival")), "a HEAD is not an arrival");
-  ok(isPageRef("K7Q4M") && isPageRef("K7Q4M.T8RX") && !isPageRef("23456") && !isPageRef("K7Q4M.T8R") && !isPageRef("K7Q4O"), "the ref's shape matches the API's and the page script's");
+  ok(isPageRef("K7Q4M") && isPageRef("TK7Q4M2P") && !isPageRef("23456") && !isPageRef("K7Q4M.T8RX") && !isPageRef("TK7Q4M2") && !isPageRef("K7Q4O"), "the ref's shape matches the API's and the page script's");
   ok(tiktokQuery("https://relynked.com/x?utm_source=x") === null && tiktokQuery("https://relynked.com/x?ttclid=abc").ttclid === "abc", "a ttclid alone is a TikTok ad too");
+  // The ref is asked for while the page is fetched, not after it (both requests are out before either answers).
+  const events = [];
+  const slowApi = apiAnswers;
+  apiAnswers = (url) => {
+    const what = url.endsWith("/arrival") ? "arrival" : "page";
+    events.push(`start ${what}`);
+    return new Promise((res) => setTimeout(() => { events.push(`end ${what}`); res(slowApi(url)); }, 30));
+  };
+  arrival = { ref: "TK7Q4M2P" };
+  const both = await asPage("/mama-put?utm_source=tiktok&utm_campaign=x");
+  ok(events.indexOf("start page") >= 0 && events.indexOf("start page") < events.indexOf("end arrival") && events.indexOf("start arrival") < events.indexOf("end page") && both.text.includes('data-cf="TK7Q4M2P"'), "the ref and the page are asked for together (Promise.all), not one after the other", events.join(", "));
+  apiAnswers = slowApi;
   const caps = await asPage("/Mama-Put?r=K7Q4M");
   ok(caps.res.status === 301 && caps.res.headers.get("location") === "https://relynked.com/mama-put?r=K7Q4M", "capital letters redirect and keep the ref");
 }

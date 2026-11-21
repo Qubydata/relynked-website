@@ -260,9 +260,8 @@ export async function servePage(context) {
   const handle = raw.toLowerCase();
   if (!shopsOn(context.env) || !isHandle(handle)) return context.next();
   if (raw !== handle) return Response.redirect(new URL(`/${handle}` + new URL(context.request.url).search, context.request.url).toString(), 301);
-  // A TikTok link or ad (API 0614): its ref, read here on the server, before the page is served.
-  const ref = context.request.method === "GET" ? await refFor(context, handle) : null;
-  const page = await toApi(context, `/shop-pages/${handle}`);
+  // A TikTok link or ad (API 0614): its ref, read here on the server, asked for while the page itself is fetched.
+  const [ref, page] = await Promise.all([context.request.method === "GET" ? refFor(context, handle) : Promise.resolve(null), toApi(context, `/shop-pages/${handle}`)]);
   return ref ? withRef(page, ref) : page;
 }
 
@@ -272,8 +271,9 @@ export async function servePage(context) {
  *
  *   relynked.com/<handle>?r=K7Q4M   a counted TikTok link (bio or video): the code goes on the page as it is.
  *   relynked.com/<handle>?utm_source=tiktok&utm_campaign=...&ttclid=...   a TikTok ad: only the values below are
- *                                   posted to the API (server to server, with the proxy secret), which makes or reuses
- *                                   the campaign's counted link and answers its ref, with a token for this tap.
+ *                                   posted to the API (server to server, with the proxy secret), which keeps the tap
+ *                                   and answers its 8 character token; the campaign's counted link is made only when
+ *                                   a customer's first WhatsApp message claims it.
  *
  * The page itself is the same kept page for everyone; the ref is written onto its <body> as data-cf for this one
  * answer (HTMLRewriter), which is then never kept anywhere. The page's script ends the WhatsApp first line with
@@ -281,15 +281,15 @@ export async function servePage(context) {
  */
 const REF_SET = "A-HJKMNP-Z2-9";
 const LINK_CODE = new RegExp(`^[${REF_SET}]{5}$`);
-const PAGE_REF = new RegExp(`^[${REF_SET}]{5}(?:\\.[${REF_SET}]{4})?$`);
+const TAP_TOKEN = new RegExp(`^[${REF_SET}]{8}$`);
 /** The query values TikTok's ads carry that the API reads. Nothing else of the address leaves here. */
 export const TIKTOK_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_id", "campaign_id", "aid", "adgroup_id", "cid", "creative_id", "ttclid"];
 const MAX_VALUE = 1000;
 const ARRIVAL_WAIT_MS = 1500;
 
-/** A ref the page may carry: a link code, or a code and a tap's token. Pure. */
+/** A ref the page may carry: a counted link's code, or a TikTok ad tap's 8 character token. Pure. */
 export function isPageRef(v) {
-  return typeof v === "string" && PAGE_REF.test(v) && /[A-Z]/.test(v.slice(0, 5));
+  return typeof v === "string" && ((LINK_CODE.test(v) && /[A-Z]/.test(v)) || TAP_TOKEN.test(v));
 }
 
 /** The TikTok values in a page address, or null when it is not from a TikTok ad. Pure. */
