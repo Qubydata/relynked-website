@@ -6,6 +6,7 @@
  *   relynked.com/<handle>/report          the report page (GET) and a report (POST)
  *   relynked.com/<handle>/order           the cart the page posts for the Ref in its WhatsApp message (POST)
  *   relynked.com/s/<code>                 the permanent short link
+ *   relynked.com/<handle>?r=CODE, ?utm_source=tiktok...   a TikTok link or ad: its counted ref on the page (refFor)
  *   relynked.com/sitemap-index.xml        the site's sitemap, then one per shop whose owner let search read it
  *   relynked.com/sitemap-shop-<handle>.xml  that shop's page and the photos search may show
  *
@@ -258,8 +259,87 @@ export async function servePage(context) {
   if (raw === SITEMAP_INDEX || raw.startsWith("sitemap-shop-")) return (await serveSitemap(context, raw)) || context.next();
   const handle = raw.toLowerCase();
   if (!shopsOn(context.env) || !isHandle(handle)) return context.next();
-  if (raw !== handle) return Response.redirect(new URL(`/${handle}`, context.request.url).toString(), 301);
-  return toApi(context, `/shop-pages/${handle}`);
+  if (raw !== handle) return Response.redirect(new URL(`/${handle}` + new URL(context.request.url).search, context.request.url).toString(), 301);
+  // A TikTok link or ad (API 0614): its ref, read here on the server, before the page is served.
+  const ref = context.request.method === "GET" ? await refFor(context, handle) : null;
+  const page = await toApi(context, `/shop-pages/${handle}`);
+  return ref ? withRef(page, ref) : page;
+}
+
+/*
+ * TIKTOK, READ ON THE SERVER (API 0614, server/api/src/came-from/tiktok.ts). No pixel, no script of TikTok's, nothing
+ * kept here.
+ *
+ *   relynked.com/<handle>?r=K7Q4M   a counted TikTok link (bio or video): the code goes on the page as it is.
+ *   relynked.com/<handle>?utm_source=tiktok&utm_campaign=...&ttclid=...   a TikTok ad: only the values below are
+ *                                   posted to the API (server to server, with the proxy secret), which makes or reuses
+ *                                   the campaign's counted link and answers its ref, with a token for this tap.
+ *
+ * The page itself is the same kept page for everyone; the ref is written onto its <body> as data-cf for this one
+ * answer (HTMLRewriter), which is then never kept anywhere. The page's script ends the WhatsApp first line with
+ * "(ref CODE)". With no answer in time, or any refusal, the page is served exactly as before.
+ */
+const REF_SET = "A-HJKMNP-Z2-9";
+const LINK_CODE = new RegExp(`^[${REF_SET}]{5}$`);
+const PAGE_REF = new RegExp(`^[${REF_SET}]{5}(?:\\.[${REF_SET}]{4})?$`);
+/** The query values TikTok's ads carry that the API reads. Nothing else of the address leaves here. */
+export const TIKTOK_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_id", "campaign_id", "aid", "adgroup_id", "cid", "creative_id", "ttclid"];
+const MAX_VALUE = 1000;
+const ARRIVAL_WAIT_MS = 1500;
+
+/** A ref the page may carry: a link code, or a code and a tap's token. Pure. */
+export function isPageRef(v) {
+  return typeof v === "string" && PAGE_REF.test(v) && /[A-Z]/.test(v.slice(0, 5));
+}
+
+/** The TikTok values in a page address, or null when it is not from a TikTok ad. Pure. */
+export function tiktokQuery(url) {
+  const q = new URL(url).searchParams;
+  const source = (q.get("utm_source") || "").trim().toLowerCase();
+  if (source !== "tiktok" && !q.get("ttclid")) return null;
+  const out = {};
+  for (const k of TIKTOK_KEYS) {
+    const v = q.get(k);
+    if (typeof v === "string" && v.length > 0 && v.length <= MAX_VALUE) out[k] = v;
+  }
+  return out;
+}
+
+/** The ref for this visit: ?r= for a TikTok link, else the API's answer for a TikTok ad, else null. */
+export async function refFor(context, handle) {
+  const { request, env } = context;
+  const url = new URL(request.url);
+  const r = (url.searchParams.get("r") || "").trim().toUpperCase();
+  if (LINK_CODE.test(r) && /[A-Z]/.test(r)) return r;
+  const q = tiktokQuery(request.url);
+  if (!q) return null;
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), ARRIVAL_WAIT_MS);
+  try {
+    const res = await fetch(`${env.SHOP_PAGES_API}/shop-pages/${handle}/arrival`, {
+      method: "POST",
+      headers: { "x-relynked-proxy": env.SHOP_PAGES_PROXY_SECRET, "x-relynked-client-ip": visitorOf(request, env), "content-type": "application/json", accept: "application/json" },
+      body: JSON.stringify({ q }),
+      redirect: "manual",
+      signal: ctl.signal,
+    });
+    if (!res.ok) return null;
+    const j = await res.json();
+    return j && isPageRef(j.ref) ? j.ref : null;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/** The page with data-cf="<ref>" on its <body>, for this answer only: never kept by the edge or the browser. */
+export function withRef(page, ref) {
+  if (page.status !== 200 || !/text\/html/.test(page.headers.get("content-type") || "") || !isPageRef(ref)) return page;
+  const headers = new Headers(page.headers);
+  headers.set("cache-control", "private, no-store");
+  const out = new Response(page.body, { status: page.status, headers });
+  return new HTMLRewriter().on("body", { element(el) { el.setAttribute("data-cf", ref); } }).transform(out);
 }
 
 /** The sitemap index's own name, at the top of the site (robots.txt names it). */
