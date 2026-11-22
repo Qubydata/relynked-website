@@ -43,24 +43,54 @@ body.wl{font-family:Inter,Arial,sans-serif;color:var(--ink);background:var(--pap
 .hero .in{display:grid;gap:30px;padding-bottom:0}
 .hero-txt{padding-top:30px}
 .hero .pill{margin-top:28px;width:100%}
-.hero .phone{justify-self:center;margin-bottom:-170px;transform:rotate(-4deg)}
 
-/* The phone: a real Remy chat, drawn (the guide's chat mockup) */
-.phone{width:290px;border-radius:46px;background:#111;padding:11px;box-shadow:0 30px 60px rgba(0,0,0,.35),inset 0 0 0 2px #333}
-.scr{border-radius:36px;overflow:hidden;background:#EFE9E0;color:#111;position:relative;height:590px;display:flex;flex-direction:column}
-.sb{display:flex;justify-content:space-between;align-items:center;padding:14px 26px 6px;background:#F6F6F6;font:600 .85rem Inter,Arial,sans-serif}
-.sb i{width:84px;height:24px;border-radius:99px;background:#111;position:absolute;left:50%;top:9px;transform:translateX(-50%)}
-.ch{display:flex;gap:10px;align-items:center;padding:8px 14px 10px;background:#F6F6F6;border-bottom:1px solid #DDD}
-.ch .av{width:34px;height:34px;border-radius:99px;background:var(--forest);color:var(--lime);display:grid;place-items:center;font:700 .72rem Inter,Arial,sans-serif}
-.ch b{display:block;font-size:.92rem}
-.ch small{font-size:.72rem;color:#6B7280}
-.msgs{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:7px}
-.msgs p{margin:0;max-width:82%;padding:7px 10px;border-radius:11px;font:400 .84rem/1.32 Inter,Arial,sans-serif;box-shadow:0 1px 1px rgba(0,0,0,.08)}
+/* Four phones: Remy answering on WhatsApp, Instagram, Messenger and TikTok, drawn (the guide's chat mockup), each in
+   its channel's own colours, never its logo. Phones: a swipe row inside the hero (the page itself never scrolls
+   sideways). Desktop: a fanned row of four. */
+.phones{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -20px;padding:6px 20px 30px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.phones::-webkit-scrollbar{display:none}
+.ph{margin:0;flex:none;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;gap:12px}
+.ph figcaption{font:800 1rem Montserrat,Arial,sans-serif;color:#fff}
+.phone{width:230px;border-radius:38px;background:#111;padding:9px;box-shadow:0 24px 48px rgba(0,0,0,.35),inset 0 0 0 2px #333}
+.scr{border-radius:30px;overflow:hidden;background:#EFE9E0;color:#111;position:relative;height:440px;display:flex;flex-direction:column}
+.sb{display:flex;justify-content:space-between;align-items:center;padding:11px 22px 4px;background:#F6F6F6;font:600 .75rem Inter,Arial,sans-serif}
+.sb i{width:68px;height:20px;border-radius:99px;background:#111;position:absolute;left:50%;top:9px;transform:translateX(-50%)}
+.ch{display:flex;gap:8px;align-items:center;padding:6px 12px 8px;background:#F6F6F6;border-bottom:1px solid #DDD}
+.ch .av{width:28px;height:28px;flex:none;border-radius:99px;background:var(--forest);color:var(--lime);display:grid;place-items:center;font:700 .72rem Inter,Arial,sans-serif}
+.ch b{display:block;font-size:.8rem}
+.ch small{font-size:.64rem;color:#6B7280}
+.msgs{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:6px}
+.msgs p{margin:0;max-width:84%;padding:6px 9px;border-radius:11px;font:400 .72rem/1.32 Inter,Arial,sans-serif;box-shadow:0 1px 1px rgba(0,0,0,.08)}
 .msgs .me{align-self:flex-end;background:#D9FDD3;border-top-right-radius:3px}
 .msgs .it{align-self:flex-start;background:#fff;border-top-left-radius:3px}
-.bar{display:flex;gap:8px;align-items:center;padding:9px 12px 18px;background:#F6F6F6}
-.bar span{flex:1;height:32px;border-radius:99px;background:#fff;border:1px solid #DDD}
-.bar i{width:32px;height:32px;border-radius:99px;background:#1DAB61}
+.bar{display:flex;gap:8px;align-items:center;padding:8px 10px 14px;background:#F6F6F6}
+.bar span{flex:1;height:26px;border-radius:99px;background:#fff;border:1px solid #DDD}
+.bar i{width:26px;height:26px;border-radius:99px;background:#1DAB61}
+
+/* Instagram: white, sent bubbles in its purple to pink. */
+.ig .scr,.ig .sb,.ig .ch,.ig .bar{background:#fff}
+.ig .msgs p{box-shadow:none;border-radius:16px}
+.ig .msgs .me{background:linear-gradient(135deg,#6A4CF5,#C13584 60%,#E1306C);color:#fff}
+.ig .msgs .it{background:#EFEFEF}
+.ig .ch .av{background:linear-gradient(45deg,#F58529,#DD2A7B,#8134AF);color:#fff}
+.ig .bar i{background:#3797F0}
+/* Messenger: white, sent bubbles in its blue to violet. */
+.fb .scr,.fb .sb,.fb .ch,.fb .bar{background:#fff}
+.fb .msgs p{box-shadow:none;border-radius:16px}
+.fb .msgs .me{background:linear-gradient(180deg,#0A7CFF,#A033FF);color:#fff}
+.fb .msgs .it{background:#F0F0F0}
+.fb .bar i{background:#0A7CFF}
+/* TikTok: dark, sent bubbles in its red, its cyan as the accent. */
+.tt .scr,.tt .sb,.tt .ch,.tt .bar{background:#121212;color:#fff}
+.tt .ch{border-bottom-color:#2A2A2A}
+.tt .ch small{color:#9A9A9A}
+.tt .ch .av{background:#25F4EE;color:#121212}
+.tt .msgs p{box-shadow:none;border-radius:14px}
+.tt .msgs .me{background:#FE2C55;color:#fff}
+.tt .msgs .it{background:#2F2F2F;color:#fff}
+.tt .bar span{background:#2A2A2A;border-color:#2A2A2A}
+.tt .bar i{background:#FE2C55}
+.tt .sb i{background:#000}
 
 /* The form */
 .prog{position:absolute;left:0;right:0;top:0;height:5px;background:rgba(15,61,46,.1)}
@@ -106,12 +136,19 @@ input[aria-invalid=true]{border-color:var(--red)}
 
 @media (min-width:860px){
   .in{padding:34px 40px 56px}
-  .hero .in{grid-template-columns:1.1fr .9fr;align-items:center;min-height:100vh;padding-bottom:40px}
+  .hero .in{grid-template-columns:.68fr 1.32fr;align-items:center;min-height:100vh;padding-bottom:40px}
+  .phones{overflow:visible;margin:0;padding:10px 0 0;gap:0;justify-content:center}
+  .ph{margin:0 -6px}
+  .ph .phone{width:184px;padding:7px;border-radius:32px}
+  .ph .scr{height:392px;border-radius:26px}
+  .ph .msgs p{font-size:.68rem}
+  .ph.wa{transform:rotate(-5deg) translateY(22px);z-index:1}
+  .ph.ig{transform:rotate(-1.5deg);z-index:2}
+  .ph.fb{transform:rotate(1.5deg);z-index:3}
+  .ph.tt{transform:rotate(5deg) translateY(22px);z-index:4}
   .hero .in > .logo{grid-column:1 / -1;align-self:start}
   .hero-txt{padding-top:0}
   .hero .pill{width:auto}
-  .hero .phone{margin-bottom:0;width:320px}
-  .hero .scr{height:640px}
   .big{font-size:clamp(4rem,7vw,6.2rem)}
   .paper .big{font-size:clamp(3.4rem,5vw,4.6rem)}
   .huge{font-size:clamp(5rem,9vw,8.5rem)}
