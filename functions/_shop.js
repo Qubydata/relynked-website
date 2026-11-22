@@ -84,7 +84,7 @@ export const NOT_A_PAGE = new Set([
   "app-store", "play-store",
   // The names a mail or web host uses, and test words.
   "ftp", "smtp", "imap", "pop", "pop3", "webmail", "vpn", "autodiscover", "autoconfig", "ns1", "ns2", "mx",
-  "staging", "dev", "beta", "preview", "stage", "test", "demo", "example", "simple",
+  "staging", "dev", "beta", "preview", "stage", "test", "demo", "example", "simple", "waitlist",
 ]);
 
 const HANDLE = /^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/;

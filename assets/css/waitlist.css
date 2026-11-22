@@ -1,0 +1,30 @@
+/* relynked.com/waitlist (22 Nov 2026). On top of beta.css: the same narrow column, paper, logo and form. One idea per
+   screen (closed, the form, your place), a big bold title, at most two buttons. */
+
+.wl-screen{padding:44px 0 40px;outline:none}
+#wl-wait{min-height:50vh}
+.wl-title{font-size:clamp(2.4rem,11vw,3.6rem);color:var(--forest);letter-spacing:-.045em;line-height:1.02;font-weight:800}
+.wl-lead{margin-top:14px;font-size:1.08rem;line-height:1.55;color:rgba(22,22,22,.72);max-width:40ch}
+.wl-card{margin-top:28px;display:grid;gap:20px}
+.wl-btn{justify-content:center;min-height:52px;font-size:1rem}
+#wl-closed .wl-btn{margin-top:28px}
+.ob-eye[hidden]{display:none}
+
+/* Your place */
+#wl-number{white-space:nowrap}
+.wl-share{margin-top:30px;background:#fff;border:1px solid rgba(1,63,50,.12);border-radius:18px;padding:22px 20px}
+.wl-share-say{font-size:1rem;line-height:1.5;color:rgba(22,22,22,.78)}
+.wl-share-say b{color:var(--forest)}
+.wl-link{margin-top:14px;font-family:var(--m);font-size:.9rem;font-weight:700;color:var(--forest);background:var(--mist);border-radius:12px;padding:12px 14px;word-break:break-all}
+.wl-acts{margin-top:16px;display:grid;gap:10px}
+.wl-acts .wl-btn{width:100%}
+.wl-share .status{margin-top:10px}
+.wl-other{margin-top:22px;font-size:.92rem}
+.wl-other a{color:rgba(22,22,22,.6);text-decoration:underline;text-decoration-color:rgba(22,22,22,.25)}
+
+@media (min-width:720px){
+  .wl-screen{padding:72px 0 56px}
+  .wl-acts{grid-template-columns:auto auto;justify-content:start}
+  .wl-acts .wl-btn{width:auto;padding-left:28px;padding-right:28px}
+  #wl-closed .wl-btn{padding-left:28px;padding-right:28px}
+}
