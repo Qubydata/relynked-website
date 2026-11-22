@@ -70,6 +70,12 @@ ok(codeFrom("not a url") === null, "a broken address is no code");
 r = await placeGet(ctx("GET", "https://relynked.com/api/waitlist/place?code=AB3CDE&code=ZZZZZZ&x=1"));
 ok(calls.at(-1).url === "https://api.example.com/waitlist/place?code=AB3CDE", "only the one code goes on, nothing else from the address");
 
+// A place in line is never cached (privacy review of website#21); the status may be, a minute.
+r = await placeGet(ctx("GET", "https://relynked.com/api/waitlist/place?code=AB3CDE"));
+ok(r.headers.get("cache-control") === "no-store", "a place answer is never cached", r.headers.get("cache-control"));
+r = await statusGet(ctx("GET", "https://relynked.com/api/waitlist/status"));
+ok(r.headers.get("cache-control") === "public, max-age=60", "the status may be kept a minute");
+
 const routes = JSON.parse(read("_routes.json"));
 ok(routes.exclude.includes("/waitlist") && routes.exclude.includes("/waitlist.html"), "/waitlist stays a page of the site (_routes.json)");
 ok(!isHandle("waitlist"), "and waitlist is never a shop name");
@@ -95,9 +101,19 @@ ok(!/letter-spacing:\.[1-9]|text-transform:uppercase/.test(read("assets/css/wait
 ok(js.includes("Opening <em>soon.</em>"), "closed: the same hero with Opening soon.");
 const added = [page, js, read("assets/css/waitlist.css"), read("assets/js/waitlist-cta.js"), read("functions/api/waitlist/join.js"), read("functions/api/waitlist/status.js"), read("functions/api/waitlist/place.js")].join("\n");
 ok(!/[\u2013\u2014]/.test(added), "no em or en dash in anything added");
+// THE CONSENT WORDING, word for word as the API keeps it with its version (relynked server/api src/routes/waitlist.ts
+// CONSENT_TEXT). A change to the page's words needs a new version on both sides.
+const CONSENT_TEXT = { "waitlist-2026-11-22": "Relynked may keep these details and contact me on WhatsApp or email about the waitlist." };
+const label = (page.match(/<label class="check">[\s\S]*?<span>([\s\S]*?)<\/span><\/label>/) || [])[1] || "";
+const shown = label.replace(/<a [^>]*>[^<]*<\/a>\.?/, "").replace(/\s+/g, " ").trim();
+const version = (js.match(/CONSENT_VERSION = "([^"]+)"/) || [])[1];
+ok(Boolean(version) && CONSENT_TEXT[version] === shown, "the consent line on the page is the API's wording for the version the page sends", JSON.stringify({ version, shown }));
+ok(page.includes("places, for up to 10 friends."), "the place screen says 5 places, for up to 10 friends");
 const privacy = read("privacy.html");
 ok(!/Relynked Business|both (Relynked )?products|our products/.test(privacy), "the privacy page no longer calls Relynked and Remy two products");
 ok(privacy.includes('id="waitlist"') && /To be removed, reply to our email or message us on WhatsApp/.test(privacy), "the privacy page says what is kept and how to be removed");
+ok(/remove your name, number, email and business details from the list, and keep only what the law requires/.test(privacy) && !/we delete your details/.test(privacy), "removal is described as it is done, not as a deletion");
+ok(privacy.includes("12 months after the waitlist closes, or until you ask to be removed, whichever is sooner"), "the waitlist has an end date");
 const home = read("index.html");
 ok((home.match(/data-waitlist-cta/g) || []).length === 2 && home.includes("/assets/js/waitlist-cta.js"), "both home heroes carry the button that becomes Join the waitlist");
 ok(read("assets/js/waitlist-cta.js").includes("j.open !== true"), "and it changes only when the list is open");
