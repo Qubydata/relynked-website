@@ -42,6 +42,8 @@
     "/sitemap.xml",
     "/terms.html",
     "/terms",
+    "/waitlist.html",
+    "/waitlist",
     "/o",
     "/o/*"
   ]

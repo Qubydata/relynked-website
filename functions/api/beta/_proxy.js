@@ -71,8 +71,10 @@ export async function toBetaApi(context, path) {
     return answer(503, { ok: false, error: "busy" }, { "retry-after": "5" });
   }
   const out = new Headers({ "content-type": "application/json; charset=utf-8", "x-content-type-options": "nosniff" });
-  // The settings may be kept a minute (the API says so); an application never.
-  out.set("cache-control", request.method === "GET" && upstream.status === 200 ? "public, max-age=60" : "no-store");
+  // The settings and the waitlist status may be kept a minute; an application never, and a place in line never (it
+  // changes with every referral, and is one person's; privacy review of website#21).
+  const keep = request.method === "GET" && upstream.status === 200 && !path.startsWith("/waitlist/place");
+  out.set("cache-control", keep ? "public, max-age=60" : "no-store");
   const retry = upstream.headers.get("retry-after");
   if (retry) out.set("retry-after", retry);
   return new Response(upstream.body, { status: upstream.status, headers: out });
