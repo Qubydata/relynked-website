@@ -90,7 +90,7 @@ ok(page.includes("We'll be in touch.") && !/when it.s your turn/.test(page), "th
 ok(!/letter-spacing:\.[1-9]|text-transform:uppercase/.test(read("assets/css/waitlist.css")), "no letter spaced eyebrow labels");
 ok(js.includes("Opening <em>soon.</em>"), "closed: the same hero with Opening soon.");
 const added = [page, js, read("assets/css/waitlist.css"), read("assets/js/waitlist-cta.js"), read("functions/api/waitlist/join.js"), read("functions/api/waitlist/status.js"), read("functions/api/waitlist/place.js")].join("\n");
-ok(!/[–—]/.test(added), "no em or en dash in anything added");
+ok(!/[\u2013\u2014]/.test(added), "no em or en dash in anything added");
 const privacy = read("privacy.html");
 ok(!/Relynked Business|both (Relynked )?products|our products/.test(privacy), "the privacy page no longer calls Relynked and Remy two products");
 ok(privacy.includes('id="waitlist"') && /To be removed, reply to our email or message us on WhatsApp/.test(privacy), "the privacy page says what is kept and how to be removed");
