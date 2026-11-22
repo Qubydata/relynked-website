@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Join the waitlist · Relynked</title>
-<meta name="description" content="Join the Relynked waitlist. Run your business on Relynked, with Remy answering your customers on WhatsApp.">
+<meta name="description" content="Get in early. Run your business on Relynked, with Remy answering your customers on WhatsApp.">
 <link rel="canonical" href="https://relynked.com/waitlist">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Relynked">
-<meta property="og:title" content="Join the Relynked waitlist">
+<meta property="og:title" content="Get in early: the Relynked waitlist">
 <meta property="og:description" content="Run your business on Relynked, with Remy answering your customers on WhatsApp.">
 <meta property="og:url" content="https://relynked.com/waitlist">
 <meta property="og:image" content="https://relynked.com/assets/img/og-relynked.png">
@@ -17,129 +17,156 @@
 <link rel="icon" href="/assets/img/logo.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#FDFDFD">
+<meta name="theme-color" content="#0F3D2E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=JetBrains+Mono:wght@600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/styles.css?v=20261011c">
-<link rel="stylesheet" href="/assets/css/beta.css?v=20261117b">
-<link rel="stylesheet" href="/assets/css/waitlist.css?v=20261122a">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/waitlist.css?v=20261122b">
 </head>
-<body class="beta wl">
+<body class="wl">
 
-<header class="ob-top">
-  <div class="ob-wrap">
-    <a class="logo" href="/" aria-label="Relynked home"><svg class="mk" viewBox="0 0 336 338" aria-hidden="true"><rect width="336" height="338" rx="84" fill="#0A3F32"/><rect x="54" y="85" width="176" height="65" rx="32.5" fill="#fff"/><rect x="54" y="186" width="227" height="67" rx="33.5" fill="#E2E41A"/></svg><span class="wm">Relynked<sup class="tm">™</sup></span></a>
+<!-- While the page asks whether the list is open: the forest block only. -->
+<section class="blk dark" id="wl-wait" aria-busy="true"></section>
+
+<!-- Hero (open) and Opening soon (closed): the same forest block. -->
+<section class="blk dark hero" id="wl-hero" hidden>
+  <div class="in">
+    <a class="logo" href="/" aria-label="Relynked home"><svg viewBox="0 0 336 338" aria-hidden="true"><rect width="336" height="338" rx="84" fill="#E2EE4D"/><rect x="54" y="85" width="176" height="65" rx="32.5" fill="#0F3D2E"/><rect x="54" y="186" width="227" height="67" rx="33.5" fill="#fff"/></svg><span>Relynked</span></a>
+    <div class="hero-txt">
+      <h1 class="big" id="wl-hero-title">Get in <em>early.</em></h1>
+      <p class="say" id="wl-hero-say">Relynked runs your shop. Remy answers your customers on WhatsApp.</p>
+      <button class="pill lime" type="button" id="wl-start">Join the waitlist</button>
+    </div>
+    <div class="phone" aria-label="A Remy chat on WhatsApp" role="img">
+      <div class="scr">
+        <div class="sb"><b>9:41</b><i></i></div>
+        <div class="ch"><span class="av">MP</span><span><b>Mama Put Kitchen</b><small>Business account</small></span></div>
+        <div class="msgs">
+          <p class="me">Good evening. Do you have jollof?</p>
+          <p class="it">Good evening ma. Yes, jollof rice is ₦2,500 a plate.</p>
+          <p class="me">2 plates. Deliver to Lekki</p>
+          <p class="it">- 2 plates of Jollof rice: ₦5,000<br>- Delivery, Lekki: ₦1,500<br><b>Total: ₦6,500</b><br><br>Should I place the order?</p>
+          <p class="me">Yes</p>
+          <p class="it">Done ma. Your order is placed.</p>
+        </div>
+        <div class="bar"><span></span><i></i></div>
+      </div>
+    </div>
   </div>
-</header>
+</section>
 
-<main class="ob-wrap" id="main">
+<!-- The form, one idea per screen. -->
+<section class="blk paper" id="wl-join" hidden>
+  <div class="prog" aria-hidden="true"><span id="wl-prog"></span></div>
+  <div class="in narrow">
+    <div class="top">
+      <a class="logo" href="/" aria-label="Relynked home"><svg viewBox="0 0 336 338" aria-hidden="true"><rect width="336" height="338" rx="84" fill="#0F3D2E"/><rect x="54" y="85" width="176" height="65" rx="32.5" fill="#fff"/><rect x="54" y="186" width="227" height="67" rx="33.5" fill="#E2EE4D"/></svg><span>Relynked</span></a>
+      <button class="back" type="button" id="wl-back">Back</button>
+    </div>
+    <p class="invited" id="wl-invited" hidden>A friend invited you.</p>
 
-  <!-- While the page asks whether the list is open: nothing but the logo. -->
-  <section class="wl-screen" id="wl-wait" aria-busy="true"></section>
-
-  <!-- Closed (WAITLIST_OPEN off). -->
-  <section class="wl-screen" id="wl-closed" hidden>
-    <h1 class="wl-title">Opening soon.</h1>
-    <p class="wl-lead">The Relynked waitlist opens shortly. Check back soon.</p>
-    <a class="btn ghost wl-btn" href="/">Back to home</a>
-  </section>
-
-  <!-- The form. -->
-  <section class="wl-screen" id="wl-join" hidden aria-labelledby="wl-join-title">
-    <p class="ob-eye" id="wl-invited" hidden>A friend invited you</p>
-    <h1 class="wl-title" id="wl-join-title">Join the waitlist.</h1>
-    <p class="wl-lead">Run your business on Relynked, with Remy answering your customers on WhatsApp.</p>
-
-    <form id="wl-form" class="ob-card wl-card" novalidate>
+    <form id="wl-form" novalidate>
       <div class="hp" aria-hidden="true">
         <label for="website">Leave this empty</label>
         <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
       </div>
 
-      <div class="f">
-        <label for="name">Your name</label>
-        <input id="name" name="name" type="text" autocomplete="name" required minlength="2" maxlength="80" aria-describedby="name-err">
-        <p class="err" id="name-err" hidden>Please write your name.</p>
-      </div>
-
-      <div class="f">
-        <label for="phone">WhatsApp number</label>
-        <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required maxlength="20" placeholder="0803 123 4567" aria-describedby="phone-err">
-        <p class="err" id="phone-err" hidden>Please check your WhatsApp number.</p>
-      </div>
-
-      <div class="f">
-        <label for="email">Email <span class="opt">optional</span></label>
-        <input id="email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="200" aria-describedby="email-err">
-        <p class="err" id="email-err" hidden>Please check your email, or leave it empty.</p>
-      </div>
-
-      <div class="f">
-        <label for="businessName">Business name</label>
-        <input id="businessName" name="businessName" type="text" autocomplete="organization" required minlength="2" maxlength="80" aria-describedby="business_name-err">
-        <p class="err" id="business_name-err" hidden>Please write your business name.</p>
-      </div>
-
-      <div class="f">
-        <label for="sells">What do you sell?</label>
-        <input id="sells" name="sells" type="text" required minlength="2" maxlength="80" placeholder="Food, shoes, hair" aria-describedby="sells-err">
-        <p class="err" id="sells-err" hidden>Please say what you sell.</p>
-      </div>
-
-      <div class="f">
-        <label for="city">City</label>
-        <input id="city" name="city" type="text" autocomplete="address-level2" required minlength="2" maxlength="60" placeholder="Lagos, Benin City, Abuja" aria-describedby="city-err">
-        <p class="err" id="city-err" hidden>Please write your city or town.</p>
-      </div>
-
-      <fieldset class="f">
-        <legend>How many shops?</legend>
-        <div class="chips">
-          <label class="ob-chip"><input type="radio" name="shops" value="one" required aria-describedby="shops-err"><span>1</span></label>
-          <label class="ob-chip"><input type="radio" name="shops" value="two_to_five"><span>2 to 5</span></label>
-          <label class="ob-chip"><input type="radio" name="shops" value="more_than_five"><span>More than 5</span></label>
+      <!-- Step 1 -->
+      <div class="step" data-step="1">
+        <h1 class="big">You and your <em>business.</em></h1>
+        <div class="f">
+          <label for="name">Your name</label>
+          <input id="name" name="name" type="text" autocomplete="name" required minlength="2" maxlength="80" aria-describedby="name-err">
+          <p class="err" id="name-err" hidden>Please write your name.</p>
         </div>
-        <p class="err" id="shops-err" hidden>Please pick one.</p>
-      </fieldset>
-
-      <div class="f consent">
-        <label class="check"><input type="checkbox" id="consent" name="consent" required aria-describedby="consent-err"><span>Relynked may keep these details and contact me on WhatsApp or email about the waitlist. See our <a href="/privacy#waitlist">privacy policy</a>.</span></label>
-        <p class="err" id="consent-err" hidden>Please tick to agree.</p>
+        <div class="f">
+          <label for="phone">WhatsApp number</label>
+          <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required maxlength="20" placeholder="0803 123 4567" aria-describedby="phone-err">
+          <p class="err" id="phone-err" hidden>Please check your WhatsApp number.</p>
+        </div>
+        <div class="f">
+          <label for="businessName">Business name</label>
+          <input id="businessName" name="businessName" type="text" autocomplete="organization" required minlength="2" maxlength="80" aria-describedby="business_name-err">
+          <p class="err" id="business_name-err" hidden>Please write your business name.</p>
+        </div>
       </div>
 
-      <button class="btn lime ob-send" type="submit" id="send">Join the waitlist</button>
+      <!-- Step 2 -->
+      <div class="step" data-step="2" hidden>
+        <h1 class="big">What do you <em>sell?</em></h1>
+        <fieldset class="f">
+          <legend class="sr">What you sell</legend>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="sellsPick" value="Food" aria-describedby="sells-err"><span>Food</span></label>
+            <label class="chip"><input type="radio" name="sellsPick" value="Fashion"><span>Fashion</span></label>
+            <label class="chip"><input type="radio" name="sellsPick" value="Beauty"><span>Beauty</span></label>
+            <label class="chip"><input type="radio" name="sellsPick" value="Phones"><span>Phones</span></label>
+            <label class="chip"><input type="radio" name="sellsPick" value="Groceries"><span>Groceries</span></label>
+            <label class="chip"><input type="radio" name="sellsPick" value="other"><span>Other</span></label>
+          </div>
+          <input class="other" id="sellsOther" name="sellsOther" type="text" maxlength="80" placeholder="What do you sell?" aria-label="What do you sell" hidden>
+          <p class="err" id="sells-err" hidden>Please pick what you sell.</p>
+        </fieldset>
+        <fieldset class="f">
+          <legend>Where?</legend>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="cityPick" value="Lagos" aria-describedby="city-err"><span>Lagos</span></label>
+            <label class="chip"><input type="radio" name="cityPick" value="Abuja"><span>Abuja</span></label>
+            <label class="chip"><input type="radio" name="cityPick" value="Port Harcourt"><span>Port Harcourt</span></label>
+            <label class="chip"><input type="radio" name="cityPick" value="other"><span>Other</span></label>
+          </div>
+          <input class="other" id="cityOther" name="cityOther" type="text" autocomplete="address-level2" maxlength="60" placeholder="Your city or town" aria-label="Your city or town" hidden>
+          <p class="err" id="city-err" hidden>Please pick your city.</p>
+        </fieldset>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step" data-step="3" hidden>
+        <h1 class="big">How many <em>shops?</em></h1>
+        <fieldset class="f">
+          <legend class="sr">How many shops</legend>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="shops" value="one" aria-describedby="shops-err"><span>1</span></label>
+            <label class="chip"><input type="radio" name="shops" value="two_to_five"><span>2 to 5</span></label>
+            <label class="chip"><input type="radio" name="shops" value="more_than_five"><span>More than 5</span></label>
+          </div>
+          <p class="err" id="shops-err" hidden>Please pick one.</p>
+        </fieldset>
+        <div class="f">
+          <label for="email">Email <span class="opt">optional</span></label>
+          <input id="email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="200" aria-describedby="email-err">
+          <p class="err" id="email-err" hidden>Please check your email, or leave it empty.</p>
+        </div>
+        <div class="f">
+          <label class="check"><input type="checkbox" id="consent" name="consent" aria-describedby="consent-err"><span>Relynked may keep these details and contact me on WhatsApp or email about the waitlist. <a href="/privacy#waitlist">Privacy policy</a>.</span></label>
+          <p class="err" id="consent-err" hidden>Please tick to agree.</p>
+        </div>
+      </div>
+
+      <button class="pill forest go" type="submit" id="send">Next</button>
       <p class="status" id="status" role="status" aria-live="polite"></p>
     </form>
-  </section>
+  </div>
+</section>
 
-  <!-- Your place. -->
-  <section class="wl-screen" id="wl-place" hidden tabindex="-1" aria-labelledby="wl-place-title">
-    <p class="ob-eye">You're on the list</p>
-    <h1 class="wl-title" id="wl-place-title">You're number <span id="wl-number">1</span>.</h1>
-    <p class="wl-lead" id="wl-place-lead">We'll message you on WhatsApp when it's your turn.</p>
-
-    <div class="wl-share" id="wl-share">
-      <p class="wl-share-say">Each friend who joins with your link moves you up <b id="wl-bump">5</b> places.</p>
-      <p class="wl-link"><span id="wl-link">relynked.com/waitlist</span></p>
-      <div class="wl-acts">
-        <a class="btn lime wl-btn" id="wl-wa" href="https://wa.me/" target="_blank" rel="noopener">Share on WhatsApp</a>
-        <button class="btn ghost wl-btn" type="button" id="wl-copy">Copy link</button>
+<!-- Your place. -->
+<section class="blk lime" id="wl-place" hidden tabindex="-1">
+  <div class="in narrow">
+    <div class="top"><a class="logo" href="/" aria-label="Relynked home"><svg viewBox="0 0 336 338" aria-hidden="true"><rect width="336" height="338" rx="84" fill="#0F3D2E"/><rect x="54" y="85" width="176" height="65" rx="32.5" fill="#fff"/><rect x="54" y="186" width="227" height="67" rx="33.5" fill="#E2EE4D"/></svg><span>Relynked</span></a></div>
+    <h1 class="huge" id="wl-place-title">You're number <span id="wl-number">1</span>.</h1>
+    <p class="say" id="wl-place-say">We'll be in touch.</p>
+    <div id="wl-share">
+      <p class="move">Each friend who joins with your link moves you up <b id="wl-bump">5</b> places.</p>
+      <div class="acts">
+        <a class="pill forest" id="wl-wa" href="https://wa.me/" target="_blank" rel="noopener">Share on WhatsApp</a>
+        <button class="pill line" type="button" id="wl-copy">Copy link</button>
       </div>
       <p class="status" id="wl-copied" role="status" aria-live="polite"></p>
     </div>
-
-    <p class="wl-other"><a href="/waitlist" id="wl-again">Join with another number</a></p>
-  </section>
-</main>
-
-<footer class="ob-foot">
-  <div class="ob-wrap">
-    <span>© 2026 Relynked Ltd.</span>
-    <span><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></span>
+    <p class="again"><a href="/waitlist" id="wl-again">Join with another number</a></p>
   </div>
-</footer>
+</section>
 
-<script src="/assets/js/waitlist.js?v=20261122a"></script>
+<script src="/assets/js/waitlist.js?v=20261122b"></script>
 </body>
 </html>

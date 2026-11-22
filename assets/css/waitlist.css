@@ -1,30 +1,121 @@
-/* relynked.com/waitlist (22 Nov 2026). On top of beta.css: the same narrow column, paper, logo and form. One idea per
-   screen (closed, the form, your place), a big bold title, at most two buttons. */
+/* relynked.com/waitlist, second look (22 Nov 2026): the Tester Guide's direction. Full bleed blocks in forest,
+   off white and lime; huge heavy headlines with one accent word; a real Remy chat in a phone; pill chips; one short
+   line of text; lots of space. Montserrat for headlines and pills, Inter for the rest (the guide's fonts). */
 
-.wl-screen{padding:44px 0 40px;outline:none}
-#wl-wait{min-height:50vh}
-.wl-title{font-size:clamp(2.4rem,11vw,3.6rem);color:var(--forest);letter-spacing:-.045em;line-height:1.02;font-weight:800}
-.wl-lead{margin-top:14px;font-size:1.08rem;line-height:1.55;color:rgba(22,22,22,.72);max-width:40ch}
-.wl-card{margin-top:28px;display:grid;gap:20px}
-.wl-btn{justify-content:center;min-height:52px;font-size:1rem}
-#wl-closed .wl-btn{margin-top:28px}
-.ob-eye[hidden]{display:none}
+:root{--forest:#0F3D2E;--lime:#E2EE4D;--paper:#F3F6F2;--ink:#10241B;--green:#1C7A4B;--red:#C4331B;--line:rgba(15,61,46,.18)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body.wl{font-family:Inter,Arial,sans-serif;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased}
+.wl [hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
-/* Your place */
+/* Blocks */
+.blk{min-height:100vh;min-height:100svh;position:relative;overflow:hidden;outline:none}
+.dark{background:var(--forest);color:#fff}
+.paper{background:var(--paper)}
+.lime{background:var(--lime)}
+.in{max-width:1160px;margin:0 auto;padding:26px 20px 40px}
+.narrow{max-width:620px}
+
+/* Logo */
+.logo{display:inline-flex;align-items:center;gap:9px;min-height:44px;color:inherit;text-decoration:none;font:800 1.15rem Montserrat,Arial,sans-serif;letter-spacing:-.02em}
+.logo svg{width:30px;height:30px}
+.top{display:flex;align-items:center;justify-content:space-between}
+
+/* Headlines */
+.big,.huge{font-family:Montserrat,Arial,sans-serif;font-weight:900;letter-spacing:-.035em;margin:0}
+.big{font-size:clamp(2.9rem,13.5vw,5.6rem);line-height:.96}
+.huge{font-size:clamp(3.6rem,17vw,8rem);line-height:.92}
+.big em,.huge em{font-style:normal;color:var(--green)}
+.dark .big em{color:var(--lime)}
+.say{font:500 1.15rem/1.4 Inter,Arial,sans-serif;margin:18px 0 0;max-width:30ch;opacity:.9}
+
+/* Pills: buttons and chips */
+.pill{display:inline-flex;align-items:center;justify-content:center;min-height:56px;padding:0 30px;border-radius:999px;border:0;font:800 1.08rem Montserrat,Arial,sans-serif;letter-spacing:-.01em;cursor:pointer;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.pill.lime{background:var(--lime);color:var(--ink)}
+.pill.forest{background:var(--forest);color:#fff}
+.pill.line{background:transparent;color:var(--forest);box-shadow:inset 0 0 0 2.5px var(--forest)}
+.pill:focus-visible,.chip input:focus-visible + span,.back:focus-visible{outline:3px solid var(--green);outline-offset:3px}
+.dark .pill:focus-visible{outline-color:#fff}
+.pill:disabled{opacity:.55;cursor:default}
+
+/* Hero */
+.hero .in{display:grid;gap:30px;padding-bottom:0}
+.hero-txt{padding-top:30px}
+.hero .pill{margin-top:28px;width:100%}
+.hero .phone{justify-self:center;margin-bottom:-170px;transform:rotate(-4deg)}
+
+/* The phone: a real Remy chat, drawn (the guide's chat mockup) */
+.phone{width:290px;border-radius:46px;background:#111;padding:11px;box-shadow:0 30px 60px rgba(0,0,0,.35),inset 0 0 0 2px #333}
+.scr{border-radius:36px;overflow:hidden;background:#EFE9E0;color:#111;position:relative;height:590px;display:flex;flex-direction:column}
+.sb{display:flex;justify-content:space-between;align-items:center;padding:14px 26px 6px;background:#F6F6F6;font:600 .85rem Inter,Arial,sans-serif}
+.sb i{width:84px;height:24px;border-radius:99px;background:#111;position:absolute;left:50%;top:9px;transform:translateX(-50%)}
+.ch{display:flex;gap:10px;align-items:center;padding:8px 14px 10px;background:#F6F6F6;border-bottom:1px solid #DDD}
+.ch .av{width:34px;height:34px;border-radius:99px;background:var(--forest);color:var(--lime);display:grid;place-items:center;font:700 .72rem Inter,Arial,sans-serif}
+.ch b{display:block;font-size:.92rem}
+.ch small{font-size:.72rem;color:#6B7280}
+.msgs{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:7px}
+.msgs p{margin:0;max-width:82%;padding:7px 10px;border-radius:11px;font:400 .84rem/1.32 Inter,Arial,sans-serif;box-shadow:0 1px 1px rgba(0,0,0,.08)}
+.msgs .me{align-self:flex-end;background:#D9FDD3;border-top-right-radius:3px}
+.msgs .it{align-self:flex-start;background:#fff;border-top-left-radius:3px}
+.bar{display:flex;gap:8px;align-items:center;padding:9px 12px 18px;background:#F6F6F6}
+.bar span{flex:1;height:32px;border-radius:99px;background:#fff;border:1px solid #DDD}
+.bar i{width:32px;height:32px;border-radius:99px;background:#1DAB61}
+
+/* The form */
+.prog{position:absolute;left:0;right:0;top:0;height:5px;background:rgba(15,61,46,.1)}
+.prog span{display:block;height:100%;width:33%;background:var(--forest);transition:width .3s}
+.back{border:0;background:none;font:700 1rem Inter,Arial,sans-serif;color:var(--forest);min-height:44px;padding:0 4px;cursor:pointer}
+.invited{font:700 1rem Inter,Arial,sans-serif;color:var(--green);margin:22px 0 -6px}
+#wl-form{margin-top:30px}
+.step{display:grid;gap:22px}
+.step .big{margin-bottom:6px}
+.f{border:0;padding:0;margin:0;min-width:0;display:grid;gap:9px}
+.f > label,.f legend{font:700 .98rem Inter,Arial,sans-serif;padding:0;margin-bottom:2px}
+.opt{font-weight:500;color:rgba(16,36,27,.55);margin-left:4px}
+input[type=text],input[type=email],input[type=tel]{width:100%;font:500 1.1rem Inter,Arial,sans-serif;color:var(--ink);background:#fff;border:2px solid transparent;border-radius:16px;padding:14px 16px;min-height:58px;-webkit-appearance:none}
+input[type=text]:focus,input[type=email]:focus,input[type=tel]:focus{outline:none;border-color:var(--forest)}
+input::placeholder{color:rgba(16,36,27,.38)}
+input[aria-invalid=true]{border-color:var(--red)}
+.other{margin-top:4px}
+
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{position:relative;display:inline-flex}
+.chip input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.chip span{display:inline-flex;align-items:center;min-height:52px;padding:0 22px;border-radius:999px;font:800 1.05rem Montserrat,Arial,sans-serif;color:var(--forest);box-shadow:inset 0 0 0 2.5px var(--forest);cursor:pointer}
+.chip input:checked + span{background:var(--forest);color:#fff}
+
+.check{display:flex;gap:12px;align-items:flex-start;font:500 .95rem/1.5 Inter,Arial,sans-serif;color:rgba(16,36,27,.8);cursor:pointer}
+.check input{flex:none;width:24px;height:24px;margin-top:1px;accent-color:var(--forest)}
+.check a{color:var(--forest);font-weight:700}
+.err{margin:0;font:600 .9rem Inter,Arial,sans-serif;color:var(--red)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.go{width:100%;margin-top:34px}
+.status{margin:12px 0 0;font:600 .95rem/1.4 Inter,Arial,sans-serif;color:rgba(16,36,27,.75)}
+.status:empty{display:none}
+
+/* Your place (lime) */
+#wl-place .in{max-width:1160px}
+#wl-place .huge{margin-top:12vh;max-width:11ch}
 #wl-number{white-space:nowrap}
-.wl-share{margin-top:30px;background:#fff;border:1px solid rgba(1,63,50,.12);border-radius:18px;padding:22px 20px}
-.wl-share-say{font-size:1rem;line-height:1.5;color:rgba(22,22,22,.78)}
-.wl-share-say b{color:var(--forest)}
-.wl-link{margin-top:14px;font-family:var(--m);font-size:.9rem;font-weight:700;color:var(--forest);background:var(--mist);border-radius:12px;padding:12px 14px;word-break:break-all}
-.wl-acts{margin-top:16px;display:grid;gap:10px}
-.wl-acts .wl-btn{width:100%}
-.wl-share .status{margin-top:10px}
-.wl-other{margin-top:22px;font-size:.92rem}
-.wl-other a{color:rgba(22,22,22,.6);text-decoration:underline;text-decoration-color:rgba(22,22,22,.25)}
+#wl-place .say{opacity:1}
+.move{font:500 1rem/1.45 Inter,Arial,sans-serif;margin:34px 0 0;max-width:34ch}
+.acts{display:grid;gap:12px;margin-top:16px}
+.again{margin:26px 0 0;font:500 .95rem Inter,Arial,sans-serif}
+.again a{color:rgba(16,36,27,.7)}
 
-@media (min-width:720px){
-  .wl-screen{padding:72px 0 56px}
-  .wl-acts{grid-template-columns:auto auto;justify-content:start}
-  .wl-acts .wl-btn{width:auto;padding-left:28px;padding-right:28px}
-  #wl-closed .wl-btn{padding-left:28px;padding-right:28px}
+@media (min-width:860px){
+  .in{padding:34px 40px 56px}
+  .hero .in{grid-template-columns:1.1fr .9fr;align-items:center;min-height:100vh;padding-bottom:40px}
+  .hero .in > .logo{grid-column:1 / -1;align-self:start}
+  .hero-txt{padding-top:0}
+  .hero .pill{width:auto}
+  .hero .phone{margin-bottom:0;width:320px}
+  .hero .scr{height:640px}
+  .big{font-size:clamp(4rem,7vw,6.2rem)}
+  .paper .big{font-size:clamp(3.4rem,5vw,4.6rem)}
+  .huge{font-size:clamp(5rem,9vw,8.5rem)}
+  .go{width:auto;padding:0 44px}
+  .acts{grid-template-columns:auto auto;justify-content:start}
 }
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}

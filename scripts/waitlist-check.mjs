@@ -75,15 +75,24 @@ ok(routes.exclude.includes("/waitlist") && routes.exclude.includes("/waitlist.ht
 ok(!isHandle("waitlist"), "and waitlist is never a shop name");
 
 const page = read("waitlist.html");
-for (const name of ["name", "phone", "email", "businessName", "sells", "city", "shops", "consent", "website"]) ok(page.includes(`name="${name}"`), `the page has ${name}`);
+for (const name of ["name", "phone", "email", "businessName", "sellsPick", "sellsOther", "cityPick", "cityOther", "shops", "consent", "website"]) ok(page.includes(`name="${name}"`), `the page has ${name}`);
 ok(/value="one"/.test(page) && /value="two_to_five"/.test(page) && /value="more_than_five"/.test(page) && page.includes(">2 to 5<") && page.includes(">More than 5<"), "shops: 1, 2 to 5, more than 5");
 const js = read("assets/js/waitlist.js");
 ok(js.includes('"waitlist-2026-11-22"') && js.includes("formMs") && js.includes("website"), "the consent version the API knows, the time on the form, the honeypot");
 const screens = page.split(/<section /).slice(1);
-ok(screens.length === 4 && screens.every((s) => (s.match(/class="btn /g) || []).length <= 2), "four screens, at most two buttons each");
+ok(screens.length === 4 && screens.every((s) => (s.match(/class="pill /g) || []).length <= 2), "four blocks, at most two buttons each");
+const steps = page.split(/class="step"/).slice(1);
+ok(steps.length === 3 && js.includes('"Join"') && page.includes('class="prog"'), "the form is three steps with a progress bar, ending in Join");
+for (const v of ["Food", "Fashion", "Beauty", "Phones", "Groceries", "Lagos", "Abuja", "Port Harcourt"]) ok(page.includes(`value="${v}"`), `chip ${v}`);
+ok((page.match(/value="other"/g) || []).length === 2, "Other on what you sell and on the city, each with its short text");
+ok(!/offer/i.test(page) && !/offer/i.test(js), "no early offer anywhere (founder, 22 Nov 2026)");
+ok(page.includes("We'll be in touch.") && !/when it.s your turn/.test(page), "the place screen says We'll be in touch.");
+ok(!/letter-spacing:\.[1-9]|text-transform:uppercase/.test(read("assets/css/waitlist.css")), "no letter spaced eyebrow labels");
+ok(js.includes("Opening <em>soon.</em>"), "closed: the same hero with Opening soon.");
 const added = [page, js, read("assets/css/waitlist.css"), read("assets/js/waitlist-cta.js"), read("functions/api/waitlist/join.js"), read("functions/api/waitlist/status.js"), read("functions/api/waitlist/place.js")].join("\n");
 ok(!/[–—]/.test(added), "no em or en dash in anything added");
 const privacy = read("privacy.html");
+ok(!/Relynked Business|both (Relynked )?products|our products/.test(privacy), "the privacy page no longer calls Relynked and Remy two products");
 ok(privacy.includes('id="waitlist"') && /To be removed, reply to our email or message us on WhatsApp/.test(privacy), "the privacy page says what is kept and how to be removed");
 const home = read("index.html");
 ok((home.match(/data-waitlist-cta/g) || []).length === 2 && home.includes("/assets/js/waitlist-cta.js"), "both home heroes carry the button that becomes Join the waitlist");
