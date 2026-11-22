@@ -44,53 +44,101 @@ body.wl{font-family:Inter,Arial,sans-serif;color:var(--ink);background:var(--pap
 .hero-txt{padding-top:30px}
 .hero .pill{margin-top:28px;width:100%}
 
-/* Four phones: Remy answering on WhatsApp, Instagram, Messenger and TikTok, drawn (the guide's chat mockup), each in
-   its channel's own colours, never its logo. Phones: a swipe row inside the hero (the page itself never scrolls
-   sideways). Desktop: a fanned row of four. */
-.phones{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -20px;padding:6px 20px 30px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+/* Four phones: Remy answering on WhatsApp, Instagram, Messenger and TikTok, drawn, each in its channel's own look,
+   never its logo. ONE design size, a true iPhone shape (280 by 606, about 9:19.5), scaled as a whole (--s), so no phone
+   is ever stretched and every screen shows status bar, header, messages and input bar. Phones: a swipe row inside the
+   hero (the page itself never scrolls sideways). Desktop: a fanned row of four. */
+.phones{--s:.8;display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -20px;padding:6px 20px 30px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .phones::-webkit-scrollbar{display:none}
+.defs{position:absolute;width:0;height:0;overflow:hidden}
 .ph{margin:0;flex:none;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;gap:12px}
 .ph figcaption{font:800 1rem Montserrat,Arial,sans-serif;color:#fff}
-.phone{width:230px;border-radius:38px;background:#111;padding:9px;box-shadow:0 24px 48px rgba(0,0,0,.35),inset 0 0 0 2px #333}
-.scr{border-radius:30px;overflow:hidden;background:#EFE9E0;color:#111;position:relative;height:440px;display:flex;flex-direction:column}
-.sb{display:flex;justify-content:space-between;align-items:center;padding:11px 22px 4px;background:#F6F6F6;font:600 .75rem Inter,Arial,sans-serif}
-.sb i{width:68px;height:20px;border-radius:99px;background:#111;position:absolute;left:50%;top:9px;transform:translateX(-50%)}
-.ch{display:flex;gap:8px;align-items:center;padding:6px 12px 8px;background:#F6F6F6;border-bottom:1px solid #DDD}
-.ch .av{width:28px;height:28px;flex:none;border-radius:99px;background:var(--forest);color:var(--lime);display:grid;place-items:center;font:700 .72rem Inter,Arial,sans-serif}
-.ch b{display:block;font-size:.8rem}
-.ch small{font-size:.64rem;color:#6B7280}
-.msgs{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:6px}
-.msgs p{margin:0;max-width:84%;padding:6px 9px;border-radius:11px;font:400 .72rem/1.32 Inter,Arial,sans-serif;box-shadow:0 1px 1px rgba(0,0,0,.08)}
-.msgs .me{align-self:flex-end;background:#D9FDD3;border-top-right-radius:3px}
-.msgs .it{align-self:flex-start;background:#fff;border-top-left-radius:3px}
-.bar{display:flex;gap:8px;align-items:center;padding:8px 10px 14px;background:#F6F6F6}
-.bar span{flex:1;height:26px;border-radius:99px;background:#fff;border:1px solid #DDD}
-.bar i{width:26px;height:26px;border-radius:99px;background:#1DAB61}
+.pbox{width:calc(280px * var(--s));height:calc(606px * var(--s));flex:none}
+.phone{width:280px;height:606px;transform:scale(var(--s));transform-origin:0 0;border-radius:46px;background:#0B0B0B;padding:10px;box-shadow:0 24px 48px rgba(0,0,0,.35),inset 0 0 0 2px #3A3A3A}
+.scr{width:260px;height:586px;border-radius:37px;overflow:hidden;position:relative;display:flex;flex-direction:column;background:#fff;color:#111;font-family:Inter,Arial,sans-serif}
+.ic{width:20px;height:20px;flex:none}
+/* Status bar */
+.sb{height:42px;flex:none;display:flex;align-items:center;padding:6px 22px 0 28px;font:600 13px Inter,Arial,sans-serif;position:relative}
+.sb .island{position:absolute;left:50%;top:9px;width:84px;height:24px;border-radius:99px;background:#000;transform:translateX(-50%)}
+.sb .sig{margin-left:auto;display:flex;align-items:flex-end;gap:1.5px;height:10px}
+.sb .sig i{width:3px;background:currentColor;border-radius:1px}
+.sb .sig i:nth-child(1){height:4px}.sb .sig i:nth-child(2){height:6px}.sb .sig i:nth-child(3){height:8px}.sb .sig i:nth-child(4){height:10px}
+.sb .bat{margin-left:6px;width:21px;height:10px;border:1.5px solid currentColor;border-radius:3px;position:relative;opacity:.9}
+.sb .bat::after{content:"";position:absolute;inset:1.5px 4px 1.5px 1.5px;background:currentColor;border-radius:1px}
+/* Header */
+.ch{flex:none;display:flex;align-items:center;gap:8px;padding:6px 12px 9px 8px}
+.ch .nm{flex:1;min-width:0;line-height:1.2}
+.ch b{display:block;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch small{display:block;font-size:10.5px;color:#667781}
+.av{flex:none;width:30px;height:30px;border-radius:99px;background:var(--forest);color:var(--lime);display:grid;place-items:center;font:700 10px Inter,Arial,sans-serif;position:relative}
+/* Messages */
+.msgs{flex:1;min-height:0;overflow:hidden;padding:10px 9px;display:flex;flex-direction:column;gap:6px}
+.m{max-width:80%;padding:6px 9px 5px;border-radius:14px;font-size:12px;line-height:1.35}
+.m.me{align-self:flex-end}
+.m.it{align-self:flex-start}
+.tm{display:block;text-align:right;font-size:9px;color:#667781;margin-top:2px}
+.tm b{color:#53BDEB;font-weight:700;letter-spacing:-2px;margin-left:2px}
+/* Input bar */
+.bar{flex:none;display:flex;align-items:center;gap:8px;padding:7px 9px 4px}
+.field{flex:1;min-width:0;display:flex;align-items:center;gap:7px;height:34px;border-radius:99px;padding:0 10px;font-size:12.5px}
+.field em{flex:1;font-style:normal;white-space:nowrap;overflow:hidden}
+.home{flex:none;display:block;width:96px;height:4px;border-radius:9px;background:currentColor;opacity:.85;margin:8px auto 7px}
 
-/* Instagram: white, sent bubbles in its purple to pink. */
-.ig .scr,.ig .sb,.ig .ch,.ig .bar{background:#fff}
-.ig .msgs p{box-shadow:none;border-radius:16px}
-.ig .msgs .me{background:linear-gradient(135deg,#6A4CF5,#C13584 60%,#E1306C);color:#fff}
-.ig .msgs .it{background:#EFEFEF}
-.ig .ch .av{background:linear-gradient(45deg,#F58529,#DD2A7B,#8134AF);color:#fff}
-.ig .bar i{background:#3797F0}
-/* Messenger: white, sent bubbles in its blue to violet. */
-.fb .scr,.fb .sb,.fb .ch,.fb .bar{background:#fff}
-.fb .msgs p{box-shadow:none;border-radius:16px}
-.fb .msgs .me{background:linear-gradient(180deg,#0A7CFF,#A033FF);color:#fff}
-.fb .msgs .it{background:#F0F0F0}
-.fb .bar i{background:#0A7CFF}
-/* TikTok: dark, sent bubbles in its red, its cyan as the accent. */
-.tt .scr,.tt .sb,.tt .ch,.tt .bar{background:#121212;color:#fff}
-.tt .ch{border-bottom-color:#2A2A2A}
-.tt .ch small{color:#9A9A9A}
-.tt .ch .av{background:#25F4EE;color:#121212}
-.tt .msgs p{box-shadow:none;border-radius:14px}
-.tt .msgs .me{background:#FE2C55;color:#fff}
-.tt .msgs .it{background:#2F2F2F;color:#fff}
-.tt .bar span{background:#2A2A2A;border-color:#2A2A2A}
-.tt .bar i{background:#FE2C55}
-.tt .sb i{background:#000}
+/* WhatsApp: beige patterned chat, green sent bubbles with time and ticks, the Message field and the green mic. */
+.wa .sb,.wa .ch,.wa .bar{background:#F6F5F3}
+.wa .ch{border-bottom:1px solid #E3E1DE;color:#111}
+.wa .ch .ic{color:#111;width:19px}
+.wa .msgs{background-color:#EFE7DD;background-image:radial-gradient(rgba(120,98,70,.12) 1px,transparent 1.2px),radial-gradient(rgba(120,98,70,.08) 1px,transparent 1.2px);background-size:18px 18px,18px 18px;background-position:0 0,9px 9px}
+.wa .m{border-radius:9px;box-shadow:0 1px .5px rgba(0,0,0,.13)}
+.wa .m.me{background:#D9FDD3;border-top-right-radius:2px}
+.wa .m.it{background:#fff;border-top-left-radius:2px}
+.wa .field{background:#fff;color:#8696A0}
+.wa .field .ic{width:18px}
+.wa .send{flex:none;width:34px;height:34px;border-radius:99px;background:#00A884;color:#fff;display:grid;place-items:center}
+.wa .send .ic{width:18px}
+.wa .home{color:#111}
+/* Instagram: white, its profile line, gradient sent bubbles, the Message... field with the blue camera circle. */
+.ig .ch{color:#111}
+.ig .av.ring{background:#F3F3F3;color:#111;box-shadow:0 0 0 2px #fff,0 0 0 3.5px #D62976}
+.ig .msgs{background:#fff;gap:5px}
+.ig .prof{display:flex;flex-direction:column;align-items:center;gap:2px;padding:2px 0 8px}
+.ig .prof .lg{width:44px;height:44px;font-size:13px;margin-bottom:4px}
+.ig .prof b{font-size:12.5px}
+.ig .prof small{font-size:10px;color:#737373}
+.ig .prof .vp{margin-top:5px;font-size:10.5px;font-weight:600;background:#EFEFEF;border-radius:8px;padding:4px 10px}
+.ig .m{border-radius:18px}
+.ig .m.me{background:linear-gradient(160deg,#A033FF 0%,#6A4CF5 45%,#3C6CF6 100%);color:#fff}
+.ig .m.it{background:#EFEFEF}
+.ig .field{border:1px solid #DBDBDB;background:#fff;color:#737373;padding-left:4px}
+.ig .field .ic{color:#111;width:18px}
+.ig .camc{flex:none;width:27px;height:27px;border-radius:99px;background:#3797F0;color:#fff;display:grid;place-items:center}
+.ig .camc .ic{color:#fff;width:16px}
+.ig .home{color:#111}
+/* Messenger: white, blue sent bubbles, the blue tools, the Aa field and the thumbs up. */
+.fb .ch{color:#0A7CFF;box-shadow:0 1px 0 rgba(0,0,0,.06)}
+.fb .ch .nm{color:#111}
+.fb .av.on::after{content:"";position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border-radius:99px;background:#31A24C;box-shadow:0 0 0 2px #fff}
+.fb .msgs{background:#fff}
+.fb .m{border-radius:18px}
+.fb .m.me{background:#0A7CFF;color:#fff}
+.fb .m.it{background:#F0F0F0}
+.fb .bar{color:#0A7CFF;gap:7px}
+.fb .bar > .ic{width:19px}
+.fb .field{background:#F0F2F5;color:#65676B;padding-right:8px}
+.fb .field .ic{color:#0A7CFF;width:18px}
+.fb .home{color:#111}
+/* TikTok: dark, red sent bubbles, the Send a message... field. */
+.tt .scr{background:#121212;color:#fff}
+.tt .ch{border-bottom:1px solid #262626}
+.tt .ch small{color:#8A8A8A}
+.tt .av{background:#25F4EE;color:#121212}
+.tt .msgs{background:#121212}
+.tt .m{border-radius:12px}
+.tt .m.me{background:#FE2C55;color:#fff}
+.tt .m.it{background:#2B2B2B;color:#fff}
+.tt .field{background:#262626;color:#8A8A8A;border-radius:12px;height:36px}
+.tt .field .ic{color:#D0D0D0;width:18px}
+.tt .home{color:#fff}
 
 /* The form */
 .prog{position:absolute;left:0;right:0;top:0;height:5px;background:rgba(15,61,46,.1)}
@@ -136,16 +184,13 @@ input[aria-invalid=true]{border-color:var(--red)}
 
 @media (min-width:860px){
   .in{padding:34px 40px 56px}
-  .hero .in{grid-template-columns:.68fr 1.32fr;align-items:center;min-height:100vh;padding-bottom:40px}
-  .phones{overflow:visible;margin:0;padding:10px 0 0;gap:0;justify-content:center}
-  .ph{margin:0 -6px}
-  .ph .phone{width:184px;padding:7px;border-radius:32px}
-  .ph .scr{height:392px;border-radius:26px}
-  .ph .msgs p{font-size:.68rem}
-  .ph.wa{transform:rotate(-5deg) translateY(22px);z-index:1}
-  .ph.ig{transform:rotate(-1.5deg);z-index:2}
-  .ph.fb{transform:rotate(1.5deg);z-index:3}
-  .ph.tt{transform:rotate(5deg) translateY(22px);z-index:4}
+  .hero .in{grid-template-columns:380px 1fr;column-gap:36px;align-items:center;min-height:100vh;padding-bottom:40px}
+  .phones{--s:.6;overflow:visible;margin:0;padding:10px 0 0;gap:10px;justify-content:center}
+  .ph{margin:0}
+  .ph.wa{transform:rotate(-3deg) translateY(16px)}
+  .ph.ig{transform:rotate(-1deg)}
+  .ph.fb{transform:rotate(1deg)}
+  .ph.tt{transform:rotate(3deg) translateY(16px)}
   .hero .in > .logo{grid-column:1 / -1;align-self:start}
   .hero-txt{padding-top:0}
   .hero .pill{width:auto}
