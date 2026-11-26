@@ -6,6 +6,13 @@
  *   relynked.com/<handle>/report          the report page (GET) and a report (POST)
  *   relynked.com/<handle>/order           the cart the page posts for the Ref in its WhatsApp message (POST)
  *   relynked.com/s/<code>                 the permanent short link
+ *   relynked.com/<handle>?r=CODE, ?utm_source=tiktok...   a TikTok link or ad: its counted ref on the page (refFor)
+ *   relynked.com/sitemap-index.xml        the site's sitemap, then one per shop whose owner let search read it
+ *   relynked.com/sitemap-shop-<handle>.xml  that shop's page and the photos search may show
+ *
+ * The sitemaps sit at the top of the site on purpose: a sitemap may only list addresses under its own folder, and a
+ * shop's address is relynked.com/<handle>. While shop pages are off (or the API cannot answer) the index still answers,
+ * with the site's own sitemap only, so robots.txt never points at something broken.
  *
  * WHY HERE AND NOT A REDIRECT. The address customers share and print is
  * relynked.com/<handle>; a redirect would show the API's own domain, break the
@@ -64,6 +71,7 @@ export const NOT_A_PAGE = new Set([
   "api", "assets", "functions", "industries", "o", "s", "reference", "scripts", "app", "staff", "www", "admin", "login",
   "support", "help", "pricing", "product", "careers", "contact", "press", "privacy", "terms", "refund-policy",
   "data-deletion", "how-it-works", "dashboard", "index", "robots", "sitemap", "favicon", "furjejkwnfuh737-x3-shift26",
+  "faq", "console",
   // Relynked's apps, services and host words.
   "mail", "email", "status", "cdn", "static", "floor", "kitchen", "bar", "pos", "waiter", "till", "store", "storekeeper",
   "cashier", "bartender", "docs", "git", "next", "pages", "remy", "relynked", "vettar", "qubydata", "auth", "oauth",
@@ -77,7 +85,7 @@ export const NOT_A_PAGE = new Set([
   "app-store", "play-store",
   // The names a mail or web host uses, and test words.
   "ftp", "smtp", "imap", "pop", "pop3", "webmail", "vpn", "autodiscover", "autoconfig", "ns1", "ns2", "mx",
-  "staging", "dev", "beta", "preview", "stage", "test", "demo", "example", "simple",
+  "staging", "dev", "beta", "preview", "stage", "test", "demo", "example", "simple", "waitlist",
 ]);
 
 const HANDLE = /^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/;
@@ -175,7 +183,7 @@ async function post(context, apiPath) {
  * (a page: fresh for 2 seconds, then served up to 3 more while the API is asked again, cheaply, with the page's ETag:
  * a 304 sends no body; a photo: for good). `context.next()` when the feature is off or not configured.
  */
-export async function toApi(context, apiPath) {
+export async function toApi(context, apiPath, query = "") {
   const { request, env } = context;
   if (!shopsOn(env)) return context.next();
   const method = request.method;
@@ -183,7 +191,8 @@ export async function toApi(context, apiPath) {
   if (method === "POST") return post(context, apiPath);
   const url = new URL(request.url);
   const cache = caches.default;
-  const cacheKey = new Request(url.origin + url.pathname, { method: "GET" });
+  // A banner's colours ride in its query (already reduced to known keys by the caller), so they are part of what is kept.
+  const cacheKey = new Request(url.origin + url.pathname + query, { method: "GET" });
   const key = cacheKey.url;
   const answer = (status, headers, buf) => new Response(method === "HEAD" ? null : buf, { status, headers });
 
@@ -194,7 +203,7 @@ export async function toApi(context, apiPath) {
       pending = (async () => {
         const h = { "x-relynked-proxy": env.SHOP_PAGES_PROXY_SECRET, "x-relynked-client-ip": visitorOf(request, env), accept: request.headers.get("accept") || "*/*" };
         if (validator) h["if-none-match"] = validator;
-        const upstream = await fetch(env.SHOP_PAGES_API + apiPath, { method: "GET", headers: h, redirect: "manual" });
+        const upstream = await fetch(env.SHOP_PAGES_API + apiPath + query, { method: "GET", headers: h, redirect: "manual" });
         const rule = edgeRule(upstream.headers.get("cache-control") || "");
         if (upstream.status === 304 && hit) {
           // Unchanged: the page we hold is the page, fresh again; no body came.
@@ -247,8 +256,127 @@ export async function toApi(context, apiPath) {
  */
 export async function servePage(context) {
   const raw = String(context.params.handle || "");
+  if (raw === SITEMAP_INDEX || raw.startsWith("sitemap-shop-")) return (await serveSitemap(context, raw)) || context.next();
   const handle = raw.toLowerCase();
   if (!shopsOn(context.env) || !isHandle(handle)) return context.next();
-  if (raw !== handle) return Response.redirect(new URL(`/${handle}`, context.request.url).toString(), 301);
-  return toApi(context, `/shop-pages/${handle}`);
+  if (raw !== handle) return Response.redirect(new URL(`/${handle}` + new URL(context.request.url).search, context.request.url).toString(), 301);
+  // A TikTok link or ad (API 0614): its ref, read here on the server, asked for while the page itself is fetched.
+  const [ref, page] = await Promise.all([context.request.method === "GET" ? refFor(context, handle) : Promise.resolve(null), toApi(context, `/shop-pages/${handle}`)]);
+  return ref ? withRef(page, ref) : page;
+}
+
+/*
+ * TIKTOK, READ ON THE SERVER (API 0614, server/api/src/came-from/tiktok.ts). No pixel, no script of TikTok's, nothing
+ * kept here.
+ *
+ *   relynked.com/<handle>?r=K7Q4M   a counted TikTok link (bio or video): the code goes on the page as it is.
+ *   relynked.com/<handle>?utm_source=tiktok&utm_campaign=...&ttclid=...   a TikTok ad: only the values below are
+ *                                   posted to the API (server to server, with the proxy secret), which keeps the tap
+ *                                   and answers its 8 character token; the campaign's counted link is made only when
+ *                                   a customer's first WhatsApp message claims it.
+ *
+ * The page itself is the same kept page for everyone; the ref is written onto its <body> as data-cf for this one
+ * answer (HTMLRewriter), which is then never kept anywhere. The page's script ends the WhatsApp first line with
+ * "(ref CODE)". With no answer in time, or any refusal, the page is served exactly as before.
+ */
+const REF_SET = "A-HJKMNP-Z2-9";
+const LINK_CODE = new RegExp(`^[${REF_SET}]{5}$`);
+const TAP_TOKEN = new RegExp(`^[${REF_SET}]{8}$`);
+/** The query values TikTok's ads carry that the API reads. Nothing else of the address leaves here. */
+export const TIKTOK_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_id", "campaign_id", "aid", "adgroup_id", "cid", "creative_id", "ttclid"];
+const MAX_VALUE = 1000;
+const ARRIVAL_WAIT_MS = 1500;
+
+/** A ref the page may carry: a counted link's code, or a TikTok ad tap's 8 character token. Pure. */
+export function isPageRef(v) {
+  return typeof v === "string" && (LINK_CODE.test(v) || TAP_TOKEN.test(v)) && /[A-Z]/.test(v);
+}
+
+/** The TikTok values in a page address, or null when it is not from a TikTok ad. Pure. */
+export function tiktokQuery(url) {
+  const q = new URL(url).searchParams;
+  const source = (q.get("utm_source") || "").trim().toLowerCase();
+  if (source !== "tiktok" && !q.get("ttclid")) return null;
+  const out = {};
+  for (const k of TIKTOK_KEYS) {
+    const v = q.get(k);
+    if (typeof v === "string" && v.length > 0 && v.length <= MAX_VALUE) out[k] = v;
+  }
+  return out;
+}
+
+/** The ref for this visit: ?r= for a TikTok link, else the API's answer for a TikTok ad, else null. */
+export async function refFor(context, handle) {
+  const { request, env } = context;
+  const url = new URL(request.url);
+  const r = (url.searchParams.get("r") || "").trim().toUpperCase();
+  if (LINK_CODE.test(r) && /[A-Z]/.test(r)) return r;
+  const q = tiktokQuery(request.url);
+  if (!q) return null;
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), ARRIVAL_WAIT_MS);
+  try {
+    const res = await fetch(`${env.SHOP_PAGES_API}/shop-pages/${handle}/arrival`, {
+      method: "POST",
+      headers: { "x-relynked-proxy": env.SHOP_PAGES_PROXY_SECRET, "x-relynked-client-ip": visitorOf(request, env), "content-type": "application/json", accept: "application/json" },
+      body: JSON.stringify({ q }),
+      redirect: "manual",
+      signal: ctl.signal,
+    });
+    if (!res.ok) return null;
+    const j = await res.json();
+    return j && isPageRef(j.ref) ? j.ref : null;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/** The page with data-cf="<ref>" on its <body>, for this answer only: never kept by the edge or the browser. */
+export function withRef(page, ref) {
+  if (page.status !== 200 || !/text\/html/.test(page.headers.get("content-type") || "") || !isPageRef(ref)) return page;
+  const headers = new Headers(page.headers);
+  headers.set("cache-control", "private, no-store");
+  const out = new Response(page.body, { status: page.status, headers });
+  return new HTMLRewriter().on("body", { element(el) { el.setAttribute("data-cf", ref); } }).transform(out);
+}
+
+/** The sitemap index's own name, at the top of the site (robots.txt names it). */
+export const SITEMAP_INDEX = "sitemap-index.xml";
+const SHOP_SITEMAP = /^sitemap-shop-([a-z0-9][a-z0-9-]{1,28}[a-z0-9])\.xml$/;
+
+/** The index with the site's own sitemap only: what /sitemap-index.xml says while shop pages are off or the API cannot answer. Pure. */
+export function siteOnlyIndex(origin) {
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n<sitemap><loc>${origin}/sitemap.xml</loc></sitemap>\n</sitemapindex>\n`;
+}
+
+const xmlAnswer = (body, cacheControl, method) =>
+  new Response(method === "HEAD" ? null : body, {
+    status: 200,
+    headers: { "content-type": "application/xml; charset=utf-8", "cache-control": cacheControl, "x-robots-tag": "noindex", "x-content-type-options": "nosniff", "strict-transport-security": "max-age=31536000" },
+  });
+
+/**
+ * relynked.com/sitemap-index.xml and relynked.com/sitemap-shop-<handle>.xml, from the API (kept at the edge ten
+ * minutes, as the API says). The index always answers: with shop pages off, or the API down or saying no, it lists
+ * the site's own sitemap only. A shop's sitemap answers only while shop pages are on; null means "not a sitemap".
+ */
+export async function serveSitemap(context, seg) {
+  const { request, env } = context;
+  if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
+  const origin = new URL(request.url).origin;
+  if (seg === SITEMAP_INDEX) {
+    if (!shopsOn(env)) return xmlAnswer(siteOnlyIndex(origin), "public, max-age=3600", request.method);
+    try {
+      const r = await toApi(context, "/shop-pages/sitemap-index.xml");
+      if (r.status === 200 && /xml/.test(r.headers.get("content-type") || "")) return r;
+    } catch {
+      // The API is not answering: the site's own sitemap is still worth reading.
+    }
+    return xmlAnswer(siteOnlyIndex(origin), "public, max-age=300", request.method);
+  }
+  const m = SHOP_SITEMAP.exec(seg);
+  if (!m || !shopsOn(env) || !isHandle(m[1])) return null;
+  return toApi(context, `/shop-pages/${m[1]}/sitemap.xml`);
 }
