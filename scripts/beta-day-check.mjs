@@ -100,7 +100,7 @@ ok(/@media \(max-width:374px\)\{\.cv-actions\.three\{flex-direction:column/.test
 for (const [name, html] of Object.entries(pages)) ok(!/<footer/.test(html) && js.includes('a.href = "/privacy"'), `${name}: no footer in the thread; Privacy is in the More menu`);
 for (const [name, html] of Object.entries(pages)) ok(/<header class="asknav">[\s\S]*id="sub"[\s\S]*<\/header>/.test(html), `${name}: "Saved" is the head's status line, never over the thread`);
 ok(!/position:fixed/.test((css.match(/\.asknav \.tx span\{[^}]+\}/) || [""])[0]) && !/\.saved|\.pill\{/.test(css), "the save status is never a floating box");
-ok(/q\.kind === "shop_rating"[\s\S]{0,400}view\.shops\.forEach\(function \(s\) \{\s*var row = el\("div", "rate-row"\)/.test(js) && /\.segment\{/.test(css) && js.includes('["1", "2", "3", "4", "5"]'), "every shop rating on ONE card: a row a shop, the app's segmented 1 to 5");
+ok(/q\.kind === "shop_rating"[\s\S]{0,400}buyShops\(\)\.forEach\(function \(s\) \{\s*var row = el\("div", "rate-row"\)/.test(js) && /\.segment\{/.test(css) && js.includes('["1", "2", "3", "4", "5"]'), "every shop rating on ONE card: a row a shop, the app's segmented 1 to 5");
 const snapSrc = (js.match(/function snap\(\) \{[^}]+\}/) || [""])[0];
 ok(snapSrc && !/token/.test(snapSrc) && (js.match(/history\.(pushState|replaceState)\(/g) || []).length === (js.match(/history\.(pushState|replaceState)\((snap\(\)|null), "", location\.pathname\)/g) || []).length && js.includes("history.pushState(snap()") && js.includes('addEventListener("popstate"'), "a history entry per step (the phone's Back works), the address always the bare path: no token, no step");
 ok(js.includes('"Welcome back"') && js.includes("firstOpen(tasks)"), "coming back lands on the first task not answered, with a quiet Welcome back");
@@ -115,6 +115,14 @@ ok(js.includes('"Send me a new link"') && js.includes('call("resend", body)') &&
 ok(js.includes('token = token || store.get("t");\n      if (token) return start();\n      if (r.status === 404) return gone();'), "a phone that already has a token (or another tab just kept one) opens its page whatever the code's answer (404, 429, an error)");
 ok(js.includes("if (token && Object.keys(pending).length && n < 40)") && js.includes("if (token !== r.json.token) { pending = {};"), "answers waiting under the old token are sent before a code is traded, and never sent under a new token");
 ok(!/window\.prompt|prompt\(/.test(js) && js.includes('box.type = "email"'), "the email for a new link is typed in the card, not a browser prompt");
+
+// Every tester is both an owner and a customer (relynked 0623).
+ok(js.includes('return list.filter(function (t) { return sectionOf(t) === "own"; }).concat(list.filter(function (t) { return sectionOf(t) === "buy"; }));') && js.includes('var SECTION = { own: "Your shops", buy: "Shops you buy from" };'), "the day's tasks are grouped by section: your shops first, then the shops you buy from");
+ok(js.includes('var pick = sectionOf(t) === "own" ? ownShops() : buyShops();') && js.includes("function buyShops() { return view.shops.filter(function (s) { return !isMine(s); }); }"), "Which shop: a task for your shops offers only your shops; a task for shops you buy from never offers your own");
+ok(js.includes('own ? "Your shop" + (s.code ? ", code " + s.code : "")') && js.includes('remy("shops:own"') && js.includes('remy("shops:buy"') && js.includes("[card(buyShops())]"), "your own shops are marked Your shop, apart from the shops you buy from");
+ok(/q\.kind === "shop_rating"[\s\S]{0,400}buyShops\(\)\.forEach/.test(js) && js.includes('q.options : buyShops().map(') && js.includes('!buyShops().length'), "the final shop rating and best or worst shop never offer the tester's own shop");
+ok(js.includes('var APP = "app.relynked.com";') && js.includes("It is not in the app stores: open it in Chrome or Safari and sign in with the same WhatsApp number as on your form.") && js.includes('location.href = "https://" + APP;'), "the app line: app.relynked.com, not in the stores, Chrome or Safari, the same WhatsApp number");
+ok(js.includes('s.mine === undefined ? view.me.role === "business" : !!s.mine'), "a page answer from before 0623 (no mine) still reads: a business tester's shops are their own");
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed) process.exit(1);
