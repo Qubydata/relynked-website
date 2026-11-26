@@ -1,6 +1,5 @@
-/* relynked.com/beta/checkin and /beta/feedback: a tester's own page, a chat with Remy in the app's look. The link
-   rides after the # and is kept on this phone; every tap saves at once and waits on the phone when offline. Each step
-   is a history entry (Back works); the address never changes. Built with textContent only, no library. */
+/* relynked.com/beta/checkin and /beta/feedback: a tester's page as a chat with Remy. The link rides after the #; taps
+   save at once (kept on the phone when offline); Back works. textContent only, no library. */
 (function () {
   "use strict";
   var app = document.getElementById("app");
@@ -11,10 +10,8 @@
     del: function (k) { try { localStorage.removeItem("rb." + k); } catch (e) { /* private mode */ } }
   };
 
-  /* The token: from the link's # ONLY (#t=...; never a ?t=, which would be sent to servers and kept in their logs),
-     else the one this phone already has. Once kept it is taken out of the address bar and the history, so it is
-     not left on screen, in a screenshot, in a shared tab or in the browser's history.
-     An email carries a one time open code (#o=), traded once for this phone's token (the mail service may log links). */
+  /* The token: from the # ONLY (a ?t= would reach server logs), else this phone's. Once kept it leaves the address
+     bar and the history. An email carries a one time open code (#o=), traded once for this phone's token. */
   var m = /^#t=([A-Za-z0-9_-]{43})$/.exec(location.hash);
   var om = /^#o=([A-Za-z0-9_-]{43})$/.exec(location.hash);
   var openCode = om ? om[1] : null;
@@ -63,7 +60,7 @@
     try { return new Date(iso + "T12:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: "Africa/Lagos" }); } catch (e) { return iso; }
   }
 
-  /* The head: the title, and under it one quiet status line (the day's count, or for a moment "Saved") */
+  /* The head: the title and one quiet status line under it */
   var subText = "", subTimer = null;
   function status(text) { subText = text || ""; if (!subTimer) paintSub("", subText); }
   function paintSub(kind, text) {
@@ -85,7 +82,7 @@
   }
 
   /* Saving: one small request per answer, kept on the phone until it is in */
-  /* One quiet word under the title, where the app shows a chat's status: "Saved", never a box over the thread. */
+  /* One quiet word under the title ("Saved"), never a box over the thread. */
   function tick(key, cls, text) {
     if (cls === "wait" && text === "Saving") return;   // a save on its way says nothing until it is in
     flash(cls ? "" : "ok", text, !cls ? 1400 : cls === "err" ? 5000 : 600000);
@@ -128,7 +125,7 @@
   }
   window.addEventListener("online", flush);
 
-  /* What is on screen wins over what the server said while a save is still waiting. */
+  /* The screen wins over the server while a save is waiting. */
   function resultOf(taskKey) {
     var p = pending["c:" + taskKey];
     if (p) return { task: taskKey, status: p.body.status, note: p.body.note || null, screenshot: p.body.screenshot || null, shops: p.body.shops || [] };
@@ -161,11 +158,11 @@
     input.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(go, 900); });
     input.addEventListener("blur", function () { if (timer) go(); });
   }
-  /* Before leaving a screen, a half typed answer is saved (its blur runs the save). */
+  /* Leaving a screen saves a half typed answer (its blur). */
   function settle() { var a = document.activeElement; if (a && a.blur && a.matches && a.matches("textarea,input")) a.blur(); }
 
 
-  /* Moving between steps: a history entry per step, never a change of address */
+  /* A history entry per step, never a change of address */
   function snap() { return { rb: 1, m: mode, d: day, i: idx, s: step, c: changing, n: depth }; }
   function forward(change) {
     return function () {
@@ -177,7 +174,7 @@
       render();
     };
   }
-  /* Back: the browser's own history when this page added the step, else straight to the step before. */
+  /* Back: the browser's history when this page added the step, else the step before. */
   function backTo(change) {
     return function () {
       settle();
@@ -199,7 +196,7 @@
     render();
   });
   backBtn.addEventListener("click", function () { if (backFn) backFn(); });
-  /* A swipe to the right is Back (touch only; a quick, mostly sideways swipe, so scrolling is never taken over). */
+  /* A quick sideways swipe right is Back (touch only; scrolling is never taken). */
   var sx = null, sy = 0, st0 = 0;
   app.addEventListener("touchstart", function (e) {
     var t = e.touches[0];
@@ -224,7 +221,7 @@
     menu.setAttribute("role", "menu");
     var items = [
       earlier().length ? ["Earlier days", forward(function () { mode = "days"; })] : null,
-      view.shops.length ? [view.me.role === "business" ? "Your business" : "Your shops", forward(function () { mode = "shops"; })] : null,
+      view.shops.length ? ["Your shops and codes", forward(function () { mode = "shops"; })] : null,
       view.feedback.open && mode !== "questions" ? ["Final questions", forward(function () { mode = "questions"; })] : null,
       mode !== "day" && s.dayIndex !== null && s.dayIndex >= 0 && s.dayIndex <= s.lastIndex ? ["Today's check-in", forward(toToday)] : null
     ];
@@ -241,7 +238,7 @@
   /* The thread's pieces, each the app's own */
   var items = [];
   function put(key, node) { node.setAttribute("data-k", key); items.push(node); return node; }
-  /* Remy speaks: the orb, "Remy", a bubble a line; `more` (chips, a card) sits under the bubbles. */
+  /* Remy speaks: the orb, a bubble a line, then `more` (chips, a card). */
   function remy(key, lines, more) {
     var row = el("div", "arow");
     var ra = el("span", "ra");
@@ -254,7 +251,7 @@
     row.appendChild(col);
     return put(key, row);
   }
-  /* The tester's own words, on the right. Tapping one changes it, when it can be changed. */
+  /* The tester's own words, on the right; tap to change. */
   function mine(key, text, on, quiet) {
     var w = el("div", "askmsg out");
     w.appendChild(on ? button("b out" + (quiet ? " skip" : ""), text, on) : el("div", "b out" + (quiet ? " skip" : ""), text));
@@ -285,7 +282,7 @@
     c.appendChild(row);
     return c;
   }
-  /* The quiet state of an empty Ask Remy: the orb in its halo, one line, one sentence. */
+  /* The quiet state of an empty Ask Remy. */
   function state(title, line, label, on) {
     items = [];
     var c = el("section", "state");
@@ -309,7 +306,7 @@
     paint();
   }
 
-  /* The pill: only when there is something to type. Its box is new for each question, so its autosave is its own. */
+  /* The pill, only when there is something to type; a new box per question. */
   var compKey = null;
   var thd = document.querySelector(".thd");
   function composer(cfg) {
@@ -343,7 +340,7 @@
     requestAnimationFrame(grow);
   }
 
-  /* Draws the thread: what is new arrives with the app's message motion, then the thread follows to its end. */
+  /* Draws the thread: new pieces arrive with the app's motion; it follows to the end. */
   function paint() {
     while (app.firstChild) app.removeChild(app.firstChild);
     var fresh = 0;
@@ -370,9 +367,20 @@
     return view.shops.filter(function (s) { return (refs || []).indexOf(s.ref) >= 0; }).map(function (s) { return s.name; }).join(", ");
   }
   function things(n) { return n === 1 ? "1 quick thing." : n + " quick things."; }
+  /* 0623: a tester's own shops (mine) and the shops they buy from */
+  function isMine(s) { return s.mine === undefined ? view.me.role === "business" : !!s.mine; }
+  function ownShops() { return view.shops.filter(isMine); }
+  function buyShops() { return view.shops.filter(function (s) { return !isMine(s); }); }
+  function sectionOf(t) { return t.section === "own" || t.section === "buy" ? t.section : view.me.role === "business" ? "own" : "buy"; }
+  var SECTION = { own: "Your shops", buy: "Shops you buy from" };
+  var APP = "app.relynked.com";
+  var APP_LINE = "The Relynked app is at " + APP + ". It is not in the app stores: open it in Chrome or Safari and sign in with the same WhatsApp number as on your form.";
 
   /* The day: Remy asks one task at a time; an answered task folds into a receipt */
-  function todays() { return view.tasks.filter(function (t) { return t.day === day; }); }
+  function todays() {
+    var list = view.tasks.filter(function (t) { return t.day === day; });
+    return list.filter(function (t) { return sectionOf(t) === "own"; }).concat(list.filter(function (t) { return sectionOf(t) === "buy"; }));
+  }
   function answered(t) { var r = resultOf(t.key); return !!(r && r.status); }
   function firstOpen(tasks) {
     for (var i = 0; i < tasks.length; i++) if (!answered(tasks[i])) return i;
@@ -399,11 +407,14 @@
     backBtn.setAttribute("aria-disabled", String(!backFn));
     items = [];
     var dayWord = day === 0 ? "Setup day" : dayLabel(day);
-    remy("hi", ["Hi " + view.me.firstName + ". " + dayWord + ". " + things(tasks.length)]);
+    var sec = function (x) { return tasks.some(function (t) { return sectionOf(t) === x; }); }, hasOwn = sec("own"), hasBuy = sec("buy");
+    remy("hi", ["Hi " + view.me.firstName + ". " + dayWord + ". " + things(tasks.length), day === 0 && hasOwn ? APP_LINE : null]);
     if (idx >= tasks.length) return renderDone(tasks);
-    // What is behind: one receipt each (their note first, as their own words).
+    // What is behind: one receipt each (their note first).
+    var shown = null;
     tasks.forEach(function (t, i) {
       if (i === idx || !answered(t)) return;
+      if (hasOwn && hasBuy && sectionOf(t) !== shown) { shown = sectionOf(t); divider("sec:" + day + ":" + shown, SECTION[shown]); }
       var r = resultOf(t.key);
       if (r.status !== "done" && r.note) mine("n:" + t.key + ":" + r.note, r.note);
       var row = el("div", "arow cont");
@@ -413,6 +424,7 @@
       row.appendChild(col);
       put("r:" + t.key + ":" + r.status + ":" + (r.shops || []).join(), row);
     });
+    if (hasOwn && hasBuy && sectionOf(tasks[idx]) !== shown) divider("sec:" + day + ":" + sectionOf(tasks[idx]), SECTION[sectionOf(tasks[idx])]);
     askTask(tasks[idx], idx, tasks.length);
     paint();
   }
@@ -439,7 +451,7 @@
       var card = el("div", "cv-card");
       card.setAttribute("role", "group");
       var head = el("div", "cv-head");
-      head.appendChild(el("span", "cv-label", "Task " + (i + 1) + " of " + total));
+      head.appendChild(el("span", "cv-label", "Task " + (i + 1) + " of " + total + ", " + SECTION[sectionOf(t)].toLowerCase()));
       card.appendChild(head);
       card.appendChild(el("div", "cv-title", t.title));
       if (t.help) card.appendChild(el("div", "cv-sub", t.help));
@@ -460,7 +472,7 @@
       remy("t:" + t.key + (changing === t.key ? ":again" : ""), [], [card]);
       return;
     }
-    /* "Didn't work" or "Got stuck": their answer, then Remy asks which shop, then what happened. */
+    /* Didn't work or Got stuck: which shop, then what happened. */
     var card2 = el("div", "cv-card");
     var h2 = el("div", "cv-head");
     h2.appendChild(el("span", "cv-label", "Task " + (i + 1) + " of " + total));
@@ -468,9 +480,10 @@
     card2.appendChild(el("div", "cv-title", t.title));
     remy("t:" + t.key + ":asked", [], [card2]);
     mine("s:" + t.key + ":" + r.status, SAID[r.status], function () { settle(); changing = t.key; render(); });
-    var askShop = t.perShop && view.shops.length > 1;
+    var pick = sectionOf(t) === "own" ? ownShops() : buyShops();
+    var askShop = t.perShop && pick.length > 1;
     if (askShop) {
-      remy("w:" + t.key, [view.me.role === "business" ? "Which business?" : "Which shop?"], [chips(view.shops.map(function (s) {
+      remy("w:" + t.key, [sectionOf(t) === "own" ? "Which of your shops?" : "Which shop?"], [chips(pick.map(function (s) {
         return { label: s.name, pressed: r.shops.indexOf(s.ref) >= 0, on: function () {
           var at = r.shops.indexOf(s.ref);
           if (at >= 0) r.shops.splice(at, 1); else r.shops.push(s.ref);
@@ -507,7 +520,7 @@
     }
   }
 
-  /* The day is done: Remy says so, and the day's list as the app's "ready" screen. */
+  /* The day is done: the app's "ready" screen. */
   function renderDone(tasks) {
     composer(null);
     var s = view.sprint;
@@ -550,7 +563,7 @@
     paint();
   }
 
-  /* An earlier day, the shops, the list of days: Remy shows them in a card. */
+  /* An earlier day, the shops, the days: in a card. */
   function listCard(rows) {
     var c = el("div", "cv-card");
     var r = el("div", "ready");
@@ -594,30 +607,35 @@
   function renderShops() {
     side();
     status("");
-    $("title").textContent = view.me.role === "business" ? "Your business" : "Your shops";
-    remy("shops", [view.me.role === "business" ? "Your business on Relynked." : "Your shops, and the code to message each."], [listCard(view.shops.map(function (s) {
-      var row = el("div", "step");
-      var sp = el("span");
-      sp.appendChild(el("b", "", s.name));
-      if (s.code) sp.appendChild(el("small", "", "Code " + s.code));
-      row.appendChild(sp);
-      return row;
-    }))]);
+    $("title").textContent = "Your shops";
+    function card(list, own) {
+      return listCard(list.map(function (s) {
+        var r = el("div", "step"), sp = el("span");
+        sp.appendChild(el("b", "", s.name));
+        sp.appendChild(el("small", "", own ? "Your shop" + (s.code ? ", code " + s.code : "") : "Code " + (s.code || "coming")));
+        r.appendChild(sp);
+        return r;
+      }));
+    }
+    if (ownShops().length) remy("shops:own", ["Your own shops. Never message them yourself."], [card(ownShops(), true)]);
+    if (buyShops().length) remy("shops:buy", ["Shops you buy from. Send a code to Relynked's WhatsApp number."], [card(buyShops())]);
+    remy("shops:app", [APP_LINE], [chips([{ label: "Open the Relynked app", quiet: true, on: function () { location.href = "https://" + APP; } }])]);
     paint();
   }
 
   /* The final questions: Remy asks one at a time in the same thread */
   function screens() {
-    return view.feedback.questions.filter(function (q) { return !((q.kind === "shop_rating" || q.kind === "shop_choice") && !view.shops.length); });
+    return view.feedback.questions.filter(function (q) { return !((q.kind === "shop_rating" || q.kind === "shop_choice") && !buyShops().length); });
   }
   function anyAnswer(q) {
     if (q.kind !== "shop_rating") return answerOf(q.key) !== "";
-    return view.shops.some(function (s) { return answerOf(q.key, s.ref) !== ""; });
+    return buyShops().some(function (s) { return answerOf(q.key, s.ref) !== ""; });
   }
   function said(q) {
     if (q.kind === "shop_rating") {
-      var n = view.shops.filter(function (s) { return answerOf(q.key, s.ref) !== ""; }).length;
-      return n ? (n === view.shops.length ? "Rated every shop" : "Rated " + n + " of " + view.shops.length + " shops") : "";
+      var rated = buyShops();
+      var n = rated.filter(function (s) { return answerOf(q.key, s.ref) !== ""; }).length;
+      return n ? (n === rated.length ? "Rated every shop" : "Rated " + n + " of " + rated.length + " shops") : "";
     }
     var a = answerOf(q.key);
     if (a === "") return "";
@@ -691,7 +709,7 @@
       var head = el("div", "cv-head");
       head.appendChild(el("span", "cv-label", "1 is poor, 5 is great"));
       card.appendChild(head);
-      view.shops.forEach(function (s) {
+      buyShops().forEach(function (s) {
         var row = el("div", "rate-row");
         row.appendChild(el("b", "", s.name));
         var seg = el("div", "segment");
@@ -720,14 +738,14 @@
     }
     if (q.kind === "choice" || q.kind === "shop_choice") {
       composer(null);
-      var opts = q.kind === "choice" ? q.options : view.shops.map(function (s) { return { value: s.ref, label: s.name }; });
+      var opts = q.kind === "choice" ? q.options : buyShops().map(function (s) { return { value: s.ref, label: s.name }; });
       var cur2 = answerOf(q.key);
       var row2 = chips(opts.map(function (o) {
         return { label: o.label, pressed: cur2 === o.value, on: function (e) {
           var b = e.currentTarget;
           row2.querySelectorAll(".qr").forEach(function (x) { if (!x.classList.contains("quiet")) x.setAttribute("aria-pressed", String(x === b)); });
           setAnswer(q.key, "", o.value);
-          // The chosen chip lifts, then it is sent as their answer and Remy asks the next.
+          // The chosen chip lifts, then is sent; Remy asks the next.
           setTimeout(next, still ? 0 : 250);
         } };
       }).concat([skip]));
@@ -769,7 +787,7 @@
       // After the last day the link goes straight to the final questions.
       if (v.feedback.open && s.dayIndex > s.lastIndex) mode = "questions";
       render();
-      // Coming back to a day already started: it opens at the first task not answered, with "Welcome back".
+      // Back to a day already started: the first task not answered, "Welcome back".
       var tasks = v.tasks.filter(function (t) { return t.day === day; });
       var done = tasks.filter(function (t) { var r = resultOf(t.key); return r && r.status; }).length;
       if (mode === "day" && done > 0 && done < tasks.length) flash("", "Welcome back", 2000);
@@ -779,7 +797,7 @@
   function load() {
     call("me", {}).then(function (r) {
       if (r.status === 200 && r.json && r.json.ok) {
-        // Answered while the page was still asking: what is on screen is newer, so it stays.
+        // Answered while still asking: the screen is newer, it stays.
         if (!(view && touched)) show(r.json, true);
         flush();
         return;
@@ -796,7 +814,7 @@
       message("No connection.", "Check your data or Wi-Fi, then try again.", "Try again", start);
     });
   }
-  /* A spent link: one button emails a fresh one to the address on file. The answer is always the same. */
+  /* A spent link: one button emails a fresh one; the answer is always the same. */
   var usedCode = null;
   function gone() {
     message("This link no longer works.", "Nothing you saved is lost. We can email you a new link to the address you signed up with.", "Send me a new link", resend);
@@ -819,7 +837,7 @@
       message("Check your email.", "If that address is on our list, a new link is on its way. It works once, within 3 days: open it on the phone you test with.");
     }, function () { message("No connection.", "Check your data or Wi-Fi, then try again.", "Try again", function () { sendNew(body); }); });
   }
-  /* Answers waiting under this phone's token go first, so a new token (perhaps another tester's) never carries them. */
+  /* Answers waiting under this token go first: a new token never carries them. */
   function trade(n) {
     n = n || 0;
     if (token && Object.keys(pending).length && n < 40) { if (!sending) flush(); return setTimeout(function () { trade(n + 1); }, 250); }
@@ -833,7 +851,7 @@
         return start();
       }
       if (r.status === 404) usedCode = code;
-      // Another tab may have kept a token meanwhile; a phone with one opens its page whatever the code's answer.
+      // A phone with a token (maybe from another tab) opens its page whatever the answer.
       token = token || store.get("t");
       if (token) return start();
       if (r.status === 404) return gone();
@@ -847,7 +865,7 @@
     if (!token) return message("Open the link in your email.", "Your personal link is in the email from Relynked titled \"Your Relynked beta check-in link\". Open it on this phone once, and this page will remember you.");
     var kept = store.get("view");
     if (kept && kept.me && kept.sprint && kept.feedback) show(kept, false);
-    // Nothing kept yet: the band and a soft pulse on the card stay until the server answers (well under a second).
+    // Nothing kept yet: the band and a soft pulse until the server answers.
     load();
   }
   start();
